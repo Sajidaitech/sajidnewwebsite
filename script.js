@@ -477,3 +477,193 @@ $$('[data-case]').forEach(card => {
     }
   });
 })();
+
+
+/* ---------------------------------------------------------------
+   Command Console — press Ctrl/⌘ + K (or "/") anywhere.
+   A glass palette to jump to any section or run a recruiter action
+   (view / download CV, email, WhatsApp, LinkedIn, copy email).
+   Everything is read from links already on the page, so nothing is
+   duplicated. Keyboard-first, works with a tap too, no pointer
+   tracking.
+--------------------------------------------------------------- */
+(function commandConsole(){
+  const root = $('#cmdk');
+  if (!root) return;
+  const input = $('#cmdkInput'), list = $('#cmdkList'), toast = $('#cmdkToast');
+  const triggers = ['#cmdkOpen', '#cmdkTip'].map(s => $(s)).filter(Boolean);
+  const html = document.documentElement;
+  let items = [], shown = [], active = 0, isOpen = false, lastFocus = null, toastTimer = 0;
+
+  // ⌘ on Apple devices, Ctrl elsewhere
+  const isMac = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent);
+  $$('[data-cmdk-mod]').forEach(k => { k.textContent = isMac ? '⌘' : 'Ctrl'; });
+
+  const KEYS = {
+    '#why-hire':'hire why recruit', '#experience':'work history jobs career', '#skills':'abilities strengths',
+    '#arsenal':'tools stack tech tooling', '#certifications':'certs certificates ccna itil', '#projects':'projects case studies missions',
+    '#proof':'evidence results metrics', '#lab':'home lab practice', '#education':'degree university school',
+    '#achievements':'awards wins', '#references':'recommendations referees testimonials', '#about':'bio profile who'
+  };
+
+  function build(){
+    if (items.length) return;
+    $$('.nav-links a').forEach(a => items.push({
+      group:'Sections', kind:'section', ico:'#', hint:'Jump',
+      label:a.textContent.trim(), href:a.getAttribute('href'), keys:KEYS[a.getAttribute('href')] || ''
+    }));
+    const byText = t => $$('.hero-actions a').find(a => a.textContent.trim().toLowerCase().startsWith(t));
+    const view = byText('view'), dl = byText('download');
+    const mail = $('a[href^="mailto:"]'), wa = $('a[href*="wa.me"]'), li = $('.side-rail a[href*="linkedin.com"]');
+    if (view) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'View CV', href:view.href, external:true, keys:'resume pdf' });
+    if (dl)   items.push({ group:'Actions', kind:'link', ico:'↓', hint:'Download', label:'Download CV', href:dl.href, download:true, keys:'resume pdf save' });
+    if (mail) {
+      const addr = mail.getAttribute('href').replace(/^mailto:/i, '').split('?')[0];
+      items.push({ group:'Actions', kind:'link', ico:'@', hint:'Opens your mail app', label:'Send an email', href:mail.href, keys:'contact mail' });
+      items.push({ group:'Actions', kind:'copy', ico:'⧉', hint:addr, label:'Copy email address', value:addr, keys:'contact mail clipboard' });
+    }
+    if (wa) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Message on WhatsApp', href:wa.href, external:true, keys:'chat phone' });
+    if (li) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Open LinkedIn', href:li.href, external:true, keys:'profile network' });
+  }
+
+  function score(it, q){
+    if (!q) return 1;
+    const label = it.label.toLowerCase(), keys = (it.keys || '').toLowerCase();
+    if (label.startsWith(q)) return 4;
+    if (label.includes(q)) return 3;
+    if (keys.includes(q)) return 2;
+    let i = 0;
+    for (const ch of label) if (ch === q[i]) i++;
+    return i === q.length ? 1 : 0;
+  }
+
+  function el(tag, cls, text){
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function render(){
+    const q = input.value.trim().toLowerCase();
+    shown = items.map(it => ({ it, s:score(it, q) })).filter(x => x.s > 0);
+    if (q) shown.sort((a, b) => b.s - a.s);
+    shown = shown.map(x => x.it);
+    list.textContent = '';
+    if (!shown.length) {
+      list.appendChild(el('li', 'cmdk-empty', `Nothing matches “${input.value.trim()}”`));
+      input.removeAttribute('aria-activedescendant');
+      return;
+    }
+    let group = null;
+    shown.forEach((it, i) => {
+      if (!q && it.group !== group) {
+        group = it.group;
+        const h = el('li', 'cmdk-group', group);
+        h.setAttribute('role', 'presentation');
+        list.appendChild(h);
+      }
+      const li = el('li', 'cmdk-item');
+      li.id = 'cmdk-o-' + i; li.dataset.i = i;
+      li.setAttribute('role', 'option');
+      li.append(el('span', 'cmdk-ico', it.ico), el('span', 'cmdk-label', it.label), el('span', 'cmdk-hint', it.hint));
+      list.appendChild(li);
+    });
+    setActive(0);
+  }
+
+  function setActive(i, scroll = true){
+    const opts = $$('.cmdk-item', list);
+    if (!opts.length) return;
+    active = (i + opts.length) % opts.length;
+    opts.forEach((o, k) => { const on = k === active; o.classList.toggle('is-active', on); o.setAttribute('aria-selected', String(on)); });
+    input.setAttribute('aria-activedescendant', opts[active].id);
+    if (scroll) opts[active].scrollIntoView({ block:'nearest' });
+  }
+
+  function say(msg){
+    toast.textContent = msg;
+    toast.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-on'), 1900);
+  }
+
+  function copy(text){
+    const ok = () => say('Email address copied');
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(ok, () => say(text)); return; }
+    const t = document.createElement('textarea');
+    t.value = text; t.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(t); t.select();
+    try { document.execCommand('copy') ? ok() : say(text); } catch { say(text); }
+    t.remove();
+  }
+
+  function run(it){
+    if (!it) return;
+    close(true);
+    if (it.kind === 'section') {
+      const t = $(it.href);
+      if (t) t.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block:'start' });
+    } else if (it.kind === 'copy') {
+      copy(it.value);
+    } else if (it.external) {
+      window.open(it.href, '_blank', 'noopener,noreferrer');
+    } else if (it.download) {
+      const a = document.createElement('a');
+      a.href = it.href; a.download = '';
+      document.body.appendChild(a); a.click(); a.remove();
+    } else {
+      location.href = it.href;
+    }
+  }
+
+  function open(){
+    if (isOpen) return;
+    build();
+    isOpen = true;
+    lastFocus = document.activeElement;
+    input.value = '';
+    render();
+    root.hidden = false;
+    html.classList.add('cmdk-open');
+    triggers.forEach(t => t.setAttribute('aria-expanded', 'true'));
+    requestAnimationFrame(() => root.classList.add('is-open'));
+    input.focus();
+  }
+
+  function close(silent){
+    if (!isOpen) return;
+    isOpen = false;
+    root.classList.remove('is-open');
+    html.classList.remove('cmdk-open');
+    triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+    const done = () => { if (!isOpen) root.hidden = true; };
+    if (reduceMotion) done(); else setTimeout(done, 240);
+    if (!silent && lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  triggers.forEach(t => t.addEventListener('click', open));
+  input.addEventListener('input', render);
+  root.addEventListener('click', e => {
+    if (e.target.closest('[data-cmdk-close]')) { close(); return; }
+    const li = e.target.closest('.cmdk-item');
+    if (li) run(shown[+li.dataset.i]);
+  });
+  root.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); setActive(0); }
+    else if (e.key === 'End')  { e.preventDefault(); setActive(shown.length - 1); }
+    else if (e.key === 'Enter') { e.preventDefault(); run(shown[active]); }
+    else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'Tab') { e.preventDefault(); input.focus(); } // keep focus inside the dialog
+  });
+  document.addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && k === 'k') { e.preventDefault(); isOpen ? close() : open(); return; }
+    if (k === '/' && !isOpen && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      if (e.target.closest && e.target.closest('input,textarea,select,[contenteditable]')) return;
+      e.preventDefault(); open();
+    }
+  });
+})();
