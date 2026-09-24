@@ -2320,3 +2320,10 @@ footer{ padding:40px var(--edge) 60px; position:relative; z-index:2; }
 .nav .nav-link, .nav .nav-cta, .mob-drawer .nav-link, .mob-drawer .nav-cta{
   --lg-noise:linear-gradient(transparent, transparent);
 }
+
+
+/* Logos inside a sub-role card (HIA Project): a little smaller than the
+   employer row so they sit under the org line without crowding it */
+.tl-logos--sub{ margin:14px 0 12px; gap:10px; }
+.tl-logos--sub .logo-plate{ --plate-h:56px; border-radius:16px; }
+@media (max-width:560px){ .tl-logos--sub .logo-plate{ --plate-h:50px; } }
