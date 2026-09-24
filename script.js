@@ -1,7 +1,7 @@
 const $  = (s, c=document) => c.querySelector(s);
 const $$ = (s, c=document) => [...c.querySelectorAll(s)];
 
-document.getElementById('year').textContent = new Date().getFullYear();
+/* Copyright year in the footer is intentionally fixed at 2025. */
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hasHover = matchMedia('(hover:hover)').matches;
