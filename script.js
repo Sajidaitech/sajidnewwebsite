@@ -237,7 +237,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && mobDrawer?.classList.contains('open')) { setMenu(false); navToggle.focus(); }
 });
 /* rotating a phone / resizing to desktop must not leave the menu open */
-matchMedia('(min-width:1024px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
+matchMedia('(min-width:1180px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 
 /* ---------------------------------------------------------------
    Scroll progress bar

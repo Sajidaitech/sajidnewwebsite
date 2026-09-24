@@ -1996,13 +1996,19 @@ footer{ padding:40px var(--edge) 60px; position:relative; z-index:2; }
 .nav-link:not(.lg-none){ --lg-fg:rgba(255,255,255,.88); font-weight:500; }
 .nav > .nav-cta:not(.lg-none){ padding:var(--nl-py) calc(var(--nl-px) + 4px); }
 
-/* Density steps so all 14 links + the CTA always fit on one row */
-@media (min-width:1340px) and (max-width:1439px){
+/* Density steps so every link + the CTA always fit on ONE row.
+   A ≥1500 · B 1400–1499 · C 1260–1399 · D 1180–1259. Below 1180px
+   (tablets / phones) the menu button + drawer take over. */
+@media (min-width:1400px) and (max-width:1499px){
+  .nav{ --nav-gap:5px; --nl-fs:12.5px; --nl-px:11px; --nl-py:8px; }
+}
+@media (min-width:1260px) and (max-width:1399px){
   .nav{ --nav-gap:4px; --nl-fs:12px; --nl-px:8px; --nl-py:8px; }
   .nav-brand{ font-size:15px; }
 }
-@media (min-width:1440px) and (max-width:1559px){
-  .nav{ --nav-gap:5px; --nl-fs:12.5px; --nl-px:11px; --nl-py:8px; }
+@media (min-width:1180px) and (max-width:1259px){
+  .nav{ --nav-gap:3px; --nl-fs:11.5px; --nl-px:7px; --nl-py:7px; }
+  .nav-brand{ font-size:15px; }
 }
 
 /* current section — same glass, brighter rim, teal waking inside */
@@ -2025,26 +2031,13 @@ footer{ padding:40px var(--edge) 60px; position:relative; z-index:2; }
 }
 
 /* ---- Desktop: full row of pills ---------------------------------- */
-@media (min-width:1024px){
+@media (min-width:1180px){
   .nav-toggle, .mob-drawer, .nav-scrim{ display:none !important; }
 }
 
-/* ---- Below 1340px: brand + Let's talk + menu button --------------- */
-/* Laptops (1024–1339px): no dropdown — the capsule grows a second row.
-   Row 1: name + "Let's talk". Row 2: every link, centred, same gaps. */
-@media (min-width:1024px) and (max-width:1339px){
-  .nav{
-    --nav-gap:4px; --nl-fs:12px; --nl-px:9px; --nl-py:8px;
-    width:min(calc(100% - 32px), 1240px);
-    flex-wrap:wrap; row-gap:8px; padding:10px 12px 12px 20px;
-  }
-  .nav-brand{ order:1; font-size:15px; }
-  .nav > .nav-cta{ order:2; margin-left:auto; }
-  .nav-links{ order:3; flex:1 0 100%; justify-content:center; flex-wrap:wrap; margin:0; padding:0; }
-}
-
-/* Tablets & phones (<1024px): menu button + drawer */
-@media (max-width:1023px){
+/* ---- Menu button appears only on tablets / phones ------------------ */
+/* Tablets & phones (<1180px): menu button + drawer */
+@media (max-width:1179px){
   .nav{ width:min(calc(100% - 32px), 860px); justify-content:space-between; }
   .nav-links{ display:none; }
   .nav-toggle{ display:flex; margin-left:10px; }
@@ -2138,9 +2131,6 @@ footer{ padding:40px var(--edge) 60px; position:relative; z-index:2; }
   .recruiter-link:last-child:nth-child(even){ grid-column:auto; }
 }
 
-/* smallest laptops (1024–1099px): a touch tighter so all links stay on one row */
-@media (min-width:1024px) and (max-width:1099px){
-  .nav{ --nl-fs:11.5px; --nl-px:7px; --nav-gap:3px; }
 }
 
 
@@ -2323,4 +2313,10 @@ footer{ padding:40px var(--edge) 60px; position:relative; z-index:2; }
 }
 @media (max-width:430px){
   .contact-panel .contact-avail{ font-size:11px; padding:8px 13px 8px 11px; flex-wrap:nowrap; white-space:nowrap; }
+}
+
+/* Navbar polish: the grain that suits big buttons reads as speckle on
+   small nav pills — keep the glass, drop the noise there. */
+.nav .nav-link, .nav .nav-cta, .mob-drawer .nav-link, .mob-drawer .nav-cta{
+  --lg-noise:linear-gradient(transparent, transparent);
 }
