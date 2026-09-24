@@ -22,6 +22,20 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 /* ---------------------------------------------------------------
+   Transparent nav — gains a touch of body once the page has
+   scrolled past the hero, so links stay legible over busy sections
+   while it reads as fully transparent over the hero itself.
+--------------------------------------------------------------- */
+{
+  const nav = $('#topNav');
+  if (nav) {
+    const setNavState = () => nav.classList.toggle('nav--scrolled', window.scrollY > 60);
+    setNavState();
+    scrollUpdaters.push(setNavState);
+  }
+}
+
+/* ---------------------------------------------------------------
    Specular highlight on every glass panel — tracks the pointer via
    --mx/--my, consumed by the ::before spotlight in styles.css.
    This is the one signature "liquid glass" interaction.
