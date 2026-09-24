@@ -1,0 +1,2326 @@
+/* =============================================================
+   Sajid Mehmood — Portfolio
+   Neutral frosted-glass design system (gray tint, green + slate-blue accents)
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  /* ---- palette ---- */
+  --bg-deep:#0A0C0D;
+  --bg-panel:#15171A;
+  --bg-panel-2:#111214;
+  --glass-tint: rgba(255,255,255,.06);
+  --glass-tint-strong: rgba(255,255,255,.13);
+  --glass-border: rgba(255,255,255,.18);
+  --glass-border-bright: rgba(255,255,255,.55);
+  --teal:#22D3A6;
+  --teal-dim: rgba(34,211,166,.16);
+  --amber:#8FA8BD;
+  --amber-dim: rgba(143,168,189,.16);
+  /* text hierarchy — white-based alpha scale so contrast is guaranteed
+     against any part of the background photo, per the Liquid Glass
+     readability pass (Part 6) */
+  --text:#FFFFFF;
+  --text-dim:rgba(255,255,255,.82);
+  --text-faint:rgba(255,255,255,.68);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-dim);
+  --text-tertiary: var(--text-faint);
+  --danger:#FF6B6B;
+
+  /* ---- type — Apple system stack (Liquid Glass pass) ---- */
+  --ff-display:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --ff-body:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --ff-mono:'IBM Plex Mono', ui-monospace, monospace;
+
+  /* ---- shape / depth ---- */
+  --radius-lg:30px;
+  --radius-md:22px;
+  --radius-sm:14px;
+  --shadow-ambient: 0 40px 90px -32px rgba(0,0,0,.55);
+  --shadow-contact: 0 2px 10px rgba(0,0,0,.3);
+  --blur-glass: blur(34px) saturate(1.7) contrast(1.05);
+  --blur-section: blur(10px) saturate(1.3) contrast(1.02); /* lighter blur for whole-section glass panels — drop to blur(5px) here for a subtler effect */
+
+  --container: 1120px;
+  --edge: clamp(20px, 5vw, 64px);
+}
+
+/* ---------------------------------------------------------------
+   Reset & base
+--------------------------------------------------------------- */
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:var(--bg-deep);
+  color:var(--text);
+  font-family:var(--ff-body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  text-shadow:0 1px 2px rgba(0,0,0,.22);
+}
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+ul{ margin:0; padding:0; list-style:none; }
+h1,h2,h3,h4{ font-family:var(--ff-display); margin:0; font-weight:600; letter-spacing:-.01em; }
+.hero h1, .section h2, .contact-panel h2{ letter-spacing:-.03em; }
+p{ margin:0; }
+button{ font-family:inherit; cursor:pointer; }
+
+::selection{ background:var(--teal-dim); color:var(--text); }
+
+:focus-visible{
+  outline:2px solid var(--teal);
+  outline-offset:3px;
+  border-radius:4px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+}
+
+/* ---------------------------------------------------------------
+   Backdrop — the landscape photo, with a dark gradient wash for
+   text legibility and the accent glows layered on top
+--------------------------------------------------------------- */
+.bg-field{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:var(--bg-deep);
+}
+.bg-field::before{
+  content:'';
+  position:absolute; inset:0;
+  background-image:url('assets/bg-landscape.jpg');
+  background-size:cover;
+  background-position:center 42%;
+  filter:saturate(1.15) brightness(.86) contrast(1.04);
+}
+.bg-field::after{
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 900px 600px at 12% -6%, rgba(34,211,166,.09), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 92% 18%, rgba(143,168,189,.10), transparent 55%),
+    linear-gradient(180deg, rgba(8,9,10,.28) 0%, rgba(8,9,10,.30) 40%, rgba(8,9,10,.56) 100%);
+}
+.bg-grain{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------------------------------------------------------------
+   Layout helpers
+--------------------------------------------------------------- */
+.container{ max-width:var(--container); margin:0 auto; padding:0 var(--edge); position:relative; z-index:2; }
+.section{
+  position:relative; z-index:2;
+  padding:112px 0;
+  margin:0 clamp(10px,2.6vw,26px) 28px;
+  border-radius:var(--radius-lg);
+  background:
+    linear-gradient(168deg, rgba(255,255,255,.10) 0%, var(--glass-tint) 16%, rgba(255,255,255,.02) 62%);
+  border:1px solid var(--glass-border);
+  border-top-color:var(--glass-border-bright);
+  backdrop-filter:var(--blur-section);
+  -webkit-backdrop-filter:var(--blur-section);
+  box-shadow:
+    var(--shadow-ambient),
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -18px 30px -26px rgba(0,0,0,.3);
+  overflow:hidden;
+}
+.section:last-of-type{ margin-bottom:0; }
+.section-label{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--ff-mono); font-size:13px; color:var(--teal);
+  margin-bottom:14px;
+}
+.section-label .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 10px var(--teal); }
+.section h2{ font-size:clamp(28px,3.4vw,40px); max-width:640px; }
+.section-intro{ color:var(--text-dim); max-width:560px; margin-top:14px; font-size:16px; }
+
+/* ---------------------------------------------------------------
+   The glass material — used everywhere a panel appears
+--------------------------------------------------------------- */
+.glass{
+  position:relative;
+  background:
+    linear-gradient(168deg, rgba(255,255,255,.26) 0%, var(--glass-tint-strong) 14%, var(--glass-tint) 60%);
+  border:1px solid var(--glass-border);
+  border-top-color:var(--glass-border-bright);
+  border-radius:var(--radius-lg);
+  backdrop-filter:var(--blur-glass);
+  -webkit-backdrop-filter:var(--blur-glass);
+  box-shadow:
+    var(--shadow-ambient),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    inset 0 -18px 30px -22px rgba(0,0,0,.35),
+    var(--shadow-contact);
+  overflow:hidden;
+}
+/* specular highlight tracking the pointer (set via --mx/--my in JS) */
+.glass::before{
+  content:'';
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(380px circle at var(--mx,50%) var(--my,20%), rgba(255,255,255,.30), transparent 62%);
+  opacity:0; transition:opacity .35s ease;
+}
+.glass:hover::before{ opacity:1; }
+.glass > *{ position:relative; z-index:1; }
+
+.glass-tight{ border-radius:var(--radius-md); }
+
+/* ---------------------------------------------------------------
+   Glass-clear — transparent variant for Nav + Hero only (Part 2).
+   No backdrop-filter. Definition, not haze: a thin bordered surface
+   with a realistic layered shadow, letting the sharp photo show
+   through fully. Does not affect .glass used elsewhere on the site.
+--------------------------------------------------------------- */
+.glass-clear{
+  position:relative;
+  background:linear-gradient(168deg, rgba(255,255,255,.09) 0%, rgba(255,255,255,.03) 60%);
+  border:1px solid rgba(255,255,255,.14);
+  border-top-color:rgba(255,255,255,.4);
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 22px 50px -24px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -14px 24px -20px rgba(0,0,0,.3);
+  overflow:hidden;
+}
+.glass-clear > *{ position:relative; z-index:1; }
+
+/* ---------------------------------------------------------------
+   Nav
+--------------------------------------------------------------- */
+.nav{
+  position:fixed; top:16px; left:50%; transform:translateX(-50%);
+  z-index:50; width:min(calc(100% - 32px), 1560px);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 10px 10px 20px;
+}
+/* Entrance fades opacity only — never touches `transform`, so it can
+   never fight the translateX(-50%) centering above. This is the fix
+   for the navbar losing its centering after its reveal animation ran
+   (it previously shared [data-reveal]'s transform property, which
+   overwrote translateX(-50%) once the cascade resolved). */
+.nav-in{ animation:navFadeIn .5s var(--sp-ease) both; }
+@keyframes navFadeIn{ from{ opacity:0; } to{ opacity:1; } }
+@media (prefers-reduced-motion: reduce){
+  .nav-in{ animation:none; }
+}
+.nav-brand{ display:flex; align-items:center; gap:10px; white-space:nowrap; flex:none; font-family:var(--ff-display); font-weight:600; font-size:16px; }
+.nav-brand .ping{ width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); }
+.nav-links{ display:flex; gap:var(--nav-gap,6px); align-items:center; flex:none; margin:0 var(--nav-gap,6px) 0 auto; padding-left:14px; }
+.nav-links a{ white-space:nowrap; flex:none; }
+.nav-cta{
+  padding:9px 18px; border-radius:999px; background:var(--teal); color:#052018;
+  font-size:14px; font-weight:600; white-space:nowrap;
+  box-shadow:0 8px 20px -8px rgba(34,211,166,.55);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.nav-cta:hover{ transform:translateY(-1px); box-shadow:0 12px 26px -8px rgba(34,211,166,.7); }
+.nav-toggle{ display:none; background:none; border:0; color:var(--text); padding:8px; }
+.nav-toggle svg{ width:22px; height:22px; }
+
+/* breakpoint + mobile drawer: see PART 11 at the end of this file */
+
+/* ---------------------------------------------------------------
+   Hero
+--------------------------------------------------------------- */
+.hero{ padding:168px 0 100px; }
+.hero-grid{
+  display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:center;
+}
+
+/* ---- entrance now handled by [data-reveal] from Part 1 — see index.html ---- */
+.hero-photo-wrap{ position:relative; }
+
+.status-chip{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:7px 14px 7px 10px; border-radius:999px;
+  font-family:var(--ff-mono); font-size:12.5px; color:var(--teal);
+  margin-bottom:24px;
+}
+.status-chip .ping{ width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:pulse 2.2s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{ opacity:1 } 50%{ opacity:.35 } }
+
+.hero h1{
+  font-size:clamp(38px,5.4vw,64px);
+  line-height:1.04;
+  margin-bottom:20px;
+}
+.hero h1 span{ display:block; }
+.hero-sub{ font-size:18px; color:var(--text-dim); max-width:480px; margin-bottom:36px; }
+
+.hero-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:44px; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 22px; font-size:14.5px; font-weight:600;
+  transition:transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  border:1px solid transparent;
+  position:relative; isolation:isolate;
+}
+.btn-arrow{ display:inline-block; transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.btn-primary{
+  background:linear-gradient(135deg, var(--teal), #1FB37E);
+  color:#052018;
+  box-shadow:0 10px 24px -10px rgba(34,211,166,.6);
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+  overflow:hidden;
+}
+.btn-primary::before{
+  content:''; position:absolute; inset:0; z-index:0;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.55) 50%, transparent 60%);
+  transform:translateX(-120%); transition:transform .6s ease;
+}
+.btn-primary:hover::before{ transform:translateX(120%); }
+.btn-primary > *{ position:relative; z-index:1; }
+.btn-primary:hover{ transform:perspective(700px) translateY(-2px) translateZ(6px) scale(1.012); box-shadow:0 14px 30px -10px rgba(34,211,166,.75); }
+.btn-primary:hover .btn-arrow{ transform:translateX(5px); }
+.btn-ghost{
+  background:rgba(255,255,255,.035); border-color:var(--glass-border); color:var(--text);
+  border-radius:12px;
+}
+.btn-ghost::before, .btn-ghost::after{
+  content:''; position:absolute; width:9px; height:9px; z-index:2;
+  border:1.5px solid var(--teal); opacity:0;
+  transition:opacity .25s ease, transform .25s ease;
+}
+.btn-ghost::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; transform:translate(5px,5px); }
+.btn-ghost::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; transform:translate(-5px,-5px); }
+.btn-ghost:hover{ background:rgba(255,255,255,.075); transform:perspective(700px) translateY(-2px) translateZ(6px); }
+.btn-ghost:hover::before, .btn-ghost:hover::after{ opacity:1; transform:translate(0,0); }
+.btn:active{ transform:perspective(700px) translateY(0) translateZ(0) scale(.97); transition-duration:.1s; }
+
+/* status strip — reads like a live systems readout, not a stat-card grid */
+.status-strip{
+  display:flex; flex-wrap:wrap; gap:0;
+  padding:18px 22px;
+}
+.status-item{
+  display:flex; flex-direction:column; gap:4px;
+  padding:0 22px; border-right:1px solid var(--glass-border);
+}
+.status-item:first-child{ padding-left:0; }
+.status-item:last-child{ border-right:none; }
+.status-item .val{ font-family:var(--ff-mono); font-size:20px; color:var(--text); }
+.status-item .lbl{ font-size:12.5px; color:var(--text-faint); }
+
+.hero-photo{
+  aspect-ratio:4/5; padding:10px;
+  transform-style:preserve-3d;
+}
+.hero-photo img{
+  width:100%; height:100%; object-fit:cover; border-radius:14px;
+  filter:saturate(1.05);
+}
+.hero-photo-tag{
+  position:absolute; bottom:22px; left:22px; right:22px;
+  padding:12px 16px; display:flex; align-items:center; gap:10px;
+  transform:translateZ(28px);
+}
+.hero-photo-tag .name{ font-family:var(--ff-display); font-size:15px; font-weight:600; }
+.hero-photo-tag .role{ font-size:12.5px; color:var(--text-dim); }
+
+@media (max-width:900px){
+  .hero-grid{ grid-template-columns:1fr; }
+  .hero-photo-wrap{ max-width:340px; }
+  .status-strip{ flex-direction:column; gap:14px; }
+  .status-item{ border-right:none; border-bottom:1px solid var(--glass-border); padding:0 0 14px; }
+  .status-item:last-child{ border-bottom:none; padding-bottom:0; }
+}
+
+/* ---------------------------------------------------------------
+   About
+--------------------------------------------------------------- */
+.about-grid{ display:grid; grid-template-columns:1.3fr .9fr; gap:40px; margin-top:44px; align-items:start; }
+.about-copy p{ color:var(--text-dim); margin-bottom:16px; }
+.about-copy strong{ color:var(--text); font-weight:600; }
+.credential-list{ display:flex; flex-direction:column; gap:0; }
+.credential-item{
+  display:flex; justify-content:space-between; gap:12px;
+  padding:14px 20px; border-bottom:1px solid var(--glass-border);
+  font-size:14px;
+}
+.credential-item:last-child{ border-bottom:none; }
+.credential-item .k{ color:var(--text-faint); }
+.credential-item .v{ color:var(--text); text-align:right; }
+
+.highlight-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:32px; }
+.highlight-card{ padding:20px; }
+.highlight-card .val{ font-family:var(--ff-mono); font-size:24px; color:var(--teal); }
+.highlight-card .lbl{ font-size:13px; color:var(--text-dim); margin-top:4px; }
+
+@media (max-width:860px){
+  .about-grid{ grid-template-columns:1fr; }
+  .highlight-row{ grid-template-columns:1fr 1fr; }
+}
+
+/* ---------------------------------------------------------------
+   Why hire — trait list (not generic identical-card grid: split rows)
+--------------------------------------------------------------- */
+.trait-list{ margin-top:44px; display:flex; flex-direction:column; gap:14px; }
+.trait-row{
+  display:grid; grid-template-columns:64px 1fr auto; gap:22px; align-items:center;
+  padding:22px 26px;
+}
+.trait-icon{
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+  background:var(--teal-dim); border:1px solid rgba(34,211,166,.3);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.trait-row:hover .trait-icon{ transform:scale(1.1) rotate(-4deg); }
+.trait-list .trait-row:nth-child(1){ transition-delay:.02s; }
+.trait-list .trait-row:nth-child(2){ transition-delay:.08s; }
+.trait-list .trait-row:nth-child(3){ transition-delay:.14s; }
+.trait-list .trait-row:nth-child(4){ transition-delay:.2s; }
+.trait-list .trait-row:nth-child(5){ transition-delay:.26s; }
+.trait-list .trait-row:nth-child(6){ transition-delay:.32s; }
+
+/* ---------------------------------------------------------------
+   3D emoji icons — used in place of flat glyphs/Font Awesome.
+   Images degrade to their plain-text emoji via onerror if a CDN
+   asset ever 404s, so nothing visually breaks.
+--------------------------------------------------------------- */
+.icon3d{ width:100%; height:100%; object-fit:contain; display:block; filter:drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+.icon3d-sm{ width:15px; height:15px; object-fit:contain; flex:none; display:inline-block; vertical-align:-2px; }
+.trait-title{ font-family:var(--ff-display); font-size:17px; margin-bottom:4px; }
+.trait-desc{ font-size:14px; color:var(--text-dim); max-width:560px; }
+.trait-tag{ font-family:var(--ff-mono); font-size:12px; color:var(--amber); white-space:nowrap; text-align:right; }
+
+@media (max-width:760px){
+  .trait-row{ grid-template-columns:1fr; text-align:left; }
+  .trait-tag{ text-align:left; }
+}
+
+/* ---------------------------------------------------------------
+   Experience — timeline (real sequence => numbering/connector earned)
+--------------------------------------------------------------- */
+.timeline{ margin-top:48px; position:relative; }
+.timeline::before{
+  content:''; position:absolute; left:11px; top:8px; bottom:8px; width:1px;
+  background:linear-gradient(var(--glass-border), transparent);
+}
+.tl-progress{
+  position:absolute; left:11px; top:8px; width:1px; height:0%;
+  background:linear-gradient(var(--teal), rgba(34,211,166,.2));
+  box-shadow:0 0 8px var(--teal); transition:height .15s linear; pointer-events:none;
+}
+.tl-item{ position:relative; padding:0 0 52px 44px; }
+.tl-item:last-child{ padding-bottom:0; }
+.tl-dot{
+  position:absolute; left:0; top:4px; width:24px; height:24px; border-radius:50%;
+  background:var(--bg-panel); border:1px solid var(--glass-border-bright);
+  display:flex; align-items:center; justify-content:center;
+}
+.tl-dot::after{ content:''; width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); }
+@keyframes tlDotIn{ 0%{ transform:scale(.3); opacity:.3; } 60%{ transform:scale(1.4); opacity:1; } 100%{ transform:scale(1); opacity:1; } }
+.tl-item.visible .tl-dot::after{ animation:tlDotIn .5s cubic-bezier(.34,1.56,.64,1); }
+.tl-dot.is-visible::after{ animation:tlDotIn .5s cubic-bezier(.34,1.56,.64,1); }
+.tl-meta{ display:flex; gap:12px; flex-wrap:wrap; align-items:baseline; margin-bottom:6px; }
+.tl-date{ font-family:var(--ff-mono); font-size:13px; color:var(--amber); }
+.tl-place{ font-size:13px; color:var(--text-faint); }
+.tl-role{ font-family:var(--ff-display); font-size:20px; margin-bottom:2px; }
+.tl-org{ font-size:14.5px; color:var(--text-dim); margin-bottom:16px; }
+.tl-bullets{ display:flex; flex-direction:column; gap:9px; margin-bottom:16px; }
+.tl-bullets li{ font-size:14.5px; color:var(--text-dim); padding-left:18px; position:relative; }
+.tl-bullets li::before{ content:''; position:absolute; left:0; top:8px; width:5px; height:5px; border-radius:50%; background:var(--teal); }
+.tl-stats{ display:flex; gap:10px; flex-wrap:wrap; }
+.tl-stat{
+  font-family:var(--ff-mono); font-size:12.5px; color:var(--text);
+  padding:6px 12px; border-radius:8px;
+  background:rgba(255,255,255,.04); border:1px solid var(--glass-border);
+}
+.tl-quote{
+  margin-top:18px; padding:18px 20px; font-size:14px; font-style:italic; color:var(--text-dim);
+  border-left:2px solid var(--teal);
+  background:rgba(255,255,255,.02);
+}
+.tl-quote cite{ display:block; margin-top:10px; font-style:normal; font-size:12.5px; color:var(--text-faint); }
+.tl-item .cert-actions{ margin-top:16px; padding-top:0; }
+.tl-item .skill-tags{ margin:14px 0 0; }
+.tl-more{ margin-top:16px; border-top:1px solid var(--glass-border); padding-top:14px; }
+.tl-more summary{ cursor:pointer; font-family:var(--ff-mono); font-size:12px; color:var(--teal); list-style:none; }
+.tl-more summary::-webkit-details-marker{ display:none; }
+.tl-more summary::after{ content:' +'; }
+.tl-more[open] summary::after{ content:' –'; }
+.tl-more p{ font-size:13.5px; color:var(--text-dim); margin-top:10px; }
+.tl-more p strong{ color:var(--text); }
+
+/* ---------------------------------------------------------------
+   Engagement breakdown — interactive capability cards
+   Replaces a plain <details> list: staggered reveal-in (via the
+   existing [data-stagger]/[data-reveal] system), hover sweep +
+   lift, and a CSS-only grid-template-rows expand/collapse (no JS
+   height measuring, so it stays smooth at any content length).
+--------------------------------------------------------------- */
+.bd{ margin-top:22px; }
+.bd-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.bd-eyebrow{ font-family:var(--ff-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--teal); }
+.bd-head h3{ font-family:var(--ff-display); font-size:14.5px; color:var(--text-dim); font-weight:500; margin:0; }
+.bd-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+.bd-card{
+  position:relative; text-align:left; cursor:pointer; width:100%; display:block;
+  padding:16px 18px; border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.03); border:1px solid var(--glass-border);
+  color:inherit; font:inherit; overflow:hidden;
+  transition:transform .35s cubic-bezier(.16,1,.3,1), border-color .3s ease, background .3s ease, box-shadow .3s ease;
+}
+.bd-card::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:linear-gradient(120deg, transparent 30%, rgba(34,211,166,.10) 48%, transparent 66%);
+  transform:translateX(-120%); transition:transform .7s ease;
+}
+.bd-card:hover::before{ transform:translateX(120%); }
+.bd-card:hover{ transform:translateY(-3px); border-color:var(--glass-border-bright); background:rgba(255,255,255,.05); box-shadow:0 16px 30px -18px rgba(0,0,0,.5); }
+.bd-card.is-open{ border-color:var(--teal); box-shadow:0 0 0 1px rgba(34,211,166,.25), 0 16px 34px -18px rgba(0,0,0,.55); background:rgba(34,211,166,.045); }
+.bd-card-top{ display:flex; align-items:center; gap:12px; position:relative; z-index:1; }
+.bd-icon{
+  flex:none; width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.05); border:1px solid var(--glass-border); font-size:16px;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), border-color .3s ease;
+}
+.bd-icon img{ width:19px; height:19px; object-fit:contain; }
+.bd-card.is-open .bd-icon{ transform:rotate(-8deg) scale(1.08); border-color:var(--teal); }
+.bd-card-titlewrap{ flex:1 1 auto; min-width:0; }
+.bd-card-title{ font-family:var(--ff-display); font-size:14.5px; color:var(--text); margin-bottom:2px; }
+.bd-card-tag{ font-family:var(--ff-mono); font-size:11px; color:var(--text-faint); }
+.bd-card-plus{
+  flex:none; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--glass-border); font-size:14px; color:var(--text-faint); line-height:1;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), color .3s ease, border-color .3s ease;
+}
+.bd-card.is-open .bd-card-plus{ transform:rotate(135deg); color:var(--teal); border-color:var(--teal); }
+.bd-card-bodywrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.16,1,.3,1); position:relative; z-index:1; }
+.bd-card.is-open .bd-card-bodywrap{ grid-template-rows:1fr; }
+.bd-card-body{ overflow:hidden; }
+.bd-card-body p{ font-size:13px; line-height:1.6; color:var(--text-dim); padding-top:12px; margin-top:12px; border-top:1px solid var(--glass-border); }
+@media (prefers-reduced-motion: reduce){
+  .bd-card, .bd-card::before, .bd-icon, .bd-card-plus, .bd-card-bodywrap{ transition:none !important; }
+}
+.tl-logos{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+.tl-logos img{
+  height:26px; max-width:86px; object-fit:contain; border-radius:6px;
+  padding:5px 9px; background:rgba(255,255,255,.05); border:1px solid var(--glass-border);
+}
+
+/* ---------------------------------------------------------------
+   Timeline — nested sub-positions (LinkedIn-style grouped roles
+   under one company, rendered as a glass card inside a tl-item)
+--------------------------------------------------------------- */
+.tl-subroles{ margin-top:18px; padding:20px 20px 4px; }
+.tl-subroles-label{
+  font-family:var(--ff-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--text-faint); margin-bottom:16px; display:flex; align-items:center; gap:8px;
+}
+.tl-subroles-label::before{ content:''; width:16px; height:1px; background:var(--glass-border-bright); }
+.tl-subrole{ position:relative; padding:0 0 20px 26px; }
+.tl-subrole:last-child{ padding-bottom:2px; }
+.tl-subrole::before{
+  content:''; position:absolute; left:5px; top:15px; bottom:-4px; width:1px;
+  background:var(--glass-border);
+}
+.tl-subrole:last-child::before{ display:none; }
+.tl-subrole::after{
+  content:''; position:absolute; left:1px; top:5px; width:9px; height:9px; border-radius:50%;
+  background:var(--bg-panel); border:1px solid var(--glass-border-bright);
+}
+.tl-subrole-role{ font-family:var(--ff-display); font-size:16px; color:var(--text); margin-bottom:3px; }
+.tl-subrole-meta{ display:flex; gap:10px; flex-wrap:wrap; align-items:baseline; font-size:12.5px; margin-bottom:6px; }
+.tl-subrole-meta .tl-date{ font-size:12px; }
+.tl-subrole-meta .tl-place{ font-size:12px; }
+.tl-subrole-org{ font-size:13px; color:var(--text-dim); margin-bottom:10px; }
+.tl-subrole-bullets{ display:flex; flex-direction:column; gap:6px; margin-bottom:4px; }
+.tl-subrole-bullets li{ font-size:13px; color:var(--text-dim); padding-left:16px; position:relative; }
+.tl-subrole-bullets li::before{ content:''; position:absolute; left:0; top:7px; width:4px; height:4px; border-radius:50%; background:var(--amber); }
+.tl-subrole .cert-actions{ margin-top:12px; }
+
+/* ---------------------------------------------------------------
+   Skills — categorized
+--------------------------------------------------------------- */
+.skills-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; }
+.skill-card{ padding:24px; }
+.skill-card .cat{ font-family:var(--ff-mono); font-size:12px; color:var(--amber); margin-bottom:8px; }
+.skill-card h3{ font-size:17px; margin-bottom:14px; }
+.skill-tags{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px; perspective:600px; }
+.skill-tags span{
+  font-size:12.5px; padding:5px 10px; border-radius:6px;
+  background:rgba(255,255,255,.035); border:1px solid var(--glass-border); color:var(--text-dim);
+  box-shadow:0 2px 6px -3px rgba(0,0,0,.5);
+  transform-style:preserve-3d; display:inline-block;
+  transition:transform .18s var(--sp-ease,ease), background .18s ease, color .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.skill-proof{ font-size:12.5px; color:var(--text-faint); font-family:var(--ff-mono); }
+.skill-tags span:hover{
+  transform:translateZ(5px) translateY(-2px) scale(1.045);
+  background:rgba(255,255,255,.07); color:var(--text); border-color:var(--glass-border-bright);
+  box-shadow:0 6px 12px -5px rgba(0,0,0,.55);
+}
+
+@media (max-width:900px){ .skills-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:620px){ .skills-grid{ grid-template-columns:1fr; } }
+
+/* ---------------------------------------------------------------
+   Certifications
+--------------------------------------------------------------- */
+.cert-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; }
+.cert-card{ padding:22px; display:flex; flex-direction:column; gap:12px; }
+.cert-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.cert-icon{
+  width:38px; height:38px; border-radius:10px; flex:none;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+  background:rgba(255,255,255,.05); border:1px solid var(--glass-border);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.cert-card:hover .cert-icon{ transform:scale(1.1) rotate(-4deg); }
+.cert-badge{ font-family:var(--ff-mono); font-size:11px; padding:4px 9px; border-radius:999px; white-space:nowrap; }
+.cert-badge.verified{ color:var(--teal); background:var(--teal-dim); }
+.cert-badge.award{ color:var(--amber); background:var(--amber-dim); }
+.cert-badge.progress{ color:var(--text-dim); background:rgba(255,255,255,.06); }
+.cert-title{ font-family:var(--ff-display); font-size:16px; }
+.cert-issuer{ font-size:13px; color:var(--text-dim); }
+.cert-category{ font-family:var(--ff-mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.04em; }
+.cert-date{ font-family:var(--ff-mono); font-size:12px; color:var(--text-faint); }
+.cert-desc{ font-size:13px; line-height:1.55; color:var(--text-dim); }
+.cert-actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; padding-top:6px; }
+.cert-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--ff-mono); font-size:11px; padding:7px 12px;
+  border-radius:999px; border:1px solid var(--glass-border);
+  background:rgba(255,255,255,.04); color:var(--text);
+  text-decoration:none; transition:transform .2s ease, background .2s ease;
+}
+.cert-btn:hover{ background:rgba(255,255,255,.09); transform:translateY(-1px); }
+.cert-btn:active{ transform:translateY(0) scale(.96); }
+.cert-btn.primary{ color:var(--teal); background:var(--teal-dim); border-color:transparent; }
+.edu-card .cert-actions{ margin-top:14px; padding-top:0; }
+
+/* Display-object hover — small lift + perspective tilt, no blur,
+   no excessive rotation. Decoupled from the entrance stagger delay
+   once revealed, so hover feels immediate rather than laggy. */
+.cert-card{ transform-style:preserve-3d; }
+.cert-card[data-reveal].is-visible{ transition:opacity var(--sp-duration) var(--sp-ease), transform .35s var(--sp-ease); }
+.cert-card:hover{ transform:perspective(900px) translateY(-4px) translateZ(6px) rotateX(1.5deg); }
+
+@media (max-width:900px){ .cert-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:620px){ .cert-grid{ grid-template-columns:1fr; } }
+
+/* ---------------------------------------------------------------
+   Projects / case studies
+--------------------------------------------------------------- */
+.case-list{ display:flex; flex-direction:column; gap:18px; margin-top:44px; }
+.case-card{ padding:0; }
+.case-head{ transform-style:preserve-3d; }
+.case-head:hover{ background:rgba(255,255,255,.03); }
+.case-head[data-reveal]{
+  transition:background .2s ease,
+             opacity var(--sp-duration) var(--sp-ease),
+             transform var(--sp-duration) var(--sp-ease);
+  transition-delay:0s,
+             calc(var(--sp-i,0) * var(--sp-stagger-step)),
+             calc(var(--sp-i,0) * var(--sp-stagger-step));
+}
+.case-head[data-reveal].is-visible{
+  transition:background .2s ease, opacity var(--sp-duration) var(--sp-ease), transform .3s var(--sp-ease);
+}
+.case-head{
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+  padding:22px 26px; cursor:pointer;
+}
+.case-head-left{ display:flex; align-items:center; gap:16px; }
+.case-num{
+  font-family:var(--ff-mono); font-size:22px; font-weight:600; color:var(--text-dim);
+  width:34px; flex:none; text-align:center; opacity:.6;
+}
+.case-title{ font-family:var(--ff-display); font-size:18px; }
+.case-sub{ font-size:13px; color:var(--text-dim); margin-top:2px; }
+.case-toggle{
+  width:32px; height:32px; border-radius:50%; flex:none;
+  border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center;
+  transition:transform .25s ease;
+}
+.case-card.open .case-toggle{ transform:rotate(45deg); }
+.case-body{
+  max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);
+}
+.case-card.open .case-body{ max-height:900px; }
+.case-body-inner{
+  padding:0 26px 26px; display:grid; grid-template-columns:1fr 1fr; gap:24px;
+  border-top:1px solid var(--glass-border); padding-top:22px; margin-top:0;
+  opacity:0; transform:translateY(-6px); transition:opacity .3s ease .1s, transform .3s ease .1s;
+}
+.case-card.open .case-body-inner{ opacity:1; transform:translateY(0); }
+.case-col h3{ font-family:var(--ff-mono); font-size:12px; color:var(--amber); margin-bottom:8px; text-transform:none; }
+.case-col p{ font-size:14px; color:var(--text-dim); }
+.case-col .skill-tags{ margin-bottom:0; }
+.case-stats{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; grid-column:1/-1; }
+.case-stat{ font-family:var(--ff-mono); font-size:12.5px; padding:6px 12px; border-radius:8px; background:rgba(255,255,255,.04); border:1px solid var(--glass-border); }
+
+@media (max-width:700px){
+  .case-body-inner{ grid-template-columns:1fr; }
+  .case-head{ padding:18px; }
+}
+
+/* ---------------------------------------------------------------
+   Infrastructure Lab
+--------------------------------------------------------------- */
+.lab-board{ margin-top:44px; padding:0; }
+.lab-board-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:16px 26px; border-bottom:1px solid var(--glass-border);
+  font-family:var(--ff-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+}
+.lab-board-label{ color:var(--text-dim); }
+.lab-board-count{ color:var(--text-faint); }
+
+.lab-ticket{ border-bottom:1px solid var(--glass-border); }
+.lab-ticket:last-child{ border-bottom:none; }
+
+.lab-ticket-head{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:17px 26px; cursor:pointer; list-style:none;
+  transition:background .18s ease;
+}
+.lab-ticket-head::-webkit-details-marker{ display:none; }
+.lab-ticket-head:hover{ background:rgba(255,255,255,.035); }
+.lab-ticket-head--static{ cursor:default; }
+.lab-ticket-head--static:hover{ background:none; }
+
+.lab-dot{ width:7px; height:7px; border-radius:50%; flex:none; }
+.lab-dot--done{ background:var(--teal); box-shadow:0 0 7px var(--teal); }
+.lab-dot--doc{ background:var(--amber); box-shadow:0 0 7px rgba(143,168,189,.55); }
+.lab-dot--pending{ background:var(--text-faint); }
+
+.lab-id{ font-family:var(--ff-mono); font-size:12px; color:var(--text-faint); white-space:nowrap; }
+.lab-cat{ font-family:var(--ff-mono); font-size:11.5px; color:var(--amber); text-transform:uppercase; letter-spacing:.03em; }
+.lab-title{ flex:1 1 220px; min-width:140px; font-family:var(--ff-display); font-size:15px; color:var(--text); }
+.lab-status{ font-family:var(--ff-mono); font-size:11px; padding:4px 11px; border-radius:999px; white-space:nowrap; margin-left:auto; }
+.lab-status--done{ color:var(--teal); background:var(--teal-dim); }
+.lab-status--doc{ color:var(--amber); background:var(--amber-dim); }
+.lab-status--pending{ color:var(--text-faint); background:rgba(255,255,255,.05); }
+
+.lab-ticket-head::after{
+  content:'+'; flex:none; width:16px; text-align:center;
+  font-family:var(--ff-mono); font-size:15px; color:var(--text-faint);
+}
+.lab-ticket[open] .lab-ticket-head::after{ content:'–'; }
+
+.lab-ticket-body{ padding:2px 26px 22px; display:flex; gap:20px; }
+.lab-ticket-body--full{ display:block; }
+.lab-thumb{ width:120px; height:88px; object-fit:cover; border-radius:var(--radius-sm); border:1px solid var(--glass-border); flex:none; }
+.lab-ticket-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:9px; }
+.lab-desc{ font-size:13.5px; color:var(--text-dim); }
+.lab-ticket-text p{ font-size:13px; color:var(--text-dim); margin:0; }
+.lab-ticket-text p strong{ color:var(--text); }
+.lab-ticket-text .skill-tags{ margin:1px 0 0; }
+.lab-ticket-text .skill-proof{ font-size:12.5px; color:var(--text-faint); font-family:var(--ff-mono); }
+
+.lab-ticket-empty .lab-cat{ color:var(--text-faint); }
+.lab-empty-note{ margin:0; padding:0 26px 20px; font-size:13px; font-style:italic; color:var(--text-faint); }
+
+@media (max-width:760px){
+  .lab-board-head{ padding:14px 20px; }
+  .lab-ticket-head{ padding:15px 20px 15px 18px; gap:10px; }
+  .lab-title{ flex:1 1 100%; order:5; font-size:14px; margin-top:2px; }
+  .lab-status{ order:4; margin-left:0; }
+  .lab-ticket-head::after{ order:6; margin-left:auto; }
+  .lab-ticket-body{ flex-direction:column; padding:0 20px 20px; }
+  .lab-thumb{ width:100%; height:150px; }
+  .lab-empty-note{ padding:0 20px 18px; }
+}
+
+/* ---------------------------------------------------------------
+   Education
+--------------------------------------------------------------- */
+.edu-list{ margin-top:44px; display:flex; flex-direction:column; gap:16px; }
+.edu-card{ padding:26px; }
+.edu-top{ display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:10px; }
+.edu-degree{ font-family:var(--ff-display); font-size:18px; }
+.edu-school{ font-size:14px; color:var(--text-dim); }
+.edu-date{ font-family:var(--ff-mono); font-size:12.5px; color:var(--amber); white-space:nowrap; }
+.edu-result{ font-size:13px; color:var(--teal); margin-bottom:10px; }
+.edu-desc{ font-size:14px; color:var(--text-dim); margin-bottom:14px; }
+.edu-quote{ font-size:13px; font-style:italic; color:var(--text-dim); border-left:2px solid var(--amber); padding-left:14px; }
+.edu-quote cite{ display:block; margin-top:8px; font-style:normal; font-size:12px; color:var(--text-faint); }
+
+/* ---------------------------------------------------------------
+   Achievements
+--------------------------------------------------------------- */
+.award-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; }
+.award-card{ padding:24px; }
+.award-icon{
+  width:44px; height:44px; border-radius:12px; margin-bottom:14px;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+  background:var(--amber-dim); border:1px solid rgba(143,168,189,.35);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.award-card:hover .award-icon{ transform:scale(1.1) rotate(-4deg); }
+.award-grid .award-card:nth-child(1){ transition-delay:0s; }
+.award-grid .award-card:nth-child(2){ transition-delay:.08s; }
+.award-grid .award-card:nth-child(3){ transition-delay:.16s; }
+.award-title{ font-family:var(--ff-display); font-size:16px; margin-bottom:6px; }
+.award-org{ font-size:12.5px; color:var(--amber); font-family:var(--ff-mono); margin-bottom:12px; }
+.award-desc{ font-size:13.5px; color:var(--text-dim); }
+
+@media (max-width:900px){ .award-grid{ grid-template-columns:1fr; } }
+
+/* ---------------------------------------------------------------
+   References
+--------------------------------------------------------------- */
+.refs-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:44px; }
+.ref-card{ padding:24px; display:flex; flex-direction:column; gap:10px; }
+.ref-top{ display:flex; align-items:center; gap:14px; }
+.ref-avatar{
+  width:44px; height:44px; border-radius:50%; flex:none;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--ff-display); font-size:15px; color:var(--teal);
+  background:var(--teal-dim); border:1px solid rgba(34,211,166,.3);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.ref-card:hover .ref-avatar{ transform:scale(1.1); }
+.refs-grid .ref-card:nth-child(1){ transition-delay:0s; }
+.refs-grid .ref-card:nth-child(2){ transition-delay:.08s; }
+.ref-name{ font-family:var(--ff-display); font-size:16px; }
+.ref-role{ font-size:13px; color:var(--text-dim); }
+.ref-org{ font-size:12.5px; color:var(--amber); font-family:var(--ff-mono); }
+.ref-meta{ display:flex; gap:10px; flex-wrap:wrap; font-size:12.5px; color:var(--text-faint); }
+.ref-desc{ font-size:13.5px; color:var(--text-dim); }
+.ref-link{ font-size:12.5px; color:var(--teal); text-decoration:none; margin-top:4px; }
+.ref-link:hover{ text-decoration:underline; }
+.refs-note{ margin-top:18px; font-size:13px; color:var(--text-faint); font-style:italic; }
+
+@media (max-width:760px){ .refs-grid{ grid-template-columns:1fr; } }
+
+/* ---------------------------------------------------------------
+   Contact — premium crystal-clear glass, redesigned.
+   No blur (inherits the blur-free .glass token from Part 5).
+   No glow, no box-shadow pulse — the availability dot is fully
+   static. Depth comes from perspective/translateZ + layered
+   borders only, and stays still at idle; the only motion is the
+   existing [data-reveal] entrance system already used everywhere
+   else on the site (opacity + transform, IntersectionObserver-
+   driven, one-shot).
+--------------------------------------------------------------- */
+.contact-panel{
+  margin-top:44px; padding:0; overflow:hidden;
+  clip-path:polygon(28px 0,100% 0,100% calc(100% - 28px),calc(100% - 28px) 100%,0 100%,0 28px);
+  perspective:1400px;
+}
+.contact-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+}
+.contact-left{ padding:48px 40px 48px 48px; display:flex; flex-direction:column; align-items:flex-start; }
+.contact-right{
+  padding:48px 48px 48px 40px; border-left:1px solid var(--glass-border);
+  transform:translateZ(14px);
+}
+.contact-panel h2{ font-size:clamp(26px,3vw,34px); margin-bottom:12px; }
+.contact-panel .lede{ color:var(--text-dim); max-width:380px; margin-bottom:20px; font-size:14.5px; }
+
+/* still, non-glowing availability indicator */
+.contact-avail{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  font-family:var(--ff-mono); font-size:12.5px; color:var(--text-dim);
+  margin-bottom:26px;
+}
+.contact-avail .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); flex:none; }
+.contact-avail .contact-time{ color:var(--text-faint); }
+.contact-avail .contact-time::before{ content:'· '; }
+
+.contact-left .btn{ margin-bottom:30px; }
+
+/* secondary, compact — not the main focus */
+.contact-shortcuts{ display:flex; flex-wrap:wrap; gap:10px; }
+
+.contact-right .section-label{ margin-bottom:22px; }
+
+/* form — inputs integrated directly into the glass, no sub-cards */
+.contact-form{ display:flex; flex-direction:column; gap:20px; }
+.cf-field{ display:flex; flex-direction:column; gap:6px; }
+.cf-field label{ font-family:var(--ff-mono); font-size:11.5px; color:var(--text-faint); letter-spacing:.02em; }
+.cf-field input, .cf-field textarea{
+  width:100%; font-family:inherit; font-size:14.5px; color:var(--text);
+  background:transparent; border:none; border-bottom:1px solid var(--glass-border);
+  border-radius:0; padding:6px 2px 10px; resize:none;
+  transition:border-color .2s ease;
+}
+.cf-field input::placeholder, .cf-field textarea::placeholder{ color:var(--text-faint); }
+.cf-field input:hover, .cf-field textarea:hover{ border-color:var(--glass-border-bright); }
+.cf-field input:focus, .cf-field textarea:focus{ outline:none; border-color:var(--teal); }
+.cf-field-area textarea{
+  border:1px solid var(--glass-border); border-radius:var(--radius-sm);
+  padding:10px 12px; resize:vertical;
+}
+.cf-field-area textarea:focus{ border-color:var(--teal); }
+/* honeypot — visually hidden, still reachable by bots that fill every field */
+.cf-hp{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); opacity:0; pointer-events:none; }
+
+.cf-actions{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:4px; }
+.cf-submit{
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer; font:inherit;
+  font-size:14.5px; font-weight:600; color:var(--text);
+  padding:12px 22px; border-radius:999px;
+  background:linear-gradient(168deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.045) 100%);
+  border:1px solid var(--glass-border-bright);
+  box-shadow:0 14px 30px -18px rgba(0,0,0,.5);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.cf-submit:hover{ transform:translateY(-2px); box-shadow:0 18px 34px -16px rgba(0,0,0,.55); border-color:var(--glass-border-bright); }
+.cf-submit:active{ transform:translateY(0); }
+.cf-submit:disabled{ opacity:.65; cursor:default; transform:none; }
+.cf-status{ font-size:12.5px; color:var(--text-dim); margin:0; }
+.cf-status.is-success{ color:var(--teal); }
+.cf-status.is-error{ color:#ff9d9d; }
+
+@media (max-width:820px){
+  .contact-grid{ grid-template-columns:1fr; }
+  .contact-left{ padding:32px 28px 28px; }
+  .contact-right{ padding:0 28px 32px; border-left:none; border-top:1px solid var(--glass-border); margin-top:8px; padding-top:28px; transform:none; }
+}
+
+/* ---------------------------------------------------------------
+   Footer
+--------------------------------------------------------------- */
+footer{ padding:40px var(--edge) 60px; position:relative; z-index:2; }
+.footer-row{
+  max-width:var(--container); margin:0 auto;
+  display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+  font-size:13px; color:var(--text-faint);
+}
+.footer-row a{ color:var(--text-dim); }
+.footer-row a:hover{ color:var(--teal); }
+
+/* ---------------------------------------------------------------
+   Scroll reveal (single, restrained — no slide, fade only)
+--------------------------------------------------------------- */
+
+.reveal{ opacity:0; transition:opacity .6s ease; }
+.reveal.visible{ opacity:1; }
+
+/* =============================================================
+   Spatial Animation Foundation — Part 1
+   Reusable [data-*] system. Transform + opacity only. No blur,
+   no glow, no bounce. Independent of the existing .reveal/.glass
+   systems above — does not modify them.
+   ============================================================= */
+:root{
+  --sp-ease: cubic-bezier(.16,.84,.44,1);
+  --sp-duration: .7s;
+  --sp-stagger-step: 70ms;
+  --sp-reveal-distance: 22px;
+  --sp-tilt-max: 6deg;
+}
+
+[data-reveal]{
+  opacity:0;
+  transform:translate3d(0, var(--sp-reveal-distance), 0);
+  transition:opacity var(--sp-duration) var(--sp-ease),
+             transform var(--sp-duration) var(--sp-ease);
+  transition-delay:calc(var(--sp-i, 0) * var(--sp-stagger-step));
+  will-change:transform, opacity;
+}
+[data-reveal="down"]{ transform:translate3d(0, calc(-1 * var(--sp-reveal-distance)), 0); }
+[data-reveal="left"]{ transform:translate3d(calc(-1 * var(--sp-reveal-distance)), 0, 0); }
+[data-reveal="right"]{ transform:translate3d(var(--sp-reveal-distance), 0, 0); }
+[data-reveal="scale"]{ transform:translate3d(0,0,0) scale(.96); }
+[data-reveal="depth"]{ transform:perspective(1000px) translate3d(0,0,-56px) scale(.95); }
+[data-reveal].is-visible{ opacity:1; transform:translate3d(0,0,0) scale(1); }
+
+[data-depth],[data-parallax]{ will-change:transform; }
+[data-tilt]{ transform-style:preserve-3d; will-change:transform; }
+[data-tilt]:not([data-reveal]){ transition:transform .5s var(--sp-ease); }
+
+@media (prefers-reduced-motion: reduce){
+  [data-reveal]{ transition:none !important; opacity:1 !important; transform:none !important; }
+  [data-depth],[data-parallax],[data-tilt]{ transform:none !important; transition:none !important; }
+}
+
+/* Tiny mobile compatibility fix — shallower depth so About/Skills/
+   Experience stay readable and don't push content off-screen. */
+@media (max-width:640px){
+  :root{ --sp-reveal-distance:14px; }
+  [data-reveal="depth"]{ transform:perspective(800px) translate3d(0,0,-28px) scale(.97); }
+  [data-tilt]{ transform:none !important; }
+}
+
+
+/* ---------------------------------------------------------------
+   Scroll progress
+--------------------------------------------------------------- */
+.scroll-progress{
+  position:fixed; top:0; left:0; height:2px; background:var(--teal);
+  box-shadow:0 0 8px var(--teal); z-index:60; width:0%;
+}
+
+/* =================================================================
+   NEW — Scroll-scrubbed hero photo + cycling role text
+   The mouse-tilt (JS, on .hero-photo-wrap) and this scroll-rotate
+   (CSS var, on the inner .hero-photo) compose in the same 3D space
+   because the wrap already has transform-style:preserve-3d.
+================================================================= */
+.hero-photo{
+  transform: perspective(1000px) rotateY(var(--scrollRotY, 0deg)) rotateX(var(--scrollRotX, 0deg));
+  transition: transform .5s cubic-bezier(.16,1,.3,1);
+}
+.hero-photo-tag .role{
+  transition: opacity .28s ease, transform .28s ease;
+}
+.hero-photo-tag .role.swap{ opacity:0; transform:translateY(4px); }
+
+.scroll-scrub-hint{
+  display:flex; align-items:center; gap:8px; justify-content:center;
+  margin-top:18px; font-family:var(--ff-mono); font-size:11.5px;
+  color:var(--text-faint); letter-spacing:.04em;
+}
+.scroll-scrub-hint span{
+  display:inline-block; color:var(--teal);
+}
+
+@media (max-width:900px){ .scroll-scrub-hint{ justify-content:flex-start; } }
+
+/* =================================================================
+   NEW — Mirrored / reflected section headers
+   JS stamps data-mirror="<same text>" on every section h2. The
+   ::after renders a flipped, gradient-masked ghost copy beneath it.
+================================================================= */
+.section h2, .contact-panel h2{ position:relative; isolation:isolate; }
+.section h2[data-mirror]::after, .contact-panel h2[data-mirror]::after{
+  content: attr(data-mirror);
+  position:absolute; left:0; top:100%; width:100%; height:100%;
+  transform: scaleY(-1); transform-origin:top;
+  background: linear-gradient(to bottom, rgba(255,255,255,.14), transparent 72%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent;
+  -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.6), transparent 68%);
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.6), transparent 68%);
+  pointer-events:none; user-select:none; z-index:-1;
+}
+
+/* one-time glitch flicker as each heading enters view */
+@keyframes glitchFlicker{
+  0%{   text-shadow:2px 0 var(--teal), -2px 0 var(--amber); transform:translateX(-1.5px); }
+  20%{  text-shadow:-2px 0 var(--teal), 2px 0 var(--amber); transform:translateX(1.5px); }
+  40%{  text-shadow:1.5px 0 var(--teal), -1.5px 0 var(--amber); transform:translateX(-.75px); }
+  60%{  text-shadow:-1px 0 var(--teal), 1px 0 var(--amber); transform:translateX(.75px); }
+  80%{  text-shadow:.5px 0 var(--teal), -.5px 0 var(--amber); transform:translateX(0); }
+  100%{ text-shadow:none; transform:translateX(0); }
+}
+.section h2.glitch-in, .contact-panel h2.glitch-in{
+  animation: glitchFlicker .55s steps(3,end) both;
+}
+
+/* =================================================================
+   NEW — Diamond corner accent on cards
+   A small glowing diamond marker in the top-right of every card,
+   dim at rest, lighting up on hover — a "system status" accent
+   that echoes the diamond bokeh in the reference design.
+================================================================= */
+.trait-row, .award-card, .cert-card, .skill-card, .edu-card,
+.ref-card, .highlight-card, .case-card, .credential-list{
+  --diamond: var(--teal);
+}
+.award-card, .edu-card{ --diamond: var(--amber); }
+
+.trait-row::after, .award-card::after, .cert-card::after, .skill-card::after,
+.edu-card::after, .ref-card::after, .highlight-card::after, .case-card::after{
+  content:''; position:absolute; top:14px; right:14px; z-index:2;
+  width:7px; height:7px; background:var(--diamond); transform:rotate(45deg) scale(.85);
+  box-shadow:0 0 10px 1px var(--diamond); opacity:.28; pointer-events:none;
+  transition:opacity .35s ease, transform .35s ease;
+}
+.trait-row:hover::after, .award-card:hover::after, .cert-card:hover::after,
+.skill-card:hover::after, .edu-card:hover::after, .ref-card:hover::after,
+.highlight-card:hover::after, .case-card:hover::after{
+  opacity:.95; transform:rotate(45deg) scale(1.25);
+}
+
+/* case-card gets its diamond mirrored to the left so it doesn't
+   collide with the open/close chevron */
+.case-card::after{ right:auto; left:14px; top:14px; }
+
+/* =================================================================
+   PART 4 — Recruiter fast-pass, Technical Arsenal, Proof of Work
+   Append-only. Reuses existing tokens/glass system. No new blur
+   layers, no invented data.
+================================================================= */
+
+/* --- Recruiter fast-pass bar (sits right under the hero) --- */
+.recruiter-bar{
+  max-width:1180px; margin:-10px auto 64px; padding:14px 22px;
+  display:flex; align-items:center; justify-content:space-between; gap:18px;
+  flex-wrap:wrap;
+}
+.recruiter-inner{ display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; width:100%; padding:0; }
+.recruiter-label{ display:flex; align-items:center; gap:8px; font-family:var(--ff-mono); font-size:12.5px; color:var(--text-dim); white-space:nowrap; }
+.recruiter-label .ping{ width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:pulse 2.2s ease-in-out infinite; }
+.recruiter-links{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.recruiter-link{
+  font-size:13px; color:var(--text-dim); padding:8px 14px; border-radius:999px;
+  border:1px solid var(--glass-border); transition:border-color .2s ease, color .2s ease;
+}
+.recruiter-link:hover{ color:var(--text); border-color:var(--glass-border-bright); }
+.recruiter-link-cv{
+  color:#052018; background:var(--teal); border-color:transparent; font-weight:600;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.recruiter-link-cv:hover{ color:#052018; filter:brightness(1.08); }
+@media (max-width:640px){
+  .recruiter-bar{ margin-top:0; }
+  .recruiter-inner{ flex-direction:column; align-items:flex-start; }
+  .recruiter-links{ width:100%; }
+  .recruiter-link{ flex:1 1 auto; text-align:center; }
+}
+
+/* --- Technical Arsenal (interactive tag cloud, inside #skills) --- */
+.arsenal-block{ margin-top:56px; padding-top:44px; border-top:1px solid var(--glass-border); }
+.arsenal-h3{ font-size:clamp(20px,3vw,26px); margin:6px 0 22px; }
+.arsenal-tabs{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.arsenal-tab{
+  font-family:var(--ff-mono); font-size:12.5px; color:var(--text-dim);
+  padding:9px 16px; border-radius:999px; border:1px solid var(--glass-border);
+  background:rgba(255,255,255,.03); cursor:pointer; transition:all .2s ease;
+}
+.arsenal-tab:hover{ color:var(--text); border-color:var(--glass-border-bright); }
+.arsenal-tab.active{ color:#052018; background:var(--teal); border-color:transparent; }
+.arsenal-panel{ padding:26px; position:relative; }
+.arsenal-cloud{ display:none; flex-wrap:wrap; gap:10px; }
+.arsenal-cloud.active{ display:flex; }
+.arsenal-cloud span{
+  padding:7px 13px; font-size:13px; color:var(--text-dim);
+  background:rgba(255,255,255,.035); border:1px solid var(--glass-border); border-radius:999px;
+}
+.arsenal-proof{
+  margin-top:18px; padding-top:16px; border-top:1px solid var(--glass-border);
+  font-size:12.5px; color:var(--text-faint);
+}
+.arsenal-proof a{ color:var(--teal); }
+
+/* --- Proof of work strip --- */
+.proof-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.proof-stat{
+  display:block; padding:22px 20px; border-radius:var(--radius-md);
+  text-align:center; transition:transform .25s ease, border-color .25s ease;
+}
+.proof-stat:hover{ transform:translateY(-3px); border-color:var(--glass-border-bright); }
+.proof-stat .val{ font-family:var(--ff-mono); font-size:32px; color:var(--teal); }
+.proof-stat .lbl{ font-size:12.5px; color:var(--text-dim); margin-top:6px; }
+@media (max-width:760px){
+  .proof-grid{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* =================================================================
+   PART 5 — Final visual language pass: crystal-clear, not frosted.
+   Redefines the .glass token in place (later in the cascade wins)
+   instead of rewriting every .glass usage across the file — kills
+   backdrop-filter blur everywhere, compensates with a touch more
+   surface opacity + the existing layered shadow/border so panels
+   stay legible and dimensional through transparency, not haze.
+   .glass-clear (nav/hero/recruiter bar) was already blur-free.
+================================================================= */
+:root{ --blur-glass:none; }
+.glass{
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  background:
+    linear-gradient(168deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,.075) 16%, rgba(255,255,255,.045) 62%);
+}
+
+/* Nav capsule: pin centering with max specificity so no later rule
+   (or a future append) can ever re-introduce the "loses centering"
+   bug noted in Part 2 — this is a belt-and-braces restatement, not
+   a behavior change. */
+.nav{ position:fixed; top:16px; left:50%; right:auto; transform:translateX(-50%); margin:0; }
+
+/* Contact form styling now lives with the rest of the Contact
+   redesign, up near .contact-panel — this Formspree-integration
+   pass only added behavior (script.js), not a second style block. */
+
+/* =================================================================
+   PART 6 — iOS 27 / Liquid Glass visual refinement
+   Purely presentational. No HTML changed, no functionality touched.
+   Redefines tokens + the .glass/.glass-clear surfaces + buttons in
+   place (later in the cascade wins, same approach as Part 5) rather
+   than rewriting every rule that consumes them. Also switches off a
+   couple of earlier decorative effects (heading "glitch" flicker,
+   glowing diamond corner markers, chamfered/bracket buttons) that
+   read as neon/HUD rather than a calm, premium Apple surface.
+================================================================= */
+
+:root{
+  /* named aliases for the 3-layer glass system described in the
+     brief — map onto the tokens already used everywhere so nothing
+     else in the file needs to be rewritten */
+  --glass-surface: linear-gradient(155deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.055) 16%, rgba(13,14,16,.46) 58%, rgba(13,14,16,.52) 100%);
+  --glass-surface-strong: linear-gradient(155deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,.08) 14%, rgba(13,14,16,.4) 56%);
+  --glass-highlight: rgba(255,255,255,.4);
+  --glass-shadow: 0 26px 60px -28px rgba(0,0,0,.55);
+  /* desaturate + dim what's behind the panel, rather than boosting
+     it — this is what keeps every card a neutral charcoal-glass tone
+     no matter how vivid the part of the photo behind it is */
+  --blur-glass-liquid: blur(22px) saturate(.5) brightness(.88) contrast(1.02);
+}
+
+/* ---- Real 3D liquid glass surface (cards, panels) -----------------
+   Three layers: translucent surface, a bright-on-top / dim-on-bottom
+   edge, and a soft shadow that separates the panel from the photo
+   behind it. A light backdrop blur is reintroduced here — it only
+   softens what's *behind* the panel, never the panel's own text, so
+   type stays perfectly sharp while the glass finally reads as a
+   dimensional material rather than a flat tinted rectangle. */
+.glass{
+  background: var(--glass-surface);
+  border:1px solid var(--glass-border);
+  border-top-color: var(--glass-highlight);
+  border-bottom-color: rgba(255,255,255,.08);
+  backdrop-filter: var(--blur-glass-liquid);
+  -webkit-backdrop-filter: var(--blur-glass-liquid);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255,255,255,.4),
+    inset 0 0 0 1px rgba(255,255,255,.045),
+    inset 0 -20px 34px -26px rgba(0,0,0,.4);
+}
+/* gentle surface gradient sweep, independent of the pointer-tracked
+   specular highlight already defined on .glass::before above */
+.glass::after{
+  content:'';
+  position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
+  background:linear-gradient(115deg, rgba(255,255,255,.10) 0%, transparent 30%, transparent 72%, rgba(255,255,255,.05) 100%);
+  mix-blend-mode:overlay;
+}
+
+/* Nav / hero surfaces stay blur-free by design (sharp photo behind
+   them reads better at that size) but get the same bright-top /
+   dim-bottom edge treatment so they visually belong to one glass
+   family with the rest of the page. */
+.glass-clear{
+  border-top-color: var(--glass-highlight);
+  border-bottom-color: rgba(255,255,255,.06);
+  box-shadow:
+    0 22px 50px -24px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -14px 24px -20px rgba(0,0,0,.32);
+}
+
+/* No "glass on glass": inner surfaces nested inside an already-glass
+   parent (skill tags, tl-stat pills, cert-btn chips, lab-thumb frame)
+   stay as a plain thin-bordered chip rather than a second full glass
+   material — this was already the case throughout the file, this
+   just states the rule so it doesn't drift as the site evolves. */
+
+/* ---- Buttons — premium physical glass controls, not HUD chrome ----
+   Replaces the angled chamfer (clip-path) on the primary button and
+   the animated corner brackets on the ghost button with a calm
+   rounded-glass surface, in line with the rest of the design system
+   and away from the "gaming console" read those effects had. */
+.btn{ border-radius:16px; }
+.btn-primary{
+  clip-path:none;
+  background:linear-gradient(168deg, rgba(255,255,255,.22), rgba(34,211,166,.92) 55%, #1FB37E);
+  box-shadow:
+    0 14px 30px -12px rgba(34,211,166,.55),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 18px 36px -12px rgba(34,211,166,.7), inset 0 1px 0 rgba(255,255,255,.6); }
+.btn-primary:active{ transform:translateY(0) scale(.98); }
+.btn-ghost{
+  background:var(--glass-surface);
+  border:1px solid var(--glass-border);
+  border-top-color:var(--glass-highlight);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 10px 22px -16px rgba(0,0,0,.5);
+}
+.btn-ghost::before, .btn-ghost::after{ content:none; }
+.btn-ghost:hover{
+  background:var(--glass-surface-strong);
+  border-color:var(--glass-border-bright);
+  transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 14px 26px -14px rgba(0,0,0,.55);
+}
+
+/* cf-submit (contact form send button) gets the same calm glass
+   treatment for consistency with the rest of the button system */
+.cf-submit{ background:var(--glass-surface); }
+.cf-submit:hover{ background:var(--glass-surface-strong); }
+
+/* ---- Turn off the two neon/gaming-coded decorative effects -------
+   1) The colored-glow "glitch" flicker on section headings (teal /
+      amber text-shadow) reads as cyberpunk neon, not premium Apple,
+      and the brief explicitly asks to avoid glowing typography.
+      The mirrored reflection under each heading is left in place —
+      it's a quiet Apple-style effect, not a glow. */
+.section h2.glitch-in, .contact-panel h2.glitch-in{ animation:none; text-shadow:none; transform:none; }
+
+/* 2) The glowing rotated "diamond" status marker in card corners —
+      an unnecessary decorative accent the brief calls out directly.
+      Removing it is a pure visual simplification; it carries no
+      content or function. */
+.trait-row::after, .award-card::after, .cert-card::after, .skill-card::after,
+.edu-card::after, .ref-card::after, .highlight-card::after, .case-card::after{
+  content:none;
+}
+
+/* ---- Mobile: keep the glass calm and the type crisp --------------
+   Heavy backdrop blur is the single most expensive paint operation
+   on scroll-heavy mobile pages, so it's dialled back (not removed)
+   below the point where devices are guaranteed to be handhelds. */
+@media (max-width:640px){
+  :root{ --blur-glass-liquid: blur(14px) saturate(.5) brightness(.88); }
+}
+
+/* =================================================================
+   PART 7 — Ambient motion pass
+   Slow, continuous, non-jittery movement only — nothing here shakes,
+   vibrates or flickers. Every element targeted below is checked
+   against the JS-driven transforms already in the page ([data-tilt],
+   [data-depth]/[data-parallax], the hero photo's scroll-rotation via
+   --scrollRotY/X, the pointer-tracked --mx/--my specular highlight)
+   so none of this fights with them. The existing global
+   `@media (prefers-reduced-motion: reduce)` rule near the top of the
+   file already disables every animation-duration site-wide, so it
+   covers everything added here automatically.
+================================================================= */
+
+/* ---- Background: slow cinematic drift instead of a static photo -- */
+.bg-field::before{
+  transform-origin:center 42%;
+  animation: bgDrift 26s ease-in-out infinite alternate;
+}
+@keyframes bgDrift{
+  0%{ transform:scale(1) translate(0,0); }
+  100%{ transform:scale(1.06) translate(-1.1%, -0.8%); }
+}
+/* oversized (inset:-4%) so the slow pan below never exposes an edge */
+.bg-field::after{
+  inset:-4%;
+  animation: glowDrift 24s ease-in-out infinite alternate;
+}
+@keyframes glowDrift{
+  0%{ transform:translate(0,0); }
+  100%{ transform:translate(-1.4%, -1%); }
+}
+
+/* ---- Universal "live" radar ping ------------------------------
+   Applies to every existing <span class="ping"> in the markup (nav
+   brand, hero status chip, hero photo tag, recruiter bar) with no
+   HTML changes — an expanding, fading ring reads as "moving" without
+   ever displacing the dot itself. */
+.ping{ position:relative; }
+.ping::after{
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background:var(--teal);
+  animation: pingRadar 2.6s cubic-bezier(0,0,.2,1) infinite;
+  pointer-events:none;
+}
+@keyframes pingRadar{
+  0%{ transform:scale(1); opacity:.5; }
+  100%{ transform:scale(2.6); opacity:0; }
+}
+
+/* ---- Section label dot: soft pulse instead of a static dot ------- */
+.section-label .dot{ animation: pulse 2.6s ease-in-out infinite; }
+
+/* ---- Scroll hint arrow: a gentle, expected "keep scrolling" bounce */
+.scroll-scrub-hint span{ animation: hintBounce 1.8s ease-in-out infinite; }
+@keyframes hintBounce{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(5px); }
+}
+
+/* ---- Hero photo tag: a very small idle float ---------------------
+   translateZ(28px) is kept in every keyframe step so this never
+   collapses the tag's position in the preserve-3d hero-photo stack;
+   only the Y offset moves. */
+.hero-photo-tag{ animation: tagFloat 5s ease-in-out infinite; }
+@keyframes tagFloat{
+  0%,100%{ transform:translateZ(28px) translateY(0); }
+  50%{ transform:translateZ(28px) translateY(-4px); }
+}
+
+/* ---- Lab ticket status dots: a soft "live system" breathing glow -
+   Only on resolved/documented tickets — the pending/not-logged dot
+   stays static, which also reinforces its meaning. */
+.lab-dot--done{ animation: dotBreatheTeal 3.4s ease-in-out infinite; }
+.lab-dot--doc{ animation: dotBreatheAmber 3.4s ease-in-out infinite; }
+@keyframes dotBreatheTeal{
+  0%,100%{ box-shadow:0 0 5px var(--teal); }
+  50%{ box-shadow:0 0 12px var(--teal); }
+}
+@keyframes dotBreatheAmber{
+  0%,100%{ box-shadow:0 0 5px rgba(143,168,189,.55); }
+  50%{ box-shadow:0 0 12px rgba(143,168,189,.75); }
+}
+
+/* ---- Primary CTA: a small idle nudge on the arrow, paused on hover
+   so the deliberate hover push-effect (already defined earlier)
+   still reads clearly instead of being masked by the loop. */
+.btn-primary .btn-arrow{ animation: arrowNudge 1.8s ease-in-out infinite; }
+.btn-primary:hover .btn-arrow{ animation:none; }
+@keyframes arrowNudge{
+  0%,100%{ transform:translateX(0); }
+  50%{ transform:translateX(3px); }
+}
+
+/* =================================================================
+   PART 8 — Glass pill buttons
+   Every clickable button on the site now shares one shape and one
+   material: a fully rounded glass pill, using the same liquid-glass
+   tokens (--glass-surface / --glass-highlight / --blur-glass-liquid)
+   Part 6 already introduced. Append-only, later-in-cascade-wins —
+   same approach as Parts 5–7 — rather than rewriting every button
+   rule scattered through the file.
+================================================================= */
+
+/* Shape — every button becomes a true pill, no exceptions */
+.btn, .nav-cta, .nav-toggle, .recruiter-link, .recruiter-link-cv,
+.cert-btn, .cf-submit, .arsenal-tab{
+  border-radius:999px;
+}
+.btn-primary::before{ display:none; } /* old chamfer sweep doesn't suit a plain pill */
+.btn-ghost::before, .btn-ghost::after{ content:none; } /* corner brackets don't suit a pill */
+
+/* Standalone buttons — ones sitting directly on the photo background
+   rather than nested inside an existing glass card (hero CTAs, the
+   nav "Let's talk" pill, the mobile menu toggle, the recruiter-bar
+   links, the Arsenal filter tabs) — get the full liquid-glass
+   material, blur included. */
+.btn-primary, .btn-ghost, .nav-cta, .nav-toggle, .recruiter-link,
+.recruiter-link-cv, .arsenal-tab{
+  background:var(--glass-surface);
+  border:1px solid var(--glass-border);
+  border-top-color:var(--glass-highlight);
+  backdrop-filter:var(--blur-glass-liquid);
+  -webkit-backdrop-filter:var(--blur-glass-liquid);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32), 0 12px 26px -16px rgba(0,0,0,.5);
+  color:var(--text);
+}
+.btn-primary:hover, .btn-ghost:hover, .nav-cta:hover, .nav-toggle:hover,
+.recruiter-link:hover, .recruiter-link-cv:hover, .arsenal-tab:hover{
+  background:var(--glass-surface-strong);
+  border-color:var(--glass-border-bright);
+  transform:translateY(-2px);
+}
+
+/* Primary / active actions keep a teal accent so they still read as
+   "the" button to press — now as a tinted glass pill instead of a
+   solid fill. */
+.btn-primary, .recruiter-link-cv, .nav-cta, .arsenal-tab.active{
+  color:var(--teal);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 14px 30px -14px rgba(34,211,166,.5);
+}
+
+/* Buttons nested inside an already-glass card (certificate actions,
+   the contact-form submit) skip a second blur layer — the same
+   "no glass on glass" rule the rest of the file already follows —
+   and just pick up the tinted glass gradient + pill shape. */
+.cert-btn, .cf-submit{
+  background:var(--glass-surface);
+  border:1px solid var(--glass-border);
+  border-top-color:var(--glass-highlight);
+}
+.cert-btn:hover, .cf-submit:hover{
+  background:var(--glass-surface-strong);
+  border-color:var(--glass-border-bright);
+}
+.cert-btn.primary{ color:var(--teal); }
+
+
+
+/* =================================================================
+   PART 9 — Liquid Capsule / Spatial Glass button system
+   Every button on the site is redrawn as a thin piece of transparent
+   liquid glass floating above the page. Append-only, later-in-cascade
+   wins (same approach as Parts 5–8). HTML and JS are untouched.
+
+   Construction, all from CSS on the existing elements:
+     1  outer spatial shadow ...... --lg-sh          (box-shadow)
+     2  glass body ................ background + backdrop-filter
+     3  inner translucent surface . --lg-edge        (inset shadows)
+     4  fine highlight border ..... border-color, bright top/left,
+                                    darker bottom/right
+     5  internal reflection ....... ::before (crescent, drifts on hover)
+     6  light sweep ............... ::after  (passes across on hover)
+
+   Three roles, one material:
+     Liquid Core    .btn-primary .nav-cta .recruiter-link-cv
+                    .cert-btn.primary .cf-submit .arsenal-tab.active
+     Secondary      .recruiter-link .cert-btn .arsenal-tab
+     Ghost          .btn-ghost
+     Glass Lens     .nav-toggle .bd-card-plus .case-toggle
+   No pointer-position code of any kind: depth is static, and motion
+   comes only from hover / focus / active / reveal states.
+================================================================= */
+
+/* Registered so glass tint, reflection strength and the teal core can
+   fade smoothly instead of snapping (gradients cannot transition). */
+@property --lg-spec{ syntax:'<number>'; inherits:false; initial-value:.14; }
+@property --lg-veil{ syntax:'<number>'; inherits:false; initial-value:.3; }
+@property --lg-core{ syntax:'<number>'; inherits:false; initial-value:0; }
+
+:root{
+  --lg-ease:      cubic-bezier(.22,.7,.2,1);
+  --lg-ease-soft: cubic-bezier(.45,.1,.25,1);
+  --lg-dur:       .55s;
+
+  --lg-b-rest:  22px;   /* backdrop blur, resting */
+  --lg-b-hover: 16px;   /* a touch clearer on hover */
+
+  /* 1 — outer spatial shadow: contact + mid + ambient */
+  --lg-sh-rest:  0 1px 1.5px rgba(0,0,0,.36), 0 10px 20px -10px rgba(0,0,0,.52), 0 26px 40px -26px rgba(0,0,0,.55);
+  --lg-sh-hover: 0 1px 2px rgba(0,0,0,.42),   0 16px 28px -10px rgba(0,0,0,.60), 0 38px 54px -28px rgba(0,0,0,.62);
+  --lg-sh-press: 0 .5px 1px rgba(0,0,0,.42),  0 4px 8px -5px rgba(0,0,0,.55),    0 10px 16px -12px rgba(0,0,0,.42);
+
+  /* 3 — glass thickness: bright upper-left rim, darker lower-right rim,
+         1px translucent inner border, upper glow, lower shade */
+  --lg-edge-rest:  inset 1px 1px 0 rgba(255,255,255,.44), inset -1px -1px 0 rgba(16,18,20,.34), inset 0 0 0 1px rgba(255,255,255,.04), inset 0 12px 14px -13px rgba(255,255,255,.20), inset 0 -10px 14px -12px rgba(0,0,0,.42);
+  --lg-edge-hover: inset 1px 1px 0 rgba(255,255,255,.66), inset -1px -1px 0 rgba(16,18,20,.30), inset 0 0 0 1px rgba(255,255,255,.07), inset 0 14px 16px -13px rgba(255,255,255,.30), inset 0 -12px 16px -12px rgba(0,0,0,.46);
+  --lg-edge-press: inset 1px 1px 0 rgba(255,255,255,.72), inset -1px -1px 0 rgba(16,18,20,.44), inset 0 0 0 2px rgba(255,255,255,.075), inset 0 6px 10px -8px rgba(255,255,255,.34), inset 0 -8px 12px -9px rgba(0,0,0,.52);
+
+  /* very fine surface grain, white speckle at low alpha */
+  --lg-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .9 0 0 0 -.34'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+
+  --lg-trans:
+    --lg-spec var(--lg-dur) var(--lg-ease),
+    --lg-veil var(--lg-dur) var(--lg-ease),
+    --lg-core .7s var(--lg-ease),
+    box-shadow var(--lg-dur) var(--lg-ease),
+    border-color var(--lg-dur) var(--lg-ease),
+    color .45s ease,
+    backdrop-filter var(--lg-dur) var(--lg-ease),
+    -webkit-backdrop-filter var(--lg-dur) var(--lg-ease),
+    translate var(--lg-dur) var(--lg-ease),
+    scale var(--lg-dur) var(--lg-ease),
+    outline-color .4s ease,
+    outline-offset .4s var(--lg-ease);
+  /* press: quick in, slow release (release uses --lg-trans) */
+  --lg-trans-press:
+    --lg-spec .14s ease-out,
+    --lg-veil .14s ease-out,
+    --lg-core .3s ease-out,
+    box-shadow .14s ease-out,
+    border-color .14s ease-out,
+    color .2s ease,
+    backdrop-filter .2s ease-out,
+    -webkit-backdrop-filter .2s ease-out,
+    translate .14s ease-out,
+    scale .14s ease-out,
+    outline-color .2s ease,
+    outline-offset .2s ease;
+}
+
+/* -----------------------------------------------------------------
+   REST — the shared Liquid Capsule
+   ":not(.lg-none)" is a specificity lift (the class never exists) so
+   these rules outrank the older per-button hover rules without
+   !important. Order in this block: rest → hover → focus → press.
+----------------------------------------------------------------- */
+:is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none){
+  --lg-spec:.14; --lg-veil:.30; --lg-core:0;
+  --lg-b:var(--lg-b-rest); --lg-sat:1.08;
+  --lg-fg:rgba(255,255,255,.92);
+  --lg-edge:var(--lg-edge-rest);
+  --lg-sh:var(--lg-sh-rest);
+  --lg-glow:inset 0 0 0 0 transparent, 0 0 0 0 transparent;
+  --lg-bc:rgba(255,255,255,.40) rgba(255,255,255,.16) rgba(255,255,255,.10) rgba(255,255,255,.28);
+  /* the teal "energy" layer — invisible until --lg-core > 0 */
+  --lg-extra:
+    radial-gradient(100% 120% at 50% 138%, rgba(34,211,166,calc(var(--lg-core) * .40)) 0%, rgba(34,211,166,calc(var(--lg-core) * .13)) 42%, transparent 70%),
+    radial-gradient(42% 70% at 74% 124%, rgba(150,255,230,calc(var(--lg-core) * .22)), transparent 100%);
+
+  position:relative; isolation:isolate; overflow:hidden;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid transparent; border-color:var(--lg-bc);
+  border-radius:999px;
+  color:var(--lg-fg);
+  font-family:var(--ff-body); font-weight:500; letter-spacing:.012em;
+  text-shadow:0 1px 1px rgba(0,0,0,.28);
+  text-decoration:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  background:
+    var(--lg-extra),
+    radial-gradient(90% 160% at 4% -30%, rgba(255,255,255,var(--lg-spec)), transparent 58%),   /* upper-left specular */
+    radial-gradient(60% 140% at 50% 48%, rgba(255,255,255,.055), transparent 72%),            /* optical centre / bulge */
+    radial-gradient(100% 140% at 104% 130%, rgba(0,0,0,.30), transparent 62%),                /* lower-right shade */
+    var(--lg-noise) 0 0 / 120px 120px repeat,
+    rgba(18,20,22,var(--lg-veil));
+  -webkit-backdrop-filter:blur(var(--lg-b)) saturate(var(--lg-sat)) brightness(.92);
+          backdrop-filter:blur(var(--lg-b)) saturate(var(--lg-sat)) brightness(.92);
+  box-shadow:var(--lg-edge), var(--lg-sh), var(--lg-glow);
+  outline:1.5px solid transparent; outline-offset:0;
+  transition:var(--lg-trans);
+}
+
+/* glass on glass: buttons sitting inside an already-glass card skip
+   their own blur (same rule the rest of the file follows) and carry a
+   slightly denser body instead */
+:is(.cert-btn,.cf-submit):not(.lg-none){
+  --lg-veil:.34;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+
+/* per-button sizing and type — the system face, medium weight */
+.btn:not(.lg-none)           { padding:13px 24px; }
+.nav-cta:not(.lg-none)       { padding:10px 20px; font-size:14px; }
+.recruiter-link:not(.lg-none){ padding:9px 16px;  font-size:13px; }
+.recruiter-link-cv:not(.lg-none){ gap:6px; }
+.cert-btn:not(.lg-none)      { padding:8px 14px;  font-size:12px; gap:7px; }
+.arsenal-tab:not(.lg-none)   { padding:10px 18px; font-size:13px; }
+.cf-submit:not(.lg-none)     { padding:13px 24px; }
+
+/* Revealed buttons keep the site's scroll-reveal (opacity + transform,
+   staggered) — hover/press use the separate `translate`/`scale`
+   properties, so the two systems never fight, and the stagger delay
+   no longer leaks into hover. */
+.btn[data-reveal]:not(.lg-none){
+  transition:
+    var(--lg-trans),
+    opacity var(--sp-duration) var(--sp-ease) calc(var(--sp-i,0) * var(--sp-stagger-step)),
+    transform var(--sp-duration) var(--sp-ease) calc(var(--sp-i,0) * var(--sp-stagger-step));
+}
+
+/* 5 — internal reflection: an upper crescent, brighter on the left */
+:is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none)::before{
+  content:''; display:block; position:absolute; z-index:-1; pointer-events:none;
+  top:1px; bottom:auto; left:7%; right:7%; width:auto; height:52%;
+  border:0; border-radius:999px 999px 50% 50% / 100% 100% 60% 60%;
+  background:
+    radial-gradient(45% 90% at 26% 8%, rgba(255,255,255,.30), transparent 72%),
+    linear-gradient(180deg, rgba(255,255,255,.17) 0%, rgba(255,255,255,.04) 62%, rgba(255,255,255,0) 100%);
+  opacity:.7; transform:none; translate:0 0;
+  transition:opacity var(--lg-dur) var(--lg-ease), translate .7s var(--lg-ease);
+}
+/* 6 — light sweep: parked off-glass, crosses once on hover */
+:is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none)::after{
+  content:''; display:block; position:absolute; z-index:-1; pointer-events:none;
+  top:0; bottom:0; left:0; right:0; width:auto; height:auto;
+  border:0; border-radius:inherit; transform:none;
+  background:linear-gradient(103deg, transparent 32%, rgba(255,255,255,.10) 43%, rgba(255,255,255,.26) 50%, rgba(255,255,255,.07) 57%, transparent 68%);
+  opacity:0; translate:-105% 0;
+  transition:opacity .45s ease, translate 0s linear .45s;
+}
+
+/* icons suspended in the glass */
+.cert-btn .icon3d-sm{
+  filter:grayscale(1) brightness(1.3) contrast(.92) drop-shadow(0 0 0 rgba(255,255,255,0));
+  opacity:.86; transition:filter .5s var(--lg-ease), opacity .5s ease;
+}
+.btn-arrow{ transition:transform .6s var(--lg-ease), text-shadow .5s ease, color .5s ease; text-shadow:0 0 0 rgba(255,255,255,0); }
+.btn-primary .btn-arrow{ animation:none; } /* calm the idle nudge — depth stays static */
+
+/* -----------------------------------------------------------------
+   ROLES
+----------------------------------------------------------------- */
+/* Liquid Core — teal lives inside the glass, not on it */
+:is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active){
+  --lg-core:1;
+  --lg-fg:#fff;
+  --lg-veil:.26;
+  --lg-bc:rgba(255,255,255,.60) rgba(255,255,255,.26) rgba(255,255,255,.14) rgba(255,255,255,.44);
+  --lg-glow:inset 0 -10px 18px -10px rgba(34,211,166,.22), 0 12px 26px -16px rgba(34,211,166,.30);
+  font-weight:600;
+}
+:is(.btn-primary,.recruiter-link-cv,.cf-submit) .btn-arrow{ color:#aef2df; }
+/* the small moving light: the crescent drifts slowly inside the glass */
+:is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):not(.lg-none)::before{
+  animation:lgDrift 9s ease-in-out infinite alternate;
+}
+@keyframes lgDrift{
+  from{ transform:translateX(-5%); }
+  to  { transform:translateX(6%); }
+}
+
+/* Secondary — neutral silver glass */
+:is(.recruiter-link,.cert-btn,.arsenal-tab):not(.lg-none){ --lg-fg:rgba(255,255,255,.88); }
+
+/* Ghost — almost invisible until you reach for it */
+.btn.btn-ghost{
+  --lg-spec:.05; --lg-veil:.05; --lg-b:10px; --lg-sat:1.05;
+  --lg-fg:rgba(255,255,255,.80);
+  --lg-bc:rgba(255,255,255,.26) rgba(255,255,255,.10) rgba(255,255,255,.06) rgba(255,255,255,.18);
+  --lg-sh:0 8px 18px -12px rgba(0,0,0,.40);
+  --lg-edge:inset 1px 1px 0 rgba(255,255,255,.20), inset -1px -1px 0 rgba(16,18,20,.16), inset 0 0 0 1px rgba(255,255,255,.02), inset 0 12px 14px -13px rgba(255,255,255,.08), inset 0 -10px 14px -12px rgba(0,0,0,.20);
+  font-weight:500;
+}
+.btn.btn-ghost::before{ opacity:.35; }
+
+/* -----------------------------------------------------------------
+   GLASS LENS — icon-only round controls
+   The old rotate() on the whole control is replaced by rotating only
+   the glyph, so the rim, highlight and shadow never swing around.
+----------------------------------------------------------------- */
+:is(.nav-toggle,.bd-card-plus,.case-toggle):not(.lg-none){
+  --lg-spec:.24; --lg-veil:.26; --lg-core:0;
+  --lg-b:18px; --lg-sat:1.08;
+  --lg-fg:rgba(255,255,255,.90);
+  --lg-edge:inset 1px 1px 0 rgba(255,255,255,.46), inset -1px -1px 0 rgba(16,18,20,.36), inset 0 8px 10px -9px rgba(255,255,255,.26), inset 0 -8px 10px -9px rgba(0,0,0,.45);
+  --lg-sh:0 1px 1.5px rgba(0,0,0,.34), 0 6px 12px -6px rgba(0,0,0,.5), 0 14px 20px -14px rgba(0,0,0,.45);
+  --lg-glow:inset 0 0 0 0 transparent, 0 0 0 0 transparent;
+  --lg-bc:rgba(255,255,255,.42) rgba(255,255,255,.16) rgba(255,255,255,.10) rgba(255,255,255,.30);
+  --lg-extra:radial-gradient(circle at 50% 122%, rgba(34,211,166,calc(var(--lg-core) * .46)), transparent 72%);
+
+  position:relative; isolation:isolate; overflow:hidden;
+  align-items:center; justify-content:center;
+  padding:0; border:1px solid transparent; border-color:var(--lg-bc);
+  border-radius:50%;
+  color:var(--lg-fg);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  background:
+    var(--lg-extra),
+    radial-gradient(circle at 31% 23%, rgba(255,255,255,calc(var(--lg-spec) + .08)), rgba(255,255,255,.05) 30%, transparent 50%),  /* specular */
+    radial-gradient(circle closest-side, transparent calc(100% - 5px), rgba(255,255,255,.15) calc(100% - 4.5px), rgba(255,255,255,.15) calc(100% - 3.5px), transparent calc(100% - 3px)),  /* inner ring */
+    radial-gradient(circle closest-side, rgba(255,255,255,.06), transparent 62%, rgba(0,0,0,.30) 100%),  /* lens bulge + refractive rim */
+    rgba(18,20,22,var(--lg-veil));
+  -webkit-backdrop-filter:blur(var(--lg-b)) saturate(var(--lg-sat)) brightness(.92);
+          backdrop-filter:blur(var(--lg-b)) saturate(var(--lg-sat)) brightness(.92);
+  box-shadow:var(--lg-edge), var(--lg-sh), var(--lg-glow);
+  outline:1.5px solid transparent; outline-offset:0;
+  transition:var(--lg-trans);
+}
+.nav-toggle:not(.lg-none){ width:44px; height:44px; }
+.bd-card-plus:not(.lg-none){ width:24px; height:24px; font-size:0; line-height:0; }
+.case-toggle:not(.lg-none){ width:32px; height:32px; font-size:0; line-height:0; }
+
+/* nested inside glass cards: no second blur, denser body */
+:is(.bd-card-plus,.case-toggle):not(.lg-none){
+  --lg-veil:.34;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+
+/* lens glint — a small arc of light, upper left */
+:is(.nav-toggle,.bd-card-plus,.case-toggle):not(.lg-none)::before{
+  content:''; position:absolute; z-index:-1; pointer-events:none;
+  left:17%; top:8%; width:48%; height:27%;
+  border-radius:50%;
+  background:linear-gradient(180deg, rgba(255,255,255,.36), rgba(255,255,255,0));
+  transform:rotate(-24deg); opacity:.7;
+  transition:opacity var(--lg-dur) var(--lg-ease);
+}
+/* hairline glyph drawn in CSS (1.5px), so it can turn on its own */
+:is(.bd-card-plus,.case-toggle):not(.lg-none)::after{
+  content:''; flex:none; display:block;
+  width:9px; height:9px;
+  background:
+    linear-gradient(currentColor,currentColor) center / 100% 1.5px no-repeat,
+    linear-gradient(currentColor,currentColor) center / 1.5px 100% no-repeat;
+  opacity:.9;
+  filter:drop-shadow(0 0 0 rgba(255,255,255,0));
+  transition:transform .6s var(--lg-ease), opacity .4s ease, filter .5s ease;
+}
+.case-toggle:not(.lg-none)::after{ width:12px; height:12px; }
+.bd-card-plus:not(.lg-none){ --lg-fg:rgba(255,255,255,.80); }
+
+.nav-toggle svg{
+  stroke-width:1.5; opacity:.92;
+  filter:drop-shadow(0 0 0 rgba(255,255,255,0));
+  transition:filter .5s ease, opacity .4s ease;
+}
+
+/* open state — teal wakes up inside the lens, glyph turns to ×  */
+.bd-card.is-open .bd-card-plus,
+.case-card.open .case-toggle{
+  --lg-core:1;
+  --lg-bc:rgba(140,255,225,.62) rgba(255,255,255,.22) rgba(255,255,255,.12) rgba(190,255,238,.42);
+  transform:none; color:#c4f6e9; border-color:var(--lg-bc);
+}
+.bd-card.is-open .bd-card-plus::after,
+.case-card.open .case-toggle::after{ transform:rotate(45deg); opacity:1; }
+
+/* -----------------------------------------------------------------
+   HOVER — Vision Pro optical response (real pointers only)
+   glass clears · rim brightens · reflection slides · light crosses ·
+   depth deepens · a microscopic lift
+----------------------------------------------------------------- */
+@media (hover:hover){
+  :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none):hover{
+    --lg-spec:.22; --lg-veil:.20; --lg-b:var(--lg-b-hover); --lg-sat:1.22;
+    --lg-fg:#fff;
+    --lg-edge:var(--lg-edge-hover); --lg-sh:var(--lg-sh-hover);
+    --lg-bc:rgba(255,255,255,.66) rgba(255,255,255,.28) rgba(255,255,255,.18) rgba(255,255,255,.48);
+    transform:none; filter:none;
+    translate:0 -1px;
+  }
+  :is(.cert-btn,.cf-submit):not(.lg-none):hover{ --lg-veil:.25; }
+
+  :is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):hover{
+    --lg-core:1.3;
+    --lg-bc:rgba(255,255,255,.86) rgba(255,255,255,.40) rgba(255,255,255,.24) rgba(255,255,255,.64);
+    --lg-glow:inset 0 -10px 20px -10px rgba(34,211,166,.30), 0 14px 30px -14px rgba(34,211,166,.38);
+  }
+  .btn.btn-ghost:hover{
+    --lg-veil:.13; --lg-spec:.16;
+    --lg-sh:0 12px 22px -12px rgba(0,0,0,.5);
+  }
+
+  :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none):hover::before{
+    opacity:.95; translate:4% 0; transform:none;
+  }
+  :is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):not(.lg-none):hover::before{
+    animation-play-state:paused; /* the drifting light settles while you look at it */
+  }
+  :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none):hover::after{
+    opacity:1; translate:105% 0; transform:none;
+    transition:opacity .35s ease, translate .8s var(--lg-ease-soft);
+  }
+
+  :is(.btn,.recruiter-link-cv,.cf-submit):not(.lg-none):hover .btn-arrow{
+    transform:translateX(3px); text-shadow:0 0 8px rgba(255,255,255,.55);
+  }
+  .cert-btn:not(.lg-none):hover .icon3d-sm{
+    opacity:1; filter:grayscale(1) brightness(1.5) contrast(.92) drop-shadow(0 0 4px rgba(255,255,255,.4));
+  }
+
+  /* lenses — own hover, or the card/row they belong to */
+  .nav-toggle:not(.lg-none):hover,
+  .bd-card:hover .bd-card-plus:not(.lg-none),
+  .case-head:hover .case-toggle:not(.lg-none){
+    --lg-spec:.34; --lg-veil:.16; --lg-b:14px; --lg-sat:1.22;
+    --lg-fg:#fff;
+    --lg-sh:0 1px 2px rgba(0,0,0,.4), 0 9px 16px -6px rgba(0,0,0,.56), 0 20px 26px -16px rgba(0,0,0,.5);
+    --lg-bc:rgba(255,255,255,.68) rgba(255,255,255,.28) rgba(255,255,255,.18) rgba(255,255,255,.50);
+    transform:none; filter:none;
+  }
+  .nav-toggle:not(.lg-none):hover{ translate:0 -1px; }
+  .nav-toggle:not(.lg-none):hover svg{ opacity:1; filter:drop-shadow(0 0 4px rgba(255,255,255,.5)); }
+  .bd-card:hover .bd-card-plus:not(.lg-none)::after,
+  .case-head:hover .case-toggle:not(.lg-none)::after{ opacity:1; filter:drop-shadow(0 0 3px rgba(255,255,255,.55)); }
+  .nav-toggle:not(.lg-none):hover::before,
+  .bd-card:hover .bd-card-plus:not(.lg-none)::before,
+  .case-head:hover .case-toggle:not(.lg-none)::before{ opacity:1; }
+}
+
+/* -----------------------------------------------------------------
+   FOCUS — spatial ring: thin silver outline, soft translucent halo,
+   a faint teal glow inside the glass
+----------------------------------------------------------------- */
+:is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab,.nav-toggle):not(.lg-none):focus-visible{
+  outline:1.5px solid rgba(236,242,244,.80); outline-offset:3px;
+  --lg-glow:inset 0 0 16px rgba(34,211,166,.20), 0 0 0 7px rgba(255,255,255,.055);
+  --lg-fg:#fff;
+}
+:is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):not(.lg-none):focus-visible{
+  --lg-glow:inset 0 0 18px rgba(34,211,166,.30), 0 0 0 7px rgba(255,255,255,.055);
+}
+.bd-card:focus-visible .bd-card-plus:not(.lg-none){
+  --lg-bc:rgba(255,255,255,.68) rgba(255,255,255,.28) rgba(255,255,255,.18) rgba(255,255,255,.50);
+  --lg-glow:inset 0 0 8px rgba(34,211,166,.30), 0 0 0 3px rgba(255,255,255,.07);
+}
+
+/* -----------------------------------------------------------------
+   PRESS — a glass control pushed in 1.5px: shadow compresses, rim
+   thickens and brightens, reflection flares, then eases back out
+----------------------------------------------------------------- */
+:is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab,.nav-toggle):not(.lg-none):active{
+  --lg-spec:.32; --lg-veil:.27; --lg-b:20px;
+  --lg-edge:var(--lg-edge-press); --lg-sh:var(--lg-sh-press);
+  --lg-bc:rgba(255,255,255,.74) rgba(255,255,255,.32) rgba(255,255,255,.20) rgba(255,255,255,.54);
+  transform:none; filter:none;
+  translate:0 1.5px; scale:.99;
+  transition:var(--lg-trans-press);
+}
+:is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none):active::before{
+  opacity:1; translate:0 0; transform:none;
+  transition:opacity .14s ease-out;
+}
+:is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none):active::after{
+  opacity:.55; translate:0 0; transform:none;
+  transition:opacity .14s ease-out, translate 0s;
+}
+.nav-toggle:not(.lg-none):active::before{ opacity:1; }
+
+.cf-submit:disabled{ pointer-events:none; opacity:.6; }
+
+/* -----------------------------------------------------------------
+   RESPONSIVE
+----------------------------------------------------------------- */
+/* tablet — a little less depth and blur */
+@media (max-width:900px){
+  :root{
+    --lg-b-rest:18px; --lg-b-hover:14px;
+    --lg-sh-rest:  0 1px 1.5px rgba(0,0,0,.34), 0 8px 16px -10px rgba(0,0,0,.50), 0 16px 26px -20px rgba(0,0,0,.50);
+    --lg-sh-hover: 0 1px 2px rgba(0,0,0,.40),   0 12px 22px -10px rgba(0,0,0,.56), 0 24px 34px -22px rgba(0,0,0,.56);
+  }
+}
+/* mobile — same material, lighter blur and no grain; easy to tap */
+@media (max-width:640px){
+  :root{
+    --lg-b-rest:13px; --lg-b-hover:11px;
+    --lg-noise:linear-gradient(transparent,transparent);
+    --lg-sh-rest:  0 1px 1.5px rgba(0,0,0,.34), 0 6px 12px -8px rgba(0,0,0,.50), 0 12px 20px -16px rgba(0,0,0,.48);
+    --lg-sh-hover: 0 1px 2px rgba(0,0,0,.40),   0 8px 16px -8px rgba(0,0,0,.54),  0 16px 24px -18px rgba(0,0,0,.52);
+  }
+}
+@media (max-width:640px), (pointer:coarse){
+  :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none){ min-height:44px; }
+  .nav-toggle:not(.lg-none){ width:44px; height:44px; }
+}
+
+/* -----------------------------------------------------------------
+   ACCESSIBILITY
+----------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce){
+  /* keep the glass and the hover / focus / press states; drop the
+     sweep and the drifting light */
+  :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none)::after{ display:none; }
+  :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab):not(.lg-none)::before,
+  :is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):not(.lg-none)::before{ animation:none; }
+  .btn-arrow{ transition:none; }
+}
+@media (forced-colors: active){
+  :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab,.nav-toggle):not(.lg-none):focus-visible{
+    outline-color:Highlight;
+  }
+}
+
+
+/* =================================================================
+   PART 10 — Pearl Plate logo system
+   Most partner logos are dark artwork on white, so on the dark glass
+   theme they were tiny and low-contrast. Each logo now sits on its
+   own thin pearl-glass plate: bright enough to read at a glance,
+   depth from layered shadow, a small teal foot-mark that lengthens
+   on hover, and a faint teal sheen that crosses once. The plate is a
+   wrapper span; logos are multiplied into it so white JPG backgrounds
+   melt away. Sizes scale from one variable (--plate-h).
+================================================================= */
+.tl-logos{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:18px 0 6px; }
+
+.logo-plate{
+  --plate-h:72px;
+  position:relative; isolation:isolate; overflow:hidden; flex:none;
+  display:inline-flex; align-items:center; justify-content:center;
+  height:var(--plate-h); padding:8px 10px;
+  border-radius:20px;
+  background:
+    radial-gradient(120% 90% at 18% -20%, #fff 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, #f7f9fa 0%, #e9edef 100%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -10px 16px -12px rgba(20,28,32,.22),
+    0 0 0 1px rgba(255,255,255,.22),
+    0 1px 1.5px rgba(0,0,0,.40),
+    0 12px 22px -12px rgba(0,0,0,.65);
+  transition:transform .5s var(--lg-ease,ease), box-shadow .5s var(--lg-ease,ease);
+}
+/* widths follow the logo's shape */
+.logo-plate--sq{ width:calc(var(--plate-h) * 1.22); }
+.logo-plate--md{ width:calc(var(--plate-h) * 1.72); }
+.logo-plate--wd{ width:calc(var(--plate-h) * 2.28); }
+.logo-plate--xw{ width:calc(var(--plate-h) * 2.94); }
+
+.logo-plate img{
+  position:relative; z-index:0; display:block;
+  width:100%; height:100%; max-width:none;
+  object-fit:contain; mix-blend-mode:multiply;
+  padding:0; border:0; border-radius:0; background:none;
+  filter:saturate(1.05) contrast(1.03);
+}
+
+/* teal foot-mark: a small index tab at rest, longer on hover */
+.logo-plate::after{
+  content:''; position:absolute; z-index:2; pointer-events:none;
+  left:50%; bottom:0; width:16%; height:2px;
+  border-radius:2px 2px 0 0; background:var(--teal); opacity:.6;
+  translate:-50% 0;
+  transition:width .5s var(--lg-ease,ease), opacity .4s ease;
+}
+/* one faint teal sheen, parked off-plate */
+.logo-plate::before{
+  content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:linear-gradient(105deg, transparent 34%, rgba(34,211,166,.10) 46%, rgba(255,255,255,.85) 50%, rgba(34,211,166,.10) 54%, transparent 66%);
+  translate:-110% 0;
+  transition:translate 0s linear .5s;
+}
+
+/* education seals: larger, square, one per school */
+.logo-plate--seal{ --plate-h:88px; width:var(--plate-h); padding:10px; border-radius:24px; }
+/* Aptech's mark is a full-bleed photo, so let it fill the seal */
+.logo-plate.is-photo{ padding:0; }
+.logo-plate.is-photo img{ mix-blend-mode:normal; object-fit:cover; filter:saturate(.8) contrast(1.02); }
+
+.edu-top{ align-items:center; justify-content:flex-start; gap:14px 18px; }
+.edu-top > div{ flex:1 1 240px; min-width:0; }
+.edu-top .edu-date{ margin-left:auto; flex:none; }
+
+@media (hover:hover){
+  .logo-plate:hover{
+    transform:translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 -10px 16px -12px rgba(20,28,32,.22),
+      0 0 0 1px rgba(255,255,255,.34),
+      0 1px 2px rgba(0,0,0,.45),
+      0 18px 28px -12px rgba(0,0,0,.72);
+  }
+  .logo-plate:hover::after{ width:46%; opacity:1; }
+  .logo-plate:hover::before{ translate:110% 0; transition:translate .9s var(--lg-ease-soft,ease); }
+}
+
+@media (max-width:560px){
+  .logo-plate{ --plate-h:60px; border-radius:16px; }
+  .logo-plate--seal{ --plate-h:68px; border-radius:20px; }
+  .tl-logos{ gap:10px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .logo-plate::before{ display:none; }
+  .logo-plate:hover{ transform:none; }
+}
+
+
+/* =================================================================
+   PART 11 — Navbar: every link is a Liquid Capsule + mobile fixes
+   Every nav link now uses the exact same glass-capsule material as
+   the "Let's talk" button (the .nav-link class is part of the shared
+   selector lists in Part 9). "Let's talk" keeps the teal core; links
+   are the silver secondary role, the active link gets a soft teal
+   core so you can see where you are. Spacing is one variable:
+   --nav-gap (same gap between every pill, links and CTA alike).
+================================================================= */
+.nav{ --nav-gap:6px; --nl-fs:13px; --nl-px:14px; --nl-py:9px; gap:0; }
+
+/* same size, same height — links and CTA line up exactly */
+.nav-link:not(.lg-none),
+.nav-cta:not(.lg-none){
+  padding:var(--nl-py) var(--nl-px); font-size:var(--nl-fs); line-height:1.25;
+  white-space:nowrap;
+}
+.nav-link:not(.lg-none){ --lg-fg:rgba(255,255,255,.88); font-weight:500; }
+.nav > .nav-cta:not(.lg-none){ padding:var(--nl-py) calc(var(--nl-px) + 4px); }
+
+/* Density steps so all 14 links + the CTA always fit on one row */
+@media (min-width:1340px) and (max-width:1439px){
+  .nav{ --nav-gap:4px; --nl-fs:12px; --nl-px:8px; --nl-py:8px; }
+  .nav-brand{ font-size:15px; }
+}
+@media (min-width:1440px) and (max-width:1559px){
+  .nav{ --nav-gap:5px; --nl-fs:12.5px; --nl-px:11px; --nl-py:8px; }
+}
+
+/* current section — same glass, brighter rim, teal waking inside */
+.nav-link.active:not(.lg-none){
+  --lg-core:.75; --lg-spec:.22; --lg-veil:.22;
+  --lg-fg:#fff;
+  --lg-edge:var(--lg-edge-hover);
+  --lg-bc:rgba(255,255,255,.66) rgba(255,255,255,.28) rgba(255,255,255,.18) rgba(255,255,255,.48);
+  --lg-glow:inset 0 -8px 16px -10px rgba(34,211,166,.26), 0 10px 22px -14px rgba(34,211,166,.30);
+}
+
+/* hamburger ⇄ close */
+.nav-toggle .i-close{ display:none; }
+.nav-toggle[aria-expanded="true"] .i-open{ display:none; }
+.nav-toggle[aria-expanded="true"] .i-close{ display:inline; }
+.nav-toggle[aria-expanded="true"]:not(.lg-none){
+  --lg-core:1;
+  --lg-bc:rgba(140,255,225,.62) rgba(255,255,255,.22) rgba(255,255,255,.12) rgba(190,255,238,.42);
+  color:#c4f6e9;
+}
+
+/* ---- Desktop: full row of pills ---------------------------------- */
+@media (min-width:1024px){
+  .nav-toggle, .mob-drawer, .nav-scrim{ display:none !important; }
+}
+
+/* ---- Below 1340px: brand + Let's talk + menu button --------------- */
+/* Laptops (1024–1339px): no dropdown — the capsule grows a second row.
+   Row 1: name + "Let's talk". Row 2: every link, centred, same gaps. */
+@media (min-width:1024px) and (max-width:1339px){
+  .nav{
+    --nav-gap:4px; --nl-fs:12px; --nl-px:9px; --nl-py:8px;
+    width:min(calc(100% - 32px), 1240px);
+    flex-wrap:wrap; row-gap:8px; padding:10px 12px 12px 20px;
+  }
+  .nav-brand{ order:1; font-size:15px; }
+  .nav > .nav-cta{ order:2; margin-left:auto; }
+  .nav-links{ order:3; flex:1 0 100%; justify-content:center; flex-wrap:wrap; margin:0; padding:0; }
+}
+
+/* Tablets & phones (<1024px): menu button + drawer */
+@media (max-width:1023px){
+  .nav{ width:min(calc(100% - 32px), 860px); justify-content:space-between; }
+  .nav-links{ display:none; }
+  .nav-toggle{ display:flex; margin-left:10px; }
+  .nav > .nav-cta{ margin-left:auto; }
+}
+
+/* ---- Mobile / tablet drawer ---------------------------------------
+   Was see-through (page text showed through the links) and could run
+   off the bottom of the screen. Now: a dense dark glass sheet, two
+   columns of the same capsule links, scrolls inside itself, closes on
+   tap outside / Esc / link tap. */
+.nav-scrim{
+  position:fixed; inset:0; z-index:48;
+  background:rgba(4,6,7,.55);
+  opacity:0; visibility:hidden;
+  transition:opacity .25s ease, visibility 0s linear .25s;
+}
+.nav-scrim.open{ opacity:1; visibility:visible; transition-delay:0s; }
+
+.mob-drawer.glass-clear{
+  position:fixed; z-index:49; inset:auto;
+  top:calc(env(safe-area-inset-top, 0px) + 84px);
+  left:max(16px, calc((100% - 860px) / 2)); right:max(16px, calc((100% - 860px) / 2));
+  display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  padding:12px; border-radius:26px;
+  max-height:calc(100vh - 104px - env(safe-area-inset-top, 0px));
+  max-height:calc(100dvh - 104px - env(safe-area-inset-top, 0px));
+  overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+  background:
+    linear-gradient(168deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.03) 55%),
+    rgba(12,14,16,.90);
+  -webkit-backdrop-filter:blur(28px) saturate(1.3); backdrop-filter:blur(28px) saturate(1.3);
+  transform-origin:top center;
+  transform:translateY(-8px) scale(.97); opacity:0;
+  visibility:hidden; pointer-events:none;
+  transition:transform .3s var(--lg-ease), opacity .22s ease, visibility 0s linear .3s;
+}
+.mob-drawer.glass-clear.open{
+  transform:none; opacity:1; visibility:visible; pointer-events:auto;
+  transition-delay:0s;
+}
+/* pills inside the drawer: no second blur layer, slightly denser body */
+.mob-drawer .nav-link:not(.lg-none){
+  width:100%; min-height:46px; font-size:14px; padding:11px 14px;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+  --lg-veil:.34;
+}
+.mob-drawer .mob-cta:not(.lg-none){
+  grid-column:1 / -1; min-height:50px; font-size:15px; margin-top:4px;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+
+/* ---- Phones ------------------------------------------------------- */
+@media (max-width:640px){
+  .nav{ top:calc(env(safe-area-inset-top, 0px) + 12px); padding:8px 8px 8px 18px; }
+  .nav-brand{ font-size:15px; }
+  .mob-drawer.glass-clear{ top:calc(env(safe-area-inset-top, 0px) + 78px); }
+
+  .hero{ padding:112px 0 64px; }
+  .hero-grid{ gap:36px; }
+  /* headline flows as one paragraph — no orphaned "that" */
+  .hero h1{ font-size:clamp(32px, 9.4vw, 42px); }
+  .hero h1 span{ display:inline; }
+  .hero-sub{ font-size:16.5px; margin-bottom:28px; }
+  /* buttons: primary full width, the two CV buttons share a row */
+  .hero-actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:32px; }
+  .hero-actions .btn{ justify-content:center; width:100%; }
+  .hero-actions .btn-primary{ grid-column:1 / -1; }
+
+  .section{ padding:72px 0; }
+}
+@media (max-width:400px){
+  .nav > .nav-cta:not(.lg-none){ padding:8px 14px; }
+}
+@media (max-width:340px){
+  .nav > .nav-cta{ display:none; }
+}
+
+/* Recruiter fast-pass: was edge-to-edge on phones while every other
+   panel keeps the page gutter — now matches the sections' margins. */
+.recruiter-bar{ width:min(1180px, calc(100% - 2 * clamp(10px, 2.6vw, 26px))); }
+@media (max-width:640px){
+  .recruiter-bar{ padding:16px; margin-bottom:28px; }
+  .recruiter-links{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .recruiter-link{ width:100%; }
+  .recruiter-link-cv{ grid-column:1 / -1; }
+}
+.recruiter-link:last-child:nth-child(even){ grid-column:1 / -1; } /* no orphan pill in the 2-col grid (phones only, see rule above) */
+@media (min-width:641px){
+  .mob-drawer.glass-clear{ grid-template-columns:repeat(4, 1fr); }
+  .recruiter-link:last-child:nth-child(even){ grid-column:auto; }
+}
+
+/* smallest laptops (1024–1099px): a touch tighter so all links stay on one row */
+@media (min-width:1024px) and (max-width:1099px){
+  .nav{ --nl-fs:11.5px; --nl-px:7px; --nav-gap:3px; }
+}
+
+
+/* Contact-panel shortcuts (CV · Email · WhatsApp · LinkedIn): same
+   glass capsule as the rest of the site's secondary buttons */
+.contact-pill:not(.lg-none){
+  padding:10px 20px; font-size:13.5px; line-height:1.25; min-height:40px;
+  --lg-fg:rgba(255,255,255,.90); font-weight:500;
+}
+.contact-left .contact-shortcuts{ margin-top:-4px; }
+
+/* drawer: 13 links is odd — let the last one span the row instead of orphaning it */
+.mob-drawer .nav-link:nth-last-child(2){ grid-column:1 / -1; }
+@media (min-width:641px){ .mob-drawer .nav-link:nth-last-child(2){ grid-column:auto; } }
+
+/* Navbar readability: it floats over page content while scrolling, and
+   the old fully-clear capsule let headings show through the brand and
+   buttons. A dense dark glass body keeps it legible everywhere. */
+.nav.glass-clear{
+  background:
+    linear-gradient(168deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.02) 60%),
+    rgba(10,12,14,.78);
+  -webkit-backdrop-filter:blur(18px) saturate(1.25);
+          backdrop-filter:blur(18px) saturate(1.25);
+}
+
+
+/* =================================================================
+   PART 12 — Contact: "Liquid Pane"
+   A one-off material reserved for the contact panel. Where the other
+   panels are thin, clear glass, this one is a thick slab of liquid:
+     · real backdrop refraction (blur + saturation) over the photo
+     · three slow, morphing colour pools suspended inside the glass
+     · a curved meniscus highlight along the top edge
+     · a chromatic rim (cool on the left, warm on the right) like
+       light dispersing through thick glass
+     · a light streak that crosses the pane every few seconds
+     · inputs pressed into the glass as dark wells
+     · the column divider is a hairline with a single teal bead
+   HTML: one decorative <span class="cp-liquid"> added; JS untouched.
+================================================================= */
+.contact-panel.glass{
+  border-radius:40px;
+  clip-path:none;
+  border:1px solid rgba(255,255,255,.18);
+  border-top-color:rgba(255,255,255,.62);
+  border-left-color:rgba(255,255,255,.36);
+  border-bottom-color:rgba(255,255,255,.07);
+  background:
+    radial-gradient(120% 60% at 50% -14%, rgba(255,255,255,.22), transparent 60%),   /* meniscus */
+    radial-gradient(85% 60% at 104% 112%, rgba(0,0,0,.38), transparent 70%),         /* pooled shade */
+    linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(12,14,16,.30) 52%, rgba(12,14,16,.44) 100%);
+  -webkit-backdrop-filter:blur(26px) saturate(1.5) brightness(.9);
+          backdrop-filter:blur(26px) saturate(1.5) brightness(.9);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255,255,255,.42),
+    inset -1px -1px 0 rgba(0,0,0,.36),
+    inset 2px 0 0 rgba(120,190,255,.14),      /* chromatic rim — cool */
+    inset -2px 0 0 rgba(255,150,120,.10),     /* chromatic rim — warm */
+    inset 0 34px 60px -42px rgba(255,255,255,.24),
+    inset 0 -54px 80px -52px rgba(0,0,0,.58),
+    0 2px 3px rgba(0,0,0,.40),
+    0 44px 90px -44px rgba(0,0,0,.78);
+}
+
+/* liquid layer — sits behind all content */
+.contact-panel > .cp-liquid{
+  position:absolute; inset:0; z-index:0; overflow:hidden;
+  border-radius:inherit; pointer-events:none;
+}
+.cp-liquid i{
+  position:absolute; display:block; aspect-ratio:1;
+  filter:blur(36px); opacity:.5;
+  border-radius:42% 58% 63% 37% / 45% 40% 60% 55%;
+}
+.cp-liquid i:nth-child(1){
+  width:52%; left:-12%; top:-24%;
+  background:radial-gradient(circle at 38% 36%, rgba(34,211,166,.85), rgba(34,211,166,0) 68%);
+  animation:cpPool1 21s ease-in-out infinite alternate;
+}
+.cp-liquid i:nth-child(2){
+  width:56%; right:-14%; bottom:-30%;
+  background:radial-gradient(circle at 60% 40%, rgba(96,160,255,.75), rgba(96,160,255,0) 68%);
+  animation:cpPool2 26s ease-in-out infinite alternate;
+}
+.cp-liquid i:nth-child(3){
+  width:30%; left:38%; top:34%; opacity:.32;
+  background:radial-gradient(circle at 50% 50%, rgba(255,168,132,.8), rgba(255,168,132,0) 68%);
+  animation:cpPool3 18s ease-in-out infinite alternate;
+}
+@keyframes cpPool1{
+  0%  { transform:translate(0,0) rotate(0deg) scale(1);          border-radius:42% 58% 63% 37% / 45% 40% 60% 55%; }
+  100%{ transform:translate(26%,30%) rotate(50deg) scale(1.2);   border-radius:58% 42% 38% 62% / 55% 60% 40% 45%; }
+}
+@keyframes cpPool2{
+  0%  { transform:translate(0,0) rotate(0deg) scale(1.05);       border-radius:55% 45% 40% 60% / 50% 55% 45% 50%; }
+  100%{ transform:translate(-30%,-24%) rotate(-40deg) scale(.9); border-radius:40% 60% 55% 45% / 60% 40% 60% 40%; }
+}
+@keyframes cpPool3{
+  0%  { transform:translate(-40%,-20%) scale(.9); }
+  100%{ transform:translate(60%,30%) scale(1.25); }
+}
+/* fine grain + a light streak that crosses the pane */
+.cp-liquid::before{
+  content:''; position:absolute; inset:0;
+  background:var(--lg-noise) 0 0 / 120px 120px repeat;
+  opacity:.5; mix-blend-mode:soft-light;
+}
+.cp-liquid::after{
+  content:''; position:absolute; top:-30%; bottom:-30%; left:-40%; width:32%;
+  background:linear-gradient(100deg, transparent 0%, rgba(255,255,255,.05) 38%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.05) 62%, transparent 100%);
+  transform:translateX(0) skewX(-16deg);
+  animation:cpStreak 11s cubic-bezier(.45,.1,.25,1) infinite;
+}
+@keyframes cpStreak{
+  0%,55%{ transform:translateX(0) skewX(-16deg); opacity:0; }
+  62%   { opacity:1; }
+  92%   { opacity:1; }
+  100%  { transform:translateX(480%) skewX(-16deg); opacity:0; }
+}
+
+/* availability: a small liquid capsule */
+.contact-panel .contact-avail{
+  display:inline-flex; flex-wrap:wrap; padding:8px 16px 8px 13px;
+  border-radius:22px; margin-bottom:26px;
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.14); border-top-color:rgba(255,255,255,.34);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 8px 18px -12px rgba(0,0,0,.6);
+}
+.contact-panel .contact-avail .dot{ width:7px; height:7px; box-shadow:0 0 10px rgba(34,211,166,.85); }
+
+/* divider: hairline + one teal bead (vertical on desktop) */
+.contact-panel .contact-right{ border-left:0; position:relative; }
+.contact-right::before{
+  content:''; position:absolute; left:0; top:8%; bottom:8%; width:1px;
+  background:linear-gradient(180deg, transparent, rgba(255,255,255,.40) 28%, rgba(255,255,255,.40) 72%, transparent);
+  box-shadow:1px 0 0 rgba(0,0,0,.28);
+}
+.contact-right::after{
+  content:''; position:absolute; left:-3.5px; top:50%; width:8px; height:8px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff, rgba(34,211,166,.95) 55%, rgba(34,211,166,.35));
+  box-shadow:0 0 14px rgba(34,211,166,.65);
+}
+
+/* inputs: pressed into the glass */
+.contact-panel .cf-field input,
+.contact-panel .cf-field textarea{
+  background:linear-gradient(180deg, rgba(0,0,0,.32), rgba(0,0,0,.16));
+  border:1px solid rgba(255,255,255,.12); border-top-color:rgba(0,0,0,.35);
+  border-radius:16px; padding:12px 16px;
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.38), inset 0 -1px 0 rgba(255,255,255,.08), 0 1px 0 rgba(255,255,255,.07);
+  transition:border-color .25s ease, box-shadow .3s ease, background .3s ease;
+}
+.contact-panel .cf-field input:hover,
+.contact-panel .cf-field textarea:hover{ border-color:rgba(255,255,255,.28); border-top-color:rgba(0,0,0,.35); }
+.contact-panel .cf-field input:focus,
+.contact-panel .cf-field textarea:focus{
+  outline:none; border-color:rgba(34,211,166,.7); border-top-color:rgba(34,211,166,.5);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.38), 0 0 0 3px rgba(34,211,166,.16), 0 0 24px -6px rgba(34,211,166,.5);
+}
+.contact-panel .cf-field label{ padding-left:4px; }
+.contact-form{ gap:18px; }
+
+@media (max-width:820px){
+  .contact-panel.glass{ border-radius:30px; }
+  .contact-panel .contact-right{ border-top:0; }
+  .contact-right::before{ left:8%; right:8%; top:0; bottom:auto; width:auto; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.40) 28%, rgba(255,255,255,.40) 72%, transparent); }
+  .contact-right::after{ left:50%; top:-3.5px; margin-left:-4px; }
+  .cp-liquid i{ filter:blur(28px); }
+}
+@media (prefers-reduced-motion: reduce){
+  .cp-liquid i, .cp-liquid::after{ animation:none; }
+  .cp-liquid::after{ display:none; }
+}
+
+/* Liquid Pane — phone refinements */
+@media (max-width:820px){
+  .cp-liquid::after{ width:22%; background:linear-gradient(100deg, transparent 0%, rgba(255,255,255,.03) 38%, rgba(255,255,255,.11) 50%, rgba(255,255,255,.03) 62%, transparent 100%); }
+}
+@media (max-width:430px){
+  .contact-panel .contact-avail{ font-size:11px; padding:8px 13px 8px 11px; flex-wrap:nowrap; white-space:nowrap; }
+}
