@@ -1068,6 +1068,42 @@
   </div>
 </footer>
 
+<!-- ============ VIEWER GATE (name capture before CV/certificate view or download) ============ -->
+<div class="vgate" id="vgate" role="dialog" aria-modal="true" aria-label="Quick details" hidden>
+  <div class="vgate-scrim" data-vgate-close></div>
+  <div class="vgate-panel">
+    <button type="button" class="vgate-close" data-vgate-close aria-label="Close">&times;</button>
+    <div class="vgate-icon">👋</div>
+    <h3 class="vgate-title" id="vgateTitle">Before you continue</h3>
+    <p class="vgate-sub" id="vgateSub">Quick intro so Sajid knows who stopped by.</p>
+    <form class="vgate-form" id="vgateForm" novalidate>
+      <label class="vgate-label">Your name
+        <input type="text" name="name" id="vgateName" class="vgate-input" required autocomplete="name" placeholder="e.g. Jane Smith">
+      </label>
+      <label class="vgate-label">Company / Organization <span class="vgate-optional">(optional)</span>
+        <input type="text" name="company" id="vgateCompany" class="vgate-input" autocomplete="organization" placeholder="e.g. Ooredoo">
+      </label>
+      <button type="submit" class="vgate-submit" id="vgateSubmit"><span id="vgateSubmitText">Continue</span></button>
+      <p class="vgate-status" id="vgateStatus" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ============ IN-SITE DOCUMENT VIEWER (CV / certificates, no Drive redirect) ============ -->
+<div class="vview" id="vview" role="dialog" aria-modal="true" aria-label="Document viewer" hidden>
+  <div class="vview-scrim" data-vview-close></div>
+  <div class="vview-panel">
+    <div class="vview-head">
+      <span class="vview-title" id="vviewTitle">Document</span>
+      <div class="vview-actions">
+        <a class="vview-open" id="vviewOpen" href="#" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+        <button type="button" class="vview-close" data-vview-close aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <div class="vview-body" id="vviewBody"></div>
+  </div>
+</div>
+
 <!-- ============ COMMAND CONSOLE (Ctrl/⌘ + K, or "/") ============ -->
 <div class="cmdk" id="cmdk" role="dialog" aria-modal="true" aria-label="Command menu" hidden>
   <div class="cmdk-scrim" data-cmdk-close></div>

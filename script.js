@@ -667,3 +667,234 @@ $$('[data-case]').forEach(card => {
     }
   });
 })();
+
+/* =================================================================
+   VIEWER GATE + IN-SITE DOCUMENT VIEWER
+   Intercepts every "View CV" / "Download CV" / certificate button.
+   Visitor gives their name (+ optional company) first; that plus
+   the action (viewed/downloaded) and item name is emailed via the
+   existing Formspree endpoint. "View" actions then open the file
+   in an in-page viewer instead of navigating to Google Drive;
+   "Download" actions trigger the actual file download.
+================================================================= */
+(function viewerGate(){
+  const CV_ID = '1-Ktw3XGNO4UZvxATGR9ED44NZiFMlwz_';
+  const NOTIFY_ENDPOINT = 'https://formspree.io/f/mbglyrwl'; // same form used by the contact section
+
+  const gate = document.getElementById('vgate');
+  const gateForm = document.getElementById('vgateForm');
+  const gateName = document.getElementById('vgateName');
+  const gateCompany = document.getElementById('vgateCompany');
+  const gateSub = document.getElementById('vgateSub');
+  const gateSubmit = document.getElementById('vgateSubmit');
+  const gateSubmitText = document.getElementById('vgateSubmitText');
+  const gateStatus = document.getElementById('vgateStatus');
+
+  const viewer = document.getElementById('vview');
+  const viewerTitle = document.getElementById('vviewTitle');
+  const viewerOpen = document.getElementById('vviewOpen');
+  const viewerBody = document.getElementById('vviewBody');
+
+  if (!gate || !viewer) return;
+
+  let pending = null; // { url, downloadUrl, title, action: 'view'|'download' }
+  let lastFocused = null;
+
+  // iOS Safari doesn't fully honour `overflow:hidden` on <html>/<body> —
+  // the page behind a modal can still drag/rubber-band. Pinning the body
+  // to a fixed position (and restoring the exact scroll offset on close)
+  // is the reliable cross-browser fix. A counter means the gate closing
+  // and the viewer opening right after it (or vice versa) doesn't
+  // release the lock in between and let the page jump.
+  let scrollLockCount = 0;
+  let savedScrollY = 0;
+  function lockScroll(){
+    if (scrollLockCount === 0) {
+      savedScrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    }
+    scrollLockCount++;
+  }
+  function unlockScroll(){
+    scrollLockCount = Math.max(0, scrollLockCount - 1);
+    if (scrollLockCount === 0) {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, savedScrollY);
+    }
+  }
+
+  function driveIdFromUrl(url){
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    return m ? m[1] : null;
+  }
+  function isImageUrl(url){ return /\.(png|jpe?g|gif|webp)$/i.test(url); }
+
+  function openGate(item){
+    pending = item;
+    gateForm.reset();
+    gateStatus.textContent = '';
+    gateStatus.classList.remove('is-error');
+    gateName.classList.remove('is-touched');
+    gateSub.textContent = `Quick intro before you ${item.action === 'download' ? 'download' : 'view'} ${item.title}.`;
+    lastFocused = document.activeElement;
+    lockScroll();
+    gate.hidden = false;
+    document.documentElement.classList.add('vgate-open');
+    requestAnimationFrame(() => {
+      gate.classList.add('is-open');
+      gateName.focus();
+    });
+  }
+  function closeGate(){
+    gate.classList.remove('is-open');
+    document.documentElement.classList.remove('vgate-open');
+    unlockScroll();
+    setTimeout(() => { gate.hidden = true; }, 250);
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+  }
+
+  function openViewer(item){
+    viewerTitle.textContent = item.title;
+    viewerOpen.href = item.url;
+    viewerBody.innerHTML = '';
+    if (isImageUrl(item.url)) {
+      const img = document.createElement('img');
+      img.className = 'vview-img';
+      img.src = item.url;
+      img.alt = item.title;
+      viewerBody.appendChild(img);
+    } else {
+      const driveId = driveIdFromUrl(item.url);
+      const iframe = document.createElement('iframe');
+      iframe.className = 'vview-iframe';
+      iframe.src = driveId ? `https://drive.google.com/file/d/${driveId}/preview` : item.url;
+      iframe.allow = 'autoplay';
+      iframe.loading = 'lazy';
+      viewerBody.appendChild(iframe);
+    }
+    lockScroll();
+    viewer.hidden = false;
+    document.documentElement.classList.add('vview-open');
+    requestAnimationFrame(() => viewer.classList.add('is-open'));
+  }
+  function closeViewer(){
+    viewer.classList.remove('is-open');
+    document.documentElement.classList.remove('vview-open');
+    unlockScroll();
+    setTimeout(() => { viewer.hidden = true; viewerBody.innerHTML = ''; }, 250);
+  }
+
+  function notify(name, company, item){
+    const actionLabel = item.action === 'download' ? 'Downloaded' : 'Viewed';
+    const payload = {
+      name: name,
+      company: company || '(not given)',
+      action: actionLabel,
+      item: item.title,
+      page: location.href,
+      time: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Qatar' }) + ' (Doha)',
+      _subject: `🔔 ${actionLabel} — ${item.title} — by ${name}`
+    };
+    return fetch(NOTIFY_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  function triggerDownload(url){
+    const a = document.createElement('a');
+    a.href = url;
+    a.rel = 'noopener noreferrer';
+    // Forces an actual download rather than a navigation for same-origin
+    // assets (e.g. local certificate images). Ignored by browsers for
+    // cross-origin URLs (Google Drive), which already download via their
+    // own Content-Disposition header.
+    a.setAttribute('download', '');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  // Wire up every certificate button + every CV link on the page.
+  function itemFromLink(link){
+    const isCV = link.href.includes(CV_ID);
+    const isDownload = link.href.includes('export=download') || link.hasAttribute('download');
+    let title = 'CV';
+    if (!isCV) {
+      const certCard = link.closest('.cert-card');
+      const eduCard = link.closest('.edu-card');
+      const certTitleEl = certCard ? certCard.querySelector('.cert-title') : null;
+      const eduTitleEl = eduCard ? eduCard.querySelector('.edu-degree') : null;
+      const linkLabel = link.textContent.trim().replace(/^(View|Download)\s+/i, '');
+      if (certTitleEl) {
+        title = certTitleEl.textContent.trim();
+      } else if (eduTitleEl) {
+        title = `${linkLabel} — ${eduTitleEl.textContent.trim()}`;
+      } else {
+        title = linkLabel;
+      }
+    }
+    return {
+      url: link.href,
+      title: title,
+      action: isDownload ? 'download' : 'view'
+    };
+  }
+
+  const targets = document.querySelectorAll(
+    'a.cert-btn, a[href*="' + CV_ID + '"]'
+  );
+  targets.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      openGate(itemFromLink(link));
+    });
+  });
+
+  gateForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    gateName.classList.add('is-touched');
+    if (!gateForm.checkValidity()) return;
+    if (!pending) return;
+
+    const name = gateName.value.trim();
+    const company = gateCompany.value.trim();
+
+    gateSubmit.disabled = true;
+    gateSubmitText.textContent = 'One sec…';
+    gateStatus.classList.remove('is-error');
+    gateStatus.textContent = '';
+
+    notify(name, company, pending)
+      .catch(() => { /* notification failure should never block the visitor */ })
+      .finally(() => {
+        gateSubmit.disabled = false;
+        gateSubmitText.textContent = 'Continue';
+        const item = pending;
+        closeGate();
+        if (item.action === 'download') {
+          triggerDownload(item.url);
+        } else {
+          openViewer(item);
+        }
+      });
+  });
+
+  gate.querySelectorAll('[data-vgate-close]').forEach(el => el.addEventListener('click', closeGate));
+  viewer.querySelectorAll('[data-vview-close]').forEach(el => el.addEventListener('click', closeViewer));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!gate.hidden) closeGate();
+    else if (!viewer.hidden) closeViewer();
+  });
+})();

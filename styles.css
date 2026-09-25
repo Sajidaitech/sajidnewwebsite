@@ -2715,3 +2715,141 @@ footer{ padding-left:0; padding-right:0; }
 /* tracked uppercase labels: 11px → 12px */
 .bd-card-tag, .bd-eyebrow, .cert-badge, .cert-category, .contact-panel .contact-avail,
 .lab-board-head, .lab-status, .tl-subroles-label{ font-size:12px; }
+
+/* =================================================================
+   VIEWER GATE + IN-SITE DOCUMENT VIEWER
+   Name-capture prompt shown before a CV/certificate view or
+   download, and a same-site modal viewer for certificates + CV
+   (so visitors never get redirected to drive.google.com). Reuses
+   the .cmdk glass-panel visual language.
+================================================================= */
+html.vgate-open, html.vview-open{ overflow:hidden; }
+
+.vgate, .vview{
+  position:fixed; inset:0; z-index:220;
+  display:flex; align-items:center; justify-content:center;
+  padding:16px;
+}
+.vgate[hidden], .vview[hidden]{ display:none; }
+
+.vgate-scrim, .vview-scrim{
+  position:absolute; inset:0; background:rgba(6,8,9,.6);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  opacity:0; transition:opacity .25s ease;
+}
+.vgate.is-open .vgate-scrim, .vview.is-open .vview-scrim{ opacity:1; }
+
+.vgate-panel{
+  position:relative; isolation:isolate;
+  width:min(400px,100%);
+  padding:32px 28px 26px;
+  border-radius:26px;
+  background:
+    radial-gradient(90% 60% at 10% -12%, rgba(255,255,255,.10), transparent 60%),
+    rgba(18,20,22,.86);
+  border:1px solid transparent;
+  border-color:rgba(255,255,255,.34) rgba(255,255,255,.14) rgba(255,255,255,.10) rgba(255,255,255,.24);
+  box-shadow:
+    inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(16,18,20,.40),
+    0 2px 4px rgba(0,0,0,.40), 0 34px 70px -24px rgba(0,0,0,.8);
+  -webkit-backdrop-filter:blur(24px) saturate(1.1); backdrop-filter:blur(24px) saturate(1.1);
+  opacity:0; translate:0 -8px; scale:.985;
+  transition:opacity .25s ease, translate .35s ease, scale .35s ease;
+}
+.vgate.is-open .vgate-panel{ opacity:1; translate:0 0; scale:1; }
+
+.vgate-close{
+  position:absolute; top:14px; right:14px; width:30px; height:30px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%; border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.05); color:rgba(255,255,255,.7);
+  font-size:18px; line-height:1; cursor:pointer;
+}
+.vgate-close:hover{ background:rgba(255,255,255,.1); color:#fff; }
+
+.vgate-icon{ font-size:26px; margin-bottom:10px; }
+.vgate-title{ margin:0 0 6px; font-size:19px; font-weight:700; color:#fff; }
+.vgate-sub{ margin:0 0 20px; font-size:13.5px; line-height:1.5; color:rgba(255,255,255,.62); }
+
+.vgate-form{ display:flex; flex-direction:column; gap:14px; }
+.vgate-label{ display:flex; flex-direction:column; gap:6px; font-size:12.5px; font-weight:600; color:rgba(255,255,255,.72); }
+.vgate-optional{ font-weight:400; color:rgba(255,255,255,.42); }
+.vgate-input{
+  padding:11px 13px; border-radius:12px; font-size:16px; color:#fff; /* 16px: no iOS zoom-on-focus */
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);
+  outline:none; transition:border-color .18s ease, background .18s ease;
+}
+.vgate-input::placeholder{ color:rgba(255,255,255,.34); }
+.vgate-input:focus{ border-color:rgba(34,211,166,.55); background:rgba(255,255,255,.09); }
+.vgate-input:invalid.is-touched{ border-color:rgba(240,110,110,.6); }
+
+.vgate-submit{
+  margin-top:4px; padding:12px 16px; border-radius:12px; border:none; cursor:pointer;
+  font-size:14.5px; font-weight:700; color:#06110d;
+  background:var(--teal,#22d3a6);
+  transition:opacity .18s ease, transform .18s ease;
+}
+.vgate-submit:hover{ opacity:.9; }
+.vgate-submit:disabled{ opacity:.6; cursor:default; }
+.vgate-status{ margin:2px 0 0; font-size:12.5px; min-height:16px; color:rgba(255,255,255,.55); }
+.vgate-status.is-error{ color:rgba(240,110,110,.9); }
+
+.vview-panel{
+  position:relative; isolation:isolate; overflow:hidden;
+  width:min(920px,100%); height:min(86vh,900px);
+  display:flex; flex-direction:column;
+  border-radius:22px;
+  background:rgba(14,16,17,.92);
+  border:1px solid transparent;
+  border-color:rgba(255,255,255,.34) rgba(255,255,255,.14) rgba(255,255,255,.10) rgba(255,255,255,.24);
+  box-shadow:
+    inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(16,18,20,.40),
+    0 2px 4px rgba(0,0,0,.40), 0 34px 70px -24px rgba(0,0,0,.8);
+  -webkit-backdrop-filter:blur(24px) saturate(1.1); backdrop-filter:blur(24px) saturate(1.1);
+  opacity:0; translate:0 8px; scale:.985;
+  transition:opacity .25s ease, translate .35s ease, scale .35s ease;
+}
+.vview.is-open .vview-panel{ opacity:1; translate:0 0; scale:1; }
+
+.vview-head{
+  flex:none; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 16px 14px 20px; border-bottom:1px solid rgba(255,255,255,.1);
+}
+.vview-title{ font-size:14.5px; font-weight:700; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.vview-actions{ display:flex; align-items:center; gap:14px; flex:none; }
+.vview-open{ font-size:12.5px; font-weight:600; color:var(--teal,#22d3a6); text-decoration:none; white-space:nowrap; }
+.vview-open:hover{ text-decoration:underline; }
+.vview-close{
+  width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+  border-radius:50%; border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.05); color:rgba(255,255,255,.7);
+  font-size:18px; line-height:1; cursor:pointer;
+}
+.vview-close:hover{ background:rgba(255,255,255,.1); color:#fff; }
+
+.vview-body{ flex:1; min-height:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.3); }
+.vview-iframe{ width:100%; height:100%; border:0; }
+.vview-img{ max-width:100%; max-height:100%; object-fit:contain; }
+.vview-loading{ font-size:13px; color:rgba(255,255,255,.5); }
+
+@media (max-width:640px){
+  /* Bottom-sheet layout: anchored to the bottom edge, full width, safe-area
+     aware, so the on-screen keyboard opening doesn't shove the panel
+     around or clip its bottom under iOS's home-indicator bar. */
+  .vgate, .vview{ align-items:flex-end; padding:0; }
+  .vgate-panel{
+    width:100%; max-height:88vh; overflow-y:auto;
+    border-radius:22px 22px 0 0;
+    padding:24px 20px calc(22px + env(safe-area-inset-bottom,0px));
+    translate:0 16px;
+  }
+  .vgate.is-open .vgate-panel{ translate:0 0; }
+  .vview-panel{
+    width:100%; height:92dvh; max-height:none;
+    border-radius:18px 18px 0 0;
+    translate:0 16px;
+  }
+  .vview.is-open .vview-panel{ translate:0 0; }
+  .vview-head{ padding-left:16px; padding-right:16px; }
+  .vview-body{ padding-bottom:env(safe-area-inset-bottom,0px); }
+}
