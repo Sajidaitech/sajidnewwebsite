@@ -898,3 +898,58 @@ $$('[data-case]').forEach(card => {
     else if (!viewer.hidden) closeViewer();
   });
 })();
+
+/* =================================================================
+   QR DIGITAL BUSINESS CARD
+   Builds a vCard from the contact details already on the page,
+   renders it as a scannable QR (via the QR Server API — no key,
+   no library to bundle) and offers a direct .vcf download too.
+================================================================= */
+(function qrBusinessCard(){
+  const img = document.getElementById('qrImg');
+  const dl = document.getElementById('qrDownload');
+  if (!img || !dl) return;
+
+  const vcard = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'N:Mehmood;Sajid;;;',
+    'FN:Sajid Mehmood',
+    'TITLE:IT Support Engineer',
+    'TEL;TYPE=CELL:+97466969598',
+    'EMAIL:sajiditeech@gmail.com',
+    'URL:https://sajidmk.com',
+    'ADR;TYPE=WORK:;;Doha;;;Qatar',
+    'END:VCARD'
+  ].join('\n');
+
+  const encoded = encodeURIComponent(vcard);
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=6&data=${encoded}`;
+  dl.href = `data:text/vcard;charset=utf-8,${encoded}`;
+})();
+
+/* =================================================================
+   REFERENCE-CALL CTA
+   Scrolls to the contact form and pre-fills subject + a starter
+   message, so a recruiter just adds their name/email and sends.
+================================================================= */
+(function referenceCallCta(){
+  const btn = document.getElementById('refCallBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    const section = document.getElementById('contact');
+    const subject = document.getElementById('cfSubject');
+    const message = document.getElementById('cfMessage');
+    const name = document.getElementById('cfName');
+    if (!section) return;
+
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (subject && !subject.value) subject.value = 'Reference call request';
+    if (message && !message.value) {
+      message.value = "Hi Sajid, I'd like to arrange a quick reference call to verify your experience. Let me know a good time.";
+    }
+    setTimeout(() => { if (name) name.focus(); }, 500);
+  });
+})();

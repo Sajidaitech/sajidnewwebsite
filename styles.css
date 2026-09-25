@@ -2853,3 +2853,72 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   .vview-head{ padding-left:16px; padding-right:16px; }
   .vview-body{ padding-bottom:env(safe-area-inset-bottom,0px); }
 }
+
+/* =================================================================
+   STATUS PAGE — live availability widget styled like a real status
+   page (recruiter-facing, reuses .glass/.glass-clear/.ping tokens).
+================================================================= */
+.sp-summary{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:18px; padding:20px 24px; border-radius:20px; margin:20px 0 26px;
+}
+.sp-overall{
+  display:flex; align-items:center; gap:10px; font-size:15px; font-weight:700; color:#fff;
+}
+.sp-overall .ping{ width:9px; height:9px; border-radius:50%; background:var(--teal,#22d3a6); box-shadow:0 0 10px var(--teal,#22d3a6); flex:none; }
+.sp-metrics{ display:flex; gap:28px; flex-wrap:wrap; }
+.sp-metric{ display:flex; flex-direction:column; gap:2px; }
+.sp-val{ font:700 17px/1.1 var(--ff-mono); color:#fff; }
+.sp-lbl{ font-size:11.5px; color:rgba(255,255,255,.5); text-transform:uppercase; letter-spacing:.04em; }
+
+.sp-incidents{ display:flex; flex-direction:column; gap:10px; }
+.sp-inc-head{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,.5); margin-bottom:2px; }
+.sp-incident{ padding:16px 18px; border-radius:14px; }
+.sp-inc-top{ display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.sp-inc-badge{
+  font:700 10.5px/1 var(--ff-mono); text-transform:uppercase; letter-spacing:.04em;
+  color:var(--teal,#22d3a6); background:rgba(34,211,166,.12);
+  border:1px solid rgba(34,211,166,.3); border-radius:999px; padding:4px 9px;
+}
+.sp-inc-date{ font:500 11.5px/1 var(--ff-mono); color:rgba(255,255,255,.45); }
+.sp-inc-title{ font-size:14.5px; font-weight:700; color:#fff; margin-bottom:4px; }
+.sp-inc-desc{ font-size:13px; line-height:1.5; color:rgba(255,255,255,.62); margin:0; }
+
+@media (max-width:640px){
+  .sp-summary{ flex-direction:column; align-items:flex-start; gap:14px; padding:18px; }
+  .sp-metrics{ gap:20px; width:100%; }
+}
+
+/* =================================================================
+   REFERENCE-CALL CTA — sits below the education testimonials.
+================================================================= */
+.ref-cta{
+  margin-top:22px; padding:20px 24px; border-radius:18px;
+  display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
+}
+.ref-cta-title{ font-size:15px; font-weight:700; color:#fff; margin-bottom:3px; }
+.ref-cta-desc{ margin:0; font-size:13px; color:rgba(255,255,255,.6); }
+.ref-cta-btn{
+  flex:none; display:inline-flex; align-items:center; gap:8px;
+  padding:11px 18px; border-radius:12px; border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06); color:#fff; font-size:13.5px; font-weight:700;
+  cursor:pointer; transition:background .18s ease, border-color .18s ease;
+}
+.ref-cta-btn:hover{ background:rgba(255,255,255,.11); border-color:rgba(34,211,166,.4); }
+@media (max-width:640px){
+  .ref-cta{ flex-direction:column; align-items:flex-start; }
+  .ref-cta-btn{ width:100%; justify-content:center; }
+}
+
+/* =================================================================
+   QR DIGITAL BUSINESS CARD — sits under the contact quick-links.
+================================================================= */
+.qr-card{
+  margin-top:18px; padding:14px 16px; border-radius:16px;
+  display:flex; align-items:center; gap:14px;
+}
+.qr-img{ width:64px; height:64px; border-radius:8px; background:#fff; padding:4px; flex:none; }
+.qr-title{ font-size:13px; font-weight:700; color:#fff; margin-bottom:3px; }
+.qr-download{ font-size:12px; font-weight:600; color:var(--teal,#22d3a6); text-decoration:none; }
+.qr-download:hover{ text-decoration:underline; }
+.qr-card.qr-failed .qr-title::after{ content:" — scan unavailable right now"; font-weight:400; color:rgba(255,255,255,.5); }
