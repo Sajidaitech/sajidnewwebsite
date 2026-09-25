@@ -407,12 +407,12 @@ button{ font-family:inherit; cursor:pointer; }
   transition:transform .3s cubic-bezier(.34,1.56,.64,1);
 }
 .trait-row:hover .trait-icon{ transform:scale(1.1) rotate(-4deg); }
-.trait-list .trait-row:nth-child(1){ transition-delay:.02s; }
-.trait-list .trait-row:nth-child(2){ transition-delay:.08s; }
-.trait-list .trait-row:nth-child(3){ transition-delay:.14s; }
-.trait-list .trait-row:nth-child(4){ transition-delay:.2s; }
-.trait-list .trait-row:nth-child(5){ transition-delay:.26s; }
-.trait-list .trait-row:nth-child(6){ transition-delay:.32s; }
+.trait-list .trait-row:nth-child(1){ transition-delay:0s; }
+.trait-list .trait-row:nth-child(2){ transition-delay:0s; }
+.trait-list .trait-row:nth-child(3){ transition-delay:0s; }
+.trait-list .trait-row:nth-child(4){ transition-delay:0s; }
+.trait-list .trait-row:nth-child(5){ transition-delay:0s; }
+.trait-list .trait-row:nth-child(6){ transition-delay:0s; }
 
 /* ---------------------------------------------------------------
    3D emoji icons — used in place of flat glyphs/Font Awesome.
@@ -793,8 +793,8 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .award-card:hover .award-icon{ transform:scale(1.1) rotate(-4deg); }
 .award-grid .award-card:nth-child(1){ transition-delay:0s; }
-.award-grid .award-card:nth-child(2){ transition-delay:.08s; }
-.award-grid .award-card:nth-child(3){ transition-delay:.16s; }
+.award-grid .award-card:nth-child(2){ transition-delay:0s; }
+.award-grid .award-card:nth-child(3){ transition-delay:0s; }
 .award-title{ font-family:var(--ff-display); font-size:16px; margin-bottom:6px; }
 .award-org{ font-size:12.5px; color:var(--amber); font-family:var(--ff-mono); margin-bottom:12px; }
 .award-desc{ font-size:13.5px; color:var(--text-dim); }
@@ -816,7 +816,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .ref-card:hover .ref-avatar{ transform:scale(1.1); }
 .refs-grid .ref-card:nth-child(1){ transition-delay:0s; }
-.refs-grid .ref-card:nth-child(2){ transition-delay:.08s; }
+.refs-grid .ref-card:nth-child(2){ transition-delay:0s; }
 .ref-name{ font-family:var(--ff-display); font-size:16px; }
 .ref-role{ font-size:13px; color:var(--text-dim); }
 .ref-org{ font-size:12.5px; color:var(--amber); font-family:var(--ff-mono); }
@@ -969,7 +969,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 :root{
   --sp-ease: cubic-bezier(.16,.84,.44,1);
   --sp-duration: .7s;
-  --sp-stagger-step: 70ms;
+  --sp-stagger-step: 0ms;
   --sp-reveal-distance: 22px;
   --sp-tilt-max: 6deg;
 }
