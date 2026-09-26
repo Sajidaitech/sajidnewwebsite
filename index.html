@@ -99,6 +99,7 @@
       <span class="focus-slider-label-text">Blurred</span>
       <span class="focus-icon focus-icon--soft" aria-hidden="true"></span>
     </div>
+    <button type="button" class="focus-ink-toggle" id="inkToggle" aria-pressed="false" title="Toggle text color on blurred panels">Aa · White text</button>
   </div>
 </div>
 
@@ -111,7 +112,7 @@
         <div class="status-chip glass-clear glass-tight" data-reveal="depth" style="--sp-i:1"><span class="ping"></span> Available — Doha, Qatar (GMT+3)</div>
         <h1 data-reveal="up" style="--sp-i:2">
           <span>I develop</span>
-          <span>failure-proof</span>
+          <span>reliable</span>
           <span>systems.</span>
         </h1>
         <p class="hero-sub" data-reveal="up" style="--sp-i:3">4+ years keeping aviation, healthcare and government systems running across Qatar & the UAE — CCNA certified, zero downtime record.</p>
@@ -957,6 +958,24 @@
         </form>
         <div class="diag-console" id="diagConsole" aria-live="polite">
           <div class="diag-line muted">Enter a host above and run the diagnostic to see the sequence.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE TICKET TRIAGE DEMO ============ -->
+  <section class="section" id="triage">
+    <div class="container">
+      <div class="section-label"><span class="dot"></span>Interactive Demo</div>
+      <h2>Submit a ticket. Watch me triage it.</h2>
+      <p class="section-intro">A simplified version of the same category → priority → SLA logic I run on a real service desk (ManageEngine ServiceDesk Plus). Describe an issue below — nothing is stored or sent anywhere.</p>
+      <div class="diag-panel glass triage-panel">
+        <form class="diag-form" id="triageForm">
+          <textarea class="diag-input triage-input" id="triageInput" rows="2" placeholder="e.g. 'Entire floor lost internet access' or 'One user forgot their password'" autocomplete="off"></textarea>
+          <button type="submit" class="diag-run" id="triageRun">Submit ticket</button>
+        </form>
+        <div class="triage-result" id="triageResult" aria-live="polite">
+          <div class="diag-line muted">Describe an issue above and submit to see it triaged.</div>
         </div>
       </div>
     </div>

@@ -1008,12 +1008,16 @@ $$('[data-case]').forEach(card => {
    LIVE FOCUS SLIDER — blurs every glass panel's BACKGROUND only
    (hero, recruiter bar, every .section, footer panel), via
    backdrop-filter — never the panel's own text/content, which is
-   what plain filter:blur() would do. Left (0) = fully Clear, no
-   blur. Right (100) = fully Blurred, backdrop-filter:blur(100px).
-   Past 20px the glass is washed-out enough that white text stops
-   reading cleanly, so text inside every blurred panel flips to
-   black once px > 20, and back to normal at 20px and below.
-   Separate from the Liquid Glass tint slider.
+   what plain filter:blur() would do.
+   Left (0)  = fully Clear: no blur AND the panel background itself
+               goes fully transparent, so the page behind shows
+               straight through.
+   Right(100)= fully Blurred, backdrop-filter:blur(100px), normal
+               tinted glass background.
+   The chosen value is saved to localStorage and restored on the
+   next visit, so a reload picks up right where the user left it.
+   Text color on blurred panels is a separate, user-controlled
+   choice — see the ink-toggle module below — not automatic.
 ================================================================= */
 (function focusSlider(){
   const slider = document.getElementById('heroFocusRange');
@@ -1021,32 +1025,79 @@ $$('[data-case]').forEach(card => {
   const panels = document.querySelectorAll('.hero, .recruiter-bar, .section, .footer-panel');
   if (!slider || !panels.length) return;
 
-  const INK_THRESHOLD = 20;
+  const STORAGE_KEY = 'focusBlurPx';
 
   panels.forEach(p => {
-    p.style.transition = 'backdrop-filter .12s linear, -webkit-backdrop-filter .12s linear';
+    p.style.transition = 'backdrop-filter .12s linear, -webkit-backdrop-filter .12s linear, background .12s linear';
   });
 
-  function apply(px){
+  function apply(px, persist){
     const clamped = Math.min(100, Math.max(0, px));
-    const bf = clamped === 0 ? '' : `blur(${clamped}px) saturate(1.3) contrast(1.02)`;
-    const inkOn = clamped > INK_THRESHOLD;
+    const isClear = clamped === 0;
+    // 'none' at 0 is required, not '' — every panel also carries a permanent
+    // baseline blur via CSS (--blur-section, ~2px) that isn't tied to this
+    // slider at all, so merely clearing the inline override would let that
+    // baseline blur leak back through instead of true zero blur.
+    const bf = isClear ? 'none' : `blur(${clamped}px) saturate(1.3) contrast(1.02)`;
 
     panels.forEach(p => {
-      // '' clears the inline override so the CSS default (--blur-section) takes back over at 0
       p.style.backdropFilter = bf;
       p.style.webkitBackdropFilter = bf;
-      p.classList.toggle('blur-ink', inkOn);
+      // At 0, drop the panel's own tinted background too, for full transparency —
+      // otherwise let the CSS default (tinted glass) take back over.
+      p.style.background = isClear ? 'transparent' : '';
     });
 
+    slider.value = clamped;
     slider.style.setProperty('--focus-fill', clamped + '%');
     if (readout) readout.textContent = clamped + 'px';
+
+    if (persist) {
+      try { localStorage.setItem(STORAGE_KEY, String(clamped)); } catch (e) { /* storage unavailable — ignore */ }
+    }
   }
 
-  apply(parseFloat(slider.value) || 0);
+  let saved = NaN;
+  try { saved = parseFloat(localStorage.getItem(STORAGE_KEY)); } catch (e) { /* storage unavailable — ignore */ }
+  const initial = Number.isFinite(saved) ? saved : (parseFloat(slider.value) || 0);
+  apply(initial, false);
 
   slider.addEventListener('input', () => {
-    apply(parseFloat(slider.value));
+    apply(parseFloat(slider.value), true);
+  });
+})();
+
+/* =================================================================
+   TEXT-COLOR (INK) TOGGLE — a manual White/Black switch for text on
+   every blurred glass panel, next to the focus slider. Replaces the
+   old automatic "flip past 20px" rule: the user decides, and the
+   choice is remembered across visits (localStorage).
+================================================================= */
+(function inkToggle(){
+  const btn = document.getElementById('inkToggle');
+  const panels = document.querySelectorAll('.hero, .recruiter-bar, .section, .footer-panel');
+  if (!btn || !panels.length) return;
+
+  const STORAGE_KEY = 'focusInkMode';
+
+  function apply(mode, persist){
+    const isBlack = mode === 'black';
+    panels.forEach(p => p.classList.toggle('blur-ink', isBlack));
+    btn.setAttribute('aria-pressed', String(isBlack));
+    btn.textContent = isBlack ? 'Aa · Black text' : 'Aa · White text';
+
+    if (persist) {
+      try { localStorage.setItem(STORAGE_KEY, mode); } catch (e) { /* storage unavailable — ignore */ }
+    }
+  }
+
+  let saved = 'white';
+  try { saved = localStorage.getItem(STORAGE_KEY) || 'white'; } catch (e) { /* storage unavailable — ignore */ }
+  apply(saved, false);
+
+  btn.addEventListener('click', () => {
+    const next = btn.getAttribute('aria-pressed') === 'true' ? 'white' : 'black';
+    apply(next, true);
   });
 })();
 
@@ -1150,5 +1201,102 @@ $$('[data-case]').forEach(card => {
     const target = input.value.trim();
     if (!target) { input.focus(); return; }
     run(target);
+  });
+})();
+
+/* =================================================================
+   LIVE TICKET TRIAGE DEMO
+   A rule-based classifier mirroring real service-desk triage:
+   category by keyword match, priority by impact language, then an
+   SLA target and first diagnostic step per category. Everything
+   runs client-side — nothing is stored or transmitted.
+================================================================= */
+(function ticketTriage(){
+  const form = document.getElementById('triageForm');
+  const input = document.getElementById('triageInput');
+  const runBtn = document.getElementById('triageRun');
+  const out = document.getElementById('triageResult');
+  if (!form || !input || !runBtn || !out) return;
+
+  const CATEGORIES = [
+    { key:'security', label:'Security', icon:'🛡️',
+      words:['phishing','malware','virus','ransomware','breach','hacked','suspicious','unauthorized','unauthorised','compromised','security'],
+      step:'Isolate the affected endpoint immediately, preserve logs, and begin containment per the incident-response runbook before anything else.' },
+    { key:'network', label:'Network', icon:'🌐',
+      words:['wifi','wi-fi','network','internet','vpn','dns','router','switch','firewall','vlan','connectivity','offline','packet','latency','lan'],
+      step:'Check physical link and switch port status, confirm DNS resolution, then run a ping/traceroute before escalating to routing.' },
+    { key:'hardware', label:'Hardware & power', icon:'🔧',
+      words:['laptop','desktop','printer','monitor','ups','power','server','hardware','device','battery','cable','peripheral','rack'],
+      step:'Verify the power source and cable seating, check UPS/PDU status and device health logs before dispatching a replacement.' },
+    { key:'access', label:'Access & identity', icon:'🔑',
+      words:['password','login','locked','account','mfa','2fa','permission','access denied','active directory','credentials','sign in','signin'],
+      step:'Verify the requester identity, check the Active Directory/Azure AD account status, then reset access under change control.' },
+    { key:'cloud', label:'Cloud & M365', icon:'☁️',
+      words:['azure','microsoft 365','office 365','m365','sharepoint','exchange','onedrive','teams','intune','cloud'],
+      step:'Check Microsoft 365 service health first, then verify licensing/sync status and Azure AD sign-in logs.' },
+    { key:'software', label:'Software', icon:'💻',
+      words:['software','application','app','crash','error','install','update','outlook','excel','freeze','bug'],
+      step:'Reproduce the issue, check for a recent update or patch conflict, and review application/event logs before a clean reinstall.' }
+  ];
+  const DEFAULT_CAT = { label:'General IT support', icon:'🗂️',
+    step:'Confirm exactly what changed for the user, gather screenshots or error text, and reproduce the issue before assigning a specialist.' };
+
+  const P1_WORDS = ['down','outage','entire','all users','all staff','everyone','production','cannot work','can not work','emergency','critical','data loss','breach','hospital','airport','no one can','whole floor','whole office'];
+  const P2_WORDS = ['multiple users','several users','some users','degraded','intermittent','slow','many people','half the'];
+  const P4_WORDS = ['how do i','how to','question','when will','just wondering','curious','request info','out of curiosity'];
+
+  const PRIORITY = {
+    P1: { label:'P1 — Critical', cls:'p1', sla:'15 min response · 4h resolution target' },
+    P2: { label:'P2 — High',     cls:'p2', sla:'1h response · 8h resolution target' },
+    P3: { label:'P3 — Medium',   cls:'p3', sla:'4h response · next business day' },
+    P4: { label:'P4 — Low',      cls:'p4', sla:'1 business day response' }
+  };
+
+  let counter = 10480 + Math.floor(Math.random() * 40);
+
+  function classify(text){
+    const t = text.toLowerCase();
+    let best = null, bestScore = 0;
+    CATEGORIES.forEach(cat => {
+      const score = cat.words.reduce((n, w) => n + (t.includes(w) ? 1 : 0), 0);
+      if (score > bestScore) { bestScore = score; best = cat; }
+    });
+    const category = best || DEFAULT_CAT;
+
+    let priority = 'P3';
+    if (P1_WORDS.some(w => t.includes(w))) priority = 'P1';
+    else if (P2_WORDS.some(w => t.includes(w))) priority = 'P2';
+    else if (P4_WORDS.some(w => t.includes(w))) priority = 'P4';
+
+    return { category, priority };
+  }
+
+  function esc(s){
+    return s.replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  function render(text){
+    const { category, priority } = classify(text);
+    const p = PRIORITY[priority];
+    counter++;
+    out.innerHTML = `
+      <div class="triage-card">
+        <div class="triage-top">
+          <span class="triage-id">SD-${counter}</span>
+          <span class="triage-badge ${p.cls}">${esc(p.label)}</span>
+        </div>
+        <div class="triage-cat">${category.icon} ${esc(category.label)}</div>
+        <div class="triage-row"><span>SLA target</span><strong>${esc(p.sla)}</strong></div>
+        <div class="triage-row"><span>First diagnostic step</span></div>
+        <p class="triage-step">${esc(category.step)}</p>
+        <div class="triage-foot">Assigned to Sajid Mehmood · auto-triaged in real time — demo only, no ticket is actually created.</div>
+      </div>`;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) { input.focus(); return; }
+    render(text);
   });
 })();

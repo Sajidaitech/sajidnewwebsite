@@ -2696,6 +2696,14 @@ button.side-rail-link{ padding:0; cursor:pointer; appearance:none; -webkit-appea
 /* footer: full-width wrapper (no side padding) so its panel matches the
    rest; content aligned to the same inner line as the sections */
 footer{ padding-left:0; padding-right:0; }
+
+/* The previous section's own margin-bottom already provides the
+   standard --panel-gap (28px) below it. Without this, footer's base
+   20px top padding stacked on top of that margin, making the gap
+   above the footer panel 48px instead of the 28px used everywhere
+   else — this keeps every glass-panel gap equal, mobile included. */
+footer{ padding-top:0; }
+
 .footer-panel{
   padding-left: max(var(--edge), calc((var(--panel-w) - var(--container)) / 2 + var(--edge)));
   padding-right:max(var(--edge), calc((var(--panel-w) - var(--container)) / 2 + var(--edge)));
@@ -3024,14 +3032,31 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   min-width:40px; text-align:right; flex:none;
 }
 
+.focus-ink-toggle{
+  flex:none; display:flex; align-items:center; gap:6px;
+  padding:6px 12px; border-radius:999px; cursor:pointer;
+  font-family:var(--ff-mono); font-size:11px; font-weight:700;
+  letter-spacing:.02em; white-space:nowrap;
+  color:var(--text-dim); background:rgba(255,255,255,.06);
+  border:1px solid var(--glass-border);
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.focus-ink-toggle:hover{ border-color:var(--glass-border-bright); }
+.focus-ink-toggle[aria-pressed="true"]{
+  color:#06110d; background:var(--teal); border-color:var(--teal);
+}
+
 @media (max-width:560px){
   .focus-slider-label-text{ display:none; }
   .focus-slider-inner{ gap:10px; }
+  .focus-ink-toggle{ padding:6px 9px; font-size:10px; }
 }
 
-/* Past 20px of blur, white text stops reading cleanly on the washed-
-   out glass — flip every bit of text/iconography inside that panel
-   to black instead. Panel is toggled via JS (.blur-ink class). */
+/* User-controlled via the "Aa" button next to the focus slider (not
+   automatic anymore) — flips text/iconography on every blurred panel
+   to black, for when a heavy blur washes out white text. Panel is
+   toggled via JS (.blur-ink class), and the choice is remembered
+   across visits (localStorage). */
 .blur-ink,
 .blur-ink *{
   color:#000 !important;
@@ -3076,4 +3101,28 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 @media (max-width:640px){
   .diag-form{ flex-direction:column; }
   .diag-run{ width:100%; }
+}
+
+/* =================================================================
+   LIVE TICKET TRIAGE DEMO
+================================================================= */
+.triage-input{ resize:vertical; min-height:44px; line-height:1.5; }
+.triage-result{ margin-top:4px; }
+.triage-card{
+  background:rgba(0,0,0,.35); border-radius:14px; padding:18px 20px;
+  opacity:0; animation:diagIn .25s ease forwards;
+}
+.triage-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.triage-id{ font-family:var(--ff-mono); font-size:12.5px; color:var(--text-faint); }
+.triage-badge{ font-family:var(--ff-mono); font-size:11px; padding:4px 10px; border-radius:999px; white-space:nowrap; font-weight:700; }
+.triage-badge.p1{ color:var(--danger); background:rgba(255,107,107,.16); }
+.triage-badge.p2{ color:#f0c96e; background:rgba(240,201,110,.14); }
+.triage-badge.p3{ color:var(--teal); background:var(--teal-dim); }
+.triage-badge.p4{ color:var(--text-faint); background:rgba(255,255,255,.06); }
+.triage-cat{ font-size:15px; font-weight:600; margin-bottom:12px; }
+.triage-row{ display:flex; justify-content:space-between; gap:12px; font-size:13px; color:var(--text-dim); margin-bottom:4px; }
+.triage-step{ font-size:13px; color:var(--text-dim); margin-top:4px; line-height:1.6; }
+.triage-foot{ margin-top:14px; font-size:11.5px; color:var(--text-faint); font-family:var(--ff-mono); }
+@media (max-width:640px){
+  .triage-card{ padding:16px; }
 }
