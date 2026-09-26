@@ -2466,51 +2466,52 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 /* =================================================================
    PART 14 — Side rail: puts the wide left gutter to work
    On the wide monitors where the gutter is largest, this gives it a
-   job — three quick-contact lenses (reusing real links already in
-   the Contact section) instead of empty space. Same glass-lens
-   material as .nav-toggle/.case-toggle (Part 9), vertically centered,
-   fully hidden below the width where the gutter is too narrow to
-   hold it without crowding the hero/section panels.
+   job — one glass "dock" holding the quick-contact links (reusing
+   real links already in the Contact section) instead of empty
+   space. One cohesive capsule, not separate floating orbs — icons
+   sit monochrome at rest and light up teal on hover, matching the
+   rest of the site's glass material instead of clashing brand
+   colors. Vertically centered, fully hidden below the width where
+   the gutter is too narrow to hold it without crowding the panels.
 ================================================================= */
 .side-rail{
   position:fixed; left:0; top:50%; z-index:40;
   transform:translateY(-50%);
-  display:none;
-  flex-direction:column; align-items:center; gap:10px;
+  display:none; align-items:center; justify-content:center;
   width:var(--panel-gutter);
 }
-.side-rail-link{
-  --lg-spec:.24; --lg-veil:.26; --lg-core:0;
-  --lg-b:18px; --lg-sat:1.08;
-  --lg-fg:rgba(255,255,255,.90);
-  --lg-edge:var(--lg-edge-rest, inset 1px 1px 0 rgba(255,255,255,.44), inset -1px -1px 0 rgba(16,18,20,.34));
-  --lg-sh:0 1px 1.5px rgba(0,0,0,.34), 0 6px 12px -6px rgba(0,0,0,.5), 0 14px 20px -14px rgba(0,0,0,.45);
-  --lg-bc:rgba(255,255,255,.42) rgba(255,255,255,.16) rgba(255,255,255,.10) rgba(255,255,255,.30);
-
-  display:flex; align-items:center; justify-content:center;
-  width:48px; height:48px; border-radius:50%;
-  border:1px solid transparent; border-color:var(--lg-bc);
-  color:var(--lg-fg); text-decoration:none;
-  font-family:var(--ff-mono); font-size:11px; font-weight:600; letter-spacing:.01em;
+.side-rail-dock{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:10px 8px;
+  border-radius:999px;
   background:
-    radial-gradient(circle at 31% 23%, rgba(255,255,255,.28), rgba(255,255,255,.05) 30%, transparent 50%),
-    rgba(18,20,22,.30);
-  backdrop-filter:blur(16px) saturate(1.15);
-  -webkit-backdrop-filter:blur(16px) saturate(1.15);
-  box-shadow:var(--lg-sh);
-  transition:transform .3s var(--lg-ease,ease), border-color .3s ease, color .3s ease, box-shadow .3s ease;
+    linear-gradient(180deg, rgba(255,255,255,.12) 0%, var(--glass-tint) 30%, rgba(255,255,255,.02) 100%);
+  border:1px solid var(--glass-border);
+  border-top-color:var(--glass-border-bright);
+  backdrop-filter:blur(20px) saturate(1.3);
+  -webkit-backdrop-filter:blur(20px) saturate(1.3);
+  box-shadow:
+    0 20px 40px -22px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.2);
+}
+.side-rail-link{
+  display:flex; align-items:center; justify-content:center;
+  width:42px; height:42px; border-radius:50%;
+  border:1px solid transparent;
+  color:var(--text-dim); text-decoration:none;
+  background:transparent;
+  transition:background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease;
 }
 .side-rail-link:hover{
-  transform:translateX(3px) scale(1.06);
+  background:rgba(34,211,166,.14);
+  border-color:rgba(34,211,166,.4);
   color:var(--teal);
-  border-color:rgba(34,211,166,.5);
-  box-shadow:0 0 0 3px rgba(34,211,166,.14), 0 10px 20px -10px rgba(0,0,0,.5);
+  transform:scale(1.08);
 }
-.side-rail-icon{ width:24px; height:24px; display:block; filter:drop-shadow(0 2px 5px rgba(0,0,0,.45)); }
-.side-rail-link:hover .side-rail-icon{ filter:drop-shadow(0 2px 8px rgba(34,211,166,.5)); }
+.side-rail-icon{ width:19px; height:19px; display:block; }
 .side-rail-line{
-  width:1px; height:64px; margin-top:2px;
-  background:linear-gradient(180deg, rgba(255,255,255,.3), transparent);
+  width:20px; height:1px; margin:3px 0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
 }
 
 @media (min-width:1400px){
@@ -2940,47 +2941,6 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 .qr-card.qr-failed .qr-title::after{ content:" — scan unavailable right now"; font-weight:400; color:rgba(255,255,255,.5); }
 
 /* =================================================================
-   LIQUID GLASS — Clear ↔ Tinted
-   Apple's own Liquid Glass accessibility control, not a light/dark
-   swap: this slider changes how opaque the frosted panels are. It
-   writes a single --glass-amt custom property (0 Clear → 1 Tinted)
-   that --glass-tint, --glass-tint-strong, --glass-surface, --glass-
-   surface-strong and --blur-glass-liquid are all already built from
-   (see :root, top of file, and the Part 6 token block), so every
-   .glass/.glass-clear panel on the page responds to one control
-   instead of needing a per-component override.
-================================================================= */
-.glass-slider{
-  display:inline-flex; align-items:center;
-  margin-left:var(--nav-gap,6px); flex:none;
-}
-.glass-slider-input{
-  -webkit-appearance:none; appearance:none;
-  width:34px; height:3px; border-radius:999px; outline:none; cursor:pointer;
-  background:linear-gradient(90deg,
-    var(--teal) 0%, var(--teal) var(--glass-slider-fill, 100%),
-    rgba(255,255,255,.22) var(--glass-slider-fill, 100%));
-}
-.glass-slider-input::-webkit-slider-thumb{
-  -webkit-appearance:none; appearance:none;
-  width:13px; height:13px; border-radius:50%; cursor:pointer;
-  background:#fff; border:1px solid var(--glass-border-bright);
-  box-shadow:0 2px 5px rgba(0,0,0,.4);
-  transition:transform .15s ease;
-}
-.glass-slider-input::-webkit-slider-thumb:hover{ transform:scale(1.15); }
-.glass-slider-input::-moz-range-track{ height:3px; border-radius:999px; background:rgba(255,255,255,.22); }
-.glass-slider-input::-moz-range-progress{ height:3px; border-radius:999px; background:var(--teal); }
-.glass-slider-input::-moz-range-thumb{
-  width:13px; height:13px; border-radius:50%; cursor:pointer;
-  background:#fff; border:1px solid var(--glass-border-bright);
-  box-shadow:0 2px 5px rgba(0,0,0,.4);
-}
-@media (max-width:1259px){
-  .glass-slider-input{ width:26px; }
-}
-
-/* =================================================================
    LIVE FOCUS SLIDER — sits between the nav and the hero panel.
    Independent of the Liquid Glass tint control above: this one
    drives a real filter:blur() on the hero panel itself, so it's
@@ -3007,8 +2967,12 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
     0 20px 44px -26px rgba(0,0,0,.6),
     inset 0 1px 0 rgba(255,255,255,.24);
 }
-@media (max-width:900px){ .focus-slider{ margin-top:84px; } }
-@media (max-width:640px){ .focus-slider{ margin-top:calc(env(safe-area-inset-top, 0px) + 84px); padding:10px 16px; } }
+/* margin-top = nav's own fixed "top" offset + its real measured
+   height (--nav-h, set in script.js) + a fixed breathing-room gap,
+   so the slider always clears the nav by the same visible amount
+   regardless of safe-area insets or the nav's rendered height. */
+@media (max-width:900px){ .focus-slider{ margin-top:calc(16px + var(--nav-h, 60px) + 20px); } }
+@media (max-width:640px){ .focus-slider{ margin-top:calc(env(safe-area-inset-top, 0px) + 12px + var(--nav-h, 52px) + 16px); padding:10px 16px; } }
 
 .focus-slider-inner{
   display:flex; align-items:center; gap:14px; width:100%;

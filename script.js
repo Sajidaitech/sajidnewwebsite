@@ -36,6 +36,30 @@ window.addEventListener('scroll', () => {
 }
 
 /* ---------------------------------------------------------------
+   Real nav height, not a guess — .nav is position:fixed so nothing
+   below it reserves space automatically. The focus-slider (and
+   anything else that needs to clear the floating nav) used to rely
+   on a hardcoded margin-top px value, which drifted out of sync
+   whenever the nav's own rendered height changed (safe-area insets,
+   font scaling, wrapping, etc.), leaving little to no visible gap
+   on some phones. Measure it for real and expose it as --nav-h so
+   CSS can just add a fixed breathing-room gap on top of it.
+--------------------------------------------------------------- */
+{
+  const nav = $('#topNav');
+  if (nav) {
+    const setNavH = () => {
+      document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
+    };
+    setNavH();
+    window.addEventListener('resize', setNavH);
+    window.addEventListener('orientationchange', setNavH);
+    if (window.ResizeObserver) new ResizeObserver(setNavH).observe(nav);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(setNavH);
+  }
+}
+
+/* ---------------------------------------------------------------
    Specular highlight on every glass panel — tracks the pointer via
    --mx/--my, consumed by the ::before spotlight in styles.css.
    This is the one signature "liquid glass" interaction.
@@ -977,48 +1001,6 @@ $$('[data-case]').forEach(card => {
       message.value = "Hi Sajid, I'd like to arrange a quick reference call to verify your experience. Let me know a good time.";
     }
     setTimeout(() => { if (name) name.focus(); }, 500);
-  });
-})();
-
-/* =================================================================
-   LIQUID GLASS — Clear ↔ Tinted slider
-   Apple's own accessibility control for how opaque glass panels are,
-   not a light/dark swap. Drives one --glass-amt custom property
-   (0 Clear → 1 Tinted); every glass token in styles.css is already
-   built from it, so moving the slider updates every panel at once.
-   Remembers an explicit choice in localStorage; defaults to fully
-   Tinted (today's look) for first-time visitors.
-================================================================= */
-(function glassSlider(){
-  const STORE_KEY = 'sajidmk-glass-amt';
-  const input = document.getElementById('glassAmt');
-  if (!input) return;
-  const root = document.documentElement;
-
-  function apply(pct){
-    const clamped = Math.min(100, Math.max(0, pct));
-    root.style.setProperty('--glass-amt', clamped / 100);
-    input.style.setProperty('--glass-slider-fill', clamped + '%');
-  }
-
-  function getStored(){
-    try {
-      const v = parseFloat(localStorage.getItem(STORE_KEY));
-      return Number.isFinite(v) ? v : null;
-    } catch (e) { return null; }
-  }
-  function setStored(pct){
-    try { localStorage.setItem(STORE_KEY, String(pct)); } catch (e) { /* private mode, etc. */ }
-  }
-
-  const stored = getStored();
-  if (stored !== null) input.value = String(stored);
-  apply(parseFloat(input.value));
-
-  input.addEventListener('input', () => {
-    const pct = parseFloat(input.value);
-    apply(pct);
-    setStored(pct);
   });
 })();
 
