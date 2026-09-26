@@ -901,14 +901,18 @@ $$('[data-case]').forEach(card => {
 
 /* =================================================================
    QR DIGITAL BUSINESS CARD
-   Builds a vCard from the contact details already on the page,
-   renders it as a scannable QR (via the QR Server API — no key,
-   no library to bundle) and offers a direct .vcf download too.
+   Builds a vCard from the contact details already on the page and
+   renders it as a scannable QR. Tries two independent QR image
+   providers (in case one is down or blocked by an extension/
+   network filter) before falling back to a plain text notice —
+   the vCard download itself never depends on either provider,
+   since it's a local data: URI.
 ================================================================= */
 (function qrBusinessCard(){
   const img = document.getElementById('qrImg');
   const dl = document.getElementById('qrDownload');
-  if (!img || !dl) return;
+  const card = document.querySelector('.qr-card');
+  if (!img || !dl || !card) return;
 
   const vcard = [
     'BEGIN:VCARD',
@@ -922,10 +926,32 @@ $$('[data-case]').forEach(card => {
     'ADR;TYPE=WORK:;;Doha;;;Qatar',
     'END:VCARD'
   ].join('\n');
-
   const encoded = encodeURIComponent(vcard);
-  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=6&data=${encoded}`;
+
+  // Always works, no network dependency at all.
   dl.href = `data:text/vcard;charset=utf-8,${encoded}`;
+
+  const providers = [
+    `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data=${encoded}`,
+    `https://quickchart.io/qr?text=${encoded}&size=240&margin=2`
+  ];
+  let attempt = 0;
+
+  function tryNext(){
+    if (attempt >= providers.length) {
+      // Both providers failed (blocked network, offline, extension, etc.)
+      // — don't leave a broken-image icon, show a clear text fallback and
+      // keep the vCard download (which still works) front and centre.
+      card.classList.add('qr-failed');
+      img.remove();
+      return;
+    }
+    img.src = providers[attempt];
+    attempt++;
+  }
+
+  img.addEventListener('error', tryNext);
+  tryNext();
 })();
 
 /* =================================================================
@@ -951,5 +977,196 @@ $$('[data-case]').forEach(card => {
       message.value = "Hi Sajid, I'd like to arrange a quick reference call to verify your experience. Let me know a good time.";
     }
     setTimeout(() => { if (name) name.focus(); }, 500);
+  });
+})();
+
+/* =================================================================
+   LIQUID GLASS — Clear ↔ Tinted slider
+   Apple's own accessibility control for how opaque glass panels are,
+   not a light/dark swap. Drives one --glass-amt custom property
+   (0 Clear → 1 Tinted); every glass token in styles.css is already
+   built from it, so moving the slider updates every panel at once.
+   Remembers an explicit choice in localStorage; defaults to fully
+   Tinted (today's look) for first-time visitors.
+================================================================= */
+(function glassSlider(){
+  const STORE_KEY = 'sajidmk-glass-amt';
+  const input = document.getElementById('glassAmt');
+  if (!input) return;
+  const root = document.documentElement;
+
+  function apply(pct){
+    const clamped = Math.min(100, Math.max(0, pct));
+    root.style.setProperty('--glass-amt', clamped / 100);
+    input.style.setProperty('--glass-slider-fill', clamped + '%');
+  }
+
+  function getStored(){
+    try {
+      const v = parseFloat(localStorage.getItem(STORE_KEY));
+      return Number.isFinite(v) ? v : null;
+    } catch (e) { return null; }
+  }
+  function setStored(pct){
+    try { localStorage.setItem(STORE_KEY, String(pct)); } catch (e) { /* private mode, etc. */ }
+  }
+
+  const stored = getStored();
+  if (stored !== null) input.value = String(stored);
+  apply(parseFloat(input.value));
+
+  input.addEventListener('input', () => {
+    const pct = parseFloat(input.value);
+    apply(pct);
+    setStored(pct);
+  });
+})();
+
+/* =================================================================
+   LIVE FOCUS SLIDER — blurs every glass panel's BACKGROUND only
+   (hero, recruiter bar, every .section, footer panel), via
+   backdrop-filter — never the panel's own text/content, which is
+   what plain filter:blur() would do. Left (0) = fully Clear, no
+   blur. Right (100) = fully Blurred, backdrop-filter:blur(100px).
+   Past 20px the glass is washed-out enough that white text stops
+   reading cleanly, so text inside every blurred panel flips to
+   black once px > 20, and back to normal at 20px and below.
+   Separate from the Liquid Glass tint slider.
+================================================================= */
+(function focusSlider(){
+  const slider = document.getElementById('heroFocusRange');
+  const readout = document.getElementById('focusSliderReadout');
+  const panels = document.querySelectorAll('.hero, .recruiter-bar, .section, .footer-panel');
+  if (!slider || !panels.length) return;
+
+  const INK_THRESHOLD = 20;
+
+  panels.forEach(p => {
+    p.style.transition = 'backdrop-filter .12s linear, -webkit-backdrop-filter .12s linear';
+  });
+
+  function apply(px){
+    const clamped = Math.min(100, Math.max(0, px));
+    const bf = clamped === 0 ? '' : `blur(${clamped}px) saturate(1.3) contrast(1.02)`;
+    const inkOn = clamped > INK_THRESHOLD;
+
+    panels.forEach(p => {
+      // '' clears the inline override so the CSS default (--blur-section) takes back over at 0
+      p.style.backdropFilter = bf;
+      p.style.webkitBackdropFilter = bf;
+      p.classList.toggle('blur-ink', inkOn);
+    });
+
+    slider.style.setProperty('--focus-fill', clamped + '%');
+    if (readout) readout.textContent = clamped + 'px';
+  }
+
+  apply(parseFloat(slider.value) || 0);
+
+  slider.addEventListener('input', () => {
+    apply(parseFloat(slider.value));
+  });
+})();
+
+/* =================================================================
+   INTERACTIVE DIAGNOSTICS DEMO
+   A scripted, clearly-labelled simulation of a DNS → ping →
+   traceroute sequence. Nothing here makes a real network call —
+   browsers can't send raw ICMP packets — it's purely illustrative
+   of the diagnostic order/methodology.
+================================================================= */
+(function diagnosticsDemo(){
+  const form = document.getElementById('diagForm');
+  const input = document.getElementById('diagTarget');
+  const runBtn = document.getElementById('diagRun');
+  const out = document.getElementById('diagConsole');
+  if (!form || !input || !runBtn || !out) return;
+
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  function line(text, cls){
+    const div = document.createElement('div');
+    div.className = 'diag-line' + (cls ? ' ' + cls : '');
+    div.textContent = text;
+    out.appendChild(div);
+    out.scrollTop = out.scrollHeight;
+  }
+
+  // Deterministic pseudo-random numbers seeded from the host string,
+  // so the same input always produces the same (fake) results rather
+  // than looking like noise on refresh.
+  function seededRandom(seed){
+    let h = 0;
+    for (let i = 0; i < seed.length; i++) { h = (h * 31 + seed.charCodeAt(i)) >>> 0; }
+    return function(){
+      h = (h * 1664525 + 1013904223) >>> 0;
+      return h / 4294967296;
+    };
+  }
+
+  async function run(target){
+    out.innerHTML = '';
+    runBtn.disabled = true;
+    const rand = seededRandom(target.toLowerCase());
+    const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(target);
+    const fakeIp = isIp ? target : `${140 + Math.floor(rand()*80)}.${Math.floor(rand()*255)}.${Math.floor(rand()*255)}.${10 + Math.floor(rand()*240)}`;
+
+    line(`[SIMULATED] Diagnostic sequence for ${target}`, 'muted');
+    await sleep(350);
+
+    if (!isIp) {
+      line(`Resolving ${target} ...`);
+      await sleep(500);
+      line(`→ Resolved to ${fakeIp}`, 'ok');
+      await sleep(300);
+    }
+
+    line(`Pinging ${fakeIp} with 32 bytes of data:`);
+    await sleep(250);
+    let sent = 0, received = 0, times = [];
+    for (let i = 0; i < 4; i++) {
+      sent++;
+      await sleep(280);
+      const dropped = rand() < 0.05;
+      if (dropped) {
+        line(`Request timed out.`, 'warn');
+      } else {
+        const t = Math.round(8 + rand() * 42);
+        times.push(t);
+        received++;
+        line(`Reply from ${fakeIp}: bytes=32 time=${t}ms TTL=54`);
+      }
+    }
+    const loss = Math.round(((sent - received) / sent) * 100);
+    const avg = times.length ? Math.round(times.reduce((a,b)=>a+b,0) / times.length) : 0;
+    line(`Packets: Sent = ${sent}, Received = ${received}, Lost = ${sent - received} (${loss}% loss)`, loss > 0 ? 'warn' : 'ok');
+    if (times.length) line(`Approximate round trip: min=${Math.min(...times)}ms max=${Math.max(...times)}ms avg=${avg}ms`, 'muted');
+
+    await sleep(400);
+    line(`Running traceroute to ${fakeIp} ...`);
+    await sleep(300);
+    const hopNames = ['gateway.local', 'isp-edge-1.net', 'isp-core-3.net', 'transit-xchg.net', 'regional-pop.net', `${target}`];
+    const hopCount = 3 + Math.floor(rand() * 3);
+    for (let h = 1; h <= hopCount; h++) {
+      await sleep(260);
+      const t = Math.round(4 + h * (6 + rand() * 10));
+      const name = h === hopCount ? (isIp ? fakeIp : target) : hopNames[Math.min(h-1, hopNames.length-2)];
+      line(`${String(h).padStart(2,' ')}  ${t}ms  ${name}`);
+    }
+
+    await sleep(300);
+    if (loss === 0) {
+      line(`✔ Diagnosis: host reachable, no packet loss, latency within normal range.`, 'ok');
+    } else {
+      line(`⚠ Diagnosis: intermittent packet loss detected — next step would be checking the local gateway and ISP link before escalating.`, 'warn');
+    }
+    runBtn.disabled = false;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const target = input.value.trim();
+    if (!target) { input.focus(); return; }
+    run(target);
   });
 })();

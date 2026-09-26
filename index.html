@@ -59,6 +59,9 @@
     <a href="#references" class="nav-link">References</a>
   </div>
   <a href="#contact" class="nav-cta">Let's talk</a>
+  <div class="glass-slider" title="Liquid Glass: Clear to Tinted">
+    <input type="range" class="glass-slider-input" id="glassAmt" min="0" max="100" value="100" step="1" aria-label="Liquid Glass tint amount, from Clear to Tinted">
+  </div>
   <button class="nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobDrawer">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="i-open" d="M3 6h18M3 12h18M3 18h18"/><path class="i-close" d="M6 6l12 12M18 6L6 18"/></svg>
   </button>
@@ -79,6 +82,25 @@
   <a href="#achievements" class="nav-link">Achievements</a>
   <a href="#references" class="nav-link">References</a>
   <a href="#contact" class="nav-cta mob-cta">Let's talk</a>
+</div>
+
+<!-- ============ LIVE FOCUS SLIDER — drag to blur the hero panel ============ -->
+<div class="focus-slider" id="focusSlider">
+  <div class="focus-slider-inner">
+    <div class="focus-slider-label focus-slider-label--left">
+      <span class="focus-icon focus-icon--sharp" aria-hidden="true"></span>
+      <span class="focus-slider-label-text">Clear</span>
+    </div>
+    <div class="focus-slider-track-wrap">
+      <input type="range" id="heroFocusRange" class="focus-slider-input" min="0" max="100" value="0" step="1"
+             aria-label="Blur the hero section — 0 is fully Clear, 100 is fully Blurred (100px)">
+      <span class="focus-slider-readout" id="focusSliderReadout">0px</span>
+    </div>
+    <div class="focus-slider-label focus-slider-label--right">
+      <span class="focus-slider-label-text">Blurred</span>
+      <span class="focus-icon focus-icon--soft" aria-hidden="true"></span>
+    </div>
+  </div>
 </div>
 
 <main id="home">
@@ -919,6 +941,24 @@
           <p class="lab-empty-note">Certification evidence for CCNA and AZ-104 lives in Proof. Dedicated lab write-ups (objective / architecture / configuration / result) for these categories don't exist yet — nothing shown here is invented to fill the gap.</p>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTERACTIVE DIAGNOSTICS DEMO ============ -->
+  <section class="section" id="diagnostics">
+    <div class="container">
+      <div class="section-label"><span class="dot"></span>Interactive Demo</div>
+      <h2>See how I'd troubleshoot it.</h2>
+      <p class="section-intro">A simulated walkthrough of the diagnostic sequence I'd actually run — DNS resolution, ping, then a traceroute. Browsers can't fire real ICMP packets, so this is illustrative rather than a live network tool, but the steps and order are the real thing.</p>
+      <div class="diag-panel glass">
+        <form class="diag-form" id="diagForm">
+          <input type="text" class="diag-input" id="diagTarget" placeholder="Enter a host, e.g. 8.8.8.8 or api.example.com" autocomplete="off">
+          <button type="submit" class="diag-run" id="diagRun">Run diagnostic</button>
+        </form>
+        <div class="diag-console" id="diagConsole" aria-live="polite">
+          <div class="diag-line muted">Enter a host above and run the diagnostic to see the sequence.</div>
+        </div>
       </div>
     </div>
   </section>
