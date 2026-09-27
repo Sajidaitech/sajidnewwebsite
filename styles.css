@@ -3,8 +3,6 @@
    Neutral frosted-glass design system (gray tint, green + slate-blue accents)
    ============================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
-
 :root{
   /* ---- palette ---- */
   --bg-deep:#0A0C0D;
