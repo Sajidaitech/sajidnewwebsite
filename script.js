@@ -527,7 +527,7 @@ $$('[data-case]').forEach(card => {
     '#why-hire':'hire why recruit', '#experience':'work history jobs career', '#skills':'abilities strengths',
     '#arsenal':'tools stack tech tooling', '#certifications':'certs certificates ccna itil', '#projects':'projects case studies missions',
     '#proof':'evidence results metrics', '#lab':'home lab practice', '#education':'degree university school',
-    '#achievements':'awards wins', '#references':'recommendations referees testimonials', '#about':'bio profile who'
+    '#achievements':'awards wins', '#references':'recommendations referees testimonials', '#about':'bio profile who', '#toolkit':'bat scripts downloads windows tools utilities'
   };
 
   function build(){
@@ -1298,5 +1298,374 @@ $$('[data-case]').forEach(card => {
     const text = input.value.trim();
     if (!text) { input.focus(); return; }
     render(text);
+  });
+})();
+
+
+/* =================================================================
+   SAJID IT TOOLKIT
+   ONE place to edit: TOOLKIT_CONFIG (social links) and TOOLKIT_TOOLS
+   (one object per tool). Cards, details modal, source viewer and the
+   unlock flow are all generated from these.
+================================================================= */
+(function sajidToolkit(){
+  const grid = $('#tkGrid');
+  if (!grid) return;
+
+  /* ---- 1. SOCIAL LINKS — paste your URLs here (leave '' to hide that button) ---- */
+  const TOOLKIT_CONFIG = {
+    youtubeUrl:   '',   // e.g. 'https://www.youtube.com/@yourchannel'
+    instagramUrl: ''    // e.g. 'https://www.instagram.com/yourhandle/'
+  };
+
+  /* ---- 2. TOOLS — add / edit tools here ---- */
+  const TOOLKIT_TOOLS = [
+    {
+      id:'software-updater', status:'available', category:'Windows', icon:'update',
+      name:'One-Click Software Updater',
+      desc:'Update commonly installed Windows applications from one convenient script.',
+      long:'Runs Windows Package Manager (winget) to upgrade installed applications, then checks for Windows updates and repairs system files.',
+      version:'v1.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11',
+      admin:true, size:'1,165 bytes',
+      sha256:'dc0e288c3626d7be24eb74fafc87ca2054f7037cb8b1f87ac2d74f58bc08896e',
+      file:'assets/toolkit/one-click-software-updater.bat',
+      runNote:'Save your work and close other programs first. Your PC may restart automatically after updates.',
+      extras:[],   // e.g. [{label:'README', path:'assets/toolkit/README.txt'}]
+      does:[
+        'Checks that it is running as administrator and stops if not.',
+        'Runs “winget upgrade --all --include-unknown” to update supported applications.',
+        'Installs the PSWindowsUpdate PowerShell module, then installs available Windows updates and drivers.',
+        'Restarts the PC automatically if Windows Update requires it.',
+        'Runs “sfc /scannow” to scan and repair system files.'
+      ],
+      requires:['Windows 10 or Windows 11','Windows Package Manager (winget)','Internet connection','Administrator rights'],
+      safety:['Save your work first: the PC can restart automatically after updates.','“--include-unknown” can also upgrade apps you did not plan to update.','Downloads a module (PSWindowsUpdate) from the PowerShell Gallery.','Create a restore point or backup before running.']
+    },
+    {
+      id:'cache-cleaner', status:'available', category:'Cleanup', icon:'broom',
+      name:'Windows Cache Cleaner',
+      desc:'Clean temporary files, cache and other safe-to-remove Windows temporary data.',
+      long:'Clears temporary folders and the DNS cache, optimizes drives, and runs the System File Checker.',
+      version:'v1.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11',
+      admin:true, size:'985 bytes',
+      sha256:'bca8cdad01610960f65ffd3cf80e9951453856533bc29d6984f0eea12ae24748',
+      file:'assets/toolkit/windows-cache-cleaner.bat',
+      runNote:'Close your open programs first so temporary files are not in use.',
+      extras:[],
+      does:[
+        'Checks that it is running as administrator and stops if not.',
+        'Deletes the contents of your user Temp folder, C:\\Windows\\Temp and C:\\Windows\\Prefetch.',
+        'Flushes the DNS resolver cache (ipconfig /flushdns).',
+        'Runs “defrag /O” on C: and D: (TRIM for SSDs, defrag for hard drives; D: is skipped or errors if it does not exist).',
+        'Runs “sfc /scannow” to scan and repair system files.'
+      ],
+      requires:['Windows 10 or Windows 11','Administrator rights'],
+      safety:['Close your open programs first; files in use are skipped.','Prefetch is rebuilt by Windows, so the first launches afterwards may be slightly slower.','Drive optimization and SFC can take several minutes.','Files removed from Temp folders are not recoverable from the Recycle Bin.']
+    },
+    {
+      id:'file-organizer', status:'available', category:'Productivity', icon:'folder',
+      name:'Automatic File Organizer',
+      desc:'Automatically organize files into appropriate folders based on their file types.',
+      long:'Moves every file in the folder where the script is placed into a subfolder named after its file extension.',
+      version:'v1.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11',
+      admin:false, size:'139 bytes',
+      sha256:'ab5578f3df5dd819df1c9466077e0db60841f8d02b35c9931c2141a50045984b',
+      file:'assets/toolkit/automatic-file-organizer.bat',
+      runNote:'Copy the file into the folder you want to organize (for example a test folder), then run it there. It moves every file in its folder and cannot be undone.',
+      extras:[],
+      does:[
+        'Looks at every file in the folder the script is run from.',
+        'Creates a subfolder for each file extension (for example “pdf” or “jpg”).',
+        'Moves each file into its matching subfolder.'
+      ],
+      requires:['Windows 10 or Windows 11','No administrator rights needed'],
+      safety:['Copy the script into the folder you want to organize; do not run it from a system folder.','There is no confirmation prompt and no undo. Back up the folder first.','The script moves itself too, because it is also a file in that folder.']
+    },
+    {
+      id:'it-quick-tools', status:'soon', category:'IT Support', icon:'terminal',
+      name:'Windows IT Quick Tools',
+      desc:'A collection of useful Windows commands and utilities for everyday IT support.',
+      version:'v0.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11'
+    }
+  ];
+
+  const CATS = ['All','Windows','Cleanup','Productivity','Networking','IT Support'];
+  const ICON = {
+    update:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12A8 8 0 0 1 18.3 7.1"/><path d="M18.5 3v4.5H14M5.5 21v-4.5H10"/></svg>',
+    broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 3l-6.5 6.5"/><path d="M11 8l5 5-3.5 3.5c-1.8 1.8-4.6 1.9-6.5.3L4 15l1-1c.8-.8 2-.8 2.8 0L11 8z"/><path d="M8 17l-1.5 4M11 18l-.5 3M5 15l-2 4"/></svg>',
+    folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M8 13h8"/></svg>',
+    terminal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9l3 3-3 3M13 15h4"/></svg>'
+  };
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  };
+  const UNLOCK_KEY = 'sajidToolkitSupport';
+
+  /* ---------- cards + search/filter ---------- */
+  let cat = 'All', query = '';
+  const empty = $('#tkEmpty');
+
+  function renderCards(){
+    const q = query.trim().toLowerCase();
+    const list = TOOLKIT_TOOLS.filter(t =>
+      (cat === 'All' || t.category === cat) &&
+      (!q || (t.name + ' ' + t.desc + ' ' + t.category).toLowerCase().includes(q)));
+    grid.innerHTML = list.map(t => `
+      <article class="tk-card" role="listitem">
+        <div class="tk-ico">${ICON[t.icon] || ICON.terminal}</div>
+        <h3>${esc(t.name)}</h3>
+        <p>${esc(t.desc)}</p>
+        <ul class="tk-meta"><li>${esc(t.version)}</li><li>${esc(t.category)}</li>${t.status === 'available' ? `<li>Admin: ${t.admin ? 'Yes' : 'No'}</li>` : ''}</ul>
+        ${t.status === 'available'
+          ? `<button type="button" class="tk-btn tk-primary" data-open="${esc(t.id)}" aria-label="View tool: ${esc(t.name)}">View Tool</button>`
+          : `<button type="button" class="tk-btn" disabled aria-disabled="true">Coming soon</button>`}
+      </article>`).join('');
+    if (empty) empty.hidden = list.length > 0;
+  }
+
+  const filterBox = $('#tkFilter');
+  if (filterBox && TOOLKIT_TOOLS.length > 6) {
+    filterBox.hidden = false;
+    filterBox.innerHTML = `<input type="search" class="tk-search" id="tkSearch" placeholder="Search tools…" aria-label="Search tools" autocomplete="off">
+      <div class="tk-chips" role="group" aria-label="Filter by category">${CATS.map((c,i) => `<button type="button" class="tk-fchip" data-cat="${c}" aria-pressed="${i === 0}">${c}</button>`).join('')}</div>`;
+    $('#tkSearch').addEventListener('input', e => { query = e.target.value; renderCards(); });
+    filterBox.addEventListener('click', e => {
+      const b = e.target.closest('[data-cat]'); if (!b) return;
+      cat = b.dataset.cat;
+      $$('.tk-fchip', filterBox).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      renderCards();
+    });
+  }
+  renderCards();
+
+  /* ---------- BAT source viewer (tiny highlighter, no library) ---------- */
+  const TOKEN = /(%[^%\s]*%|%%~?[a-z0-9])|\b(echo|if|else|exit|for|in|do|goto|call|set|pause|del|rd|md|mkdir|move|net|sfc|defrag|ipconfig|winget|powershell|not|exist|errorlevel)\b|("[^"]*")/gi;
+  function highlight(src){
+    return src.split(/\r?\n/).map(line => {
+      if (/^\s*(::|rem\b)/i.test(line)) return `<span class="tk-c">${esc(line)}</span>`;
+      if (/^\s*:[^:\s]/.test(line)) return `<span class="tk-l">${esc(line)}</span>`;
+      let out = '', last = 0, m; TOKEN.lastIndex = 0;
+      while ((m = TOKEN.exec(line))) {
+        out += esc(line.slice(last, m.index));
+        out += `<span class="${m[1] ? 'tk-v' : m[2] ? "tk-k" : "tk-s"}">${esc(m[0])}</span>`;
+        last = m.index + m[0].length;
+      }
+      return out + esc(line.slice(last));
+    }).join('\n');
+  }
+  const srcCache = {};
+  async function loadSource(path){
+    if (srcCache[path] != null) return srcCache[path];
+    const r = await fetch(path, { cache:'no-cache' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return (srcCache[path] = await r.text());
+  }
+  async function copyText(text){
+    try { await navigator.clipboard.writeText(text); return true; } catch(e){}
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    ta.remove(); return ok;
+  }
+
+  /* ---------- details modal ---------- */
+  const modal = $('#tkModal'), panel = $('#tkPanel'), body = $('#tkmBody');
+  let cur = null, lastFocus = null, closing = null;
+  const need = { yt: !!TOOLKIT_CONFIG.youtubeUrl, ig: !!TOOLKIT_CONFIG.instagramUrl };
+  const done = { yt: false, ig: false };
+  const list = arr => `<ul class="tk-list">${(arr || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  const unlocked = () => store.get(UNLOCK_KEY) === '1' || (!need.yt && !need.ig);
+  const extOf = p => (p.split('.').pop() || 'file').toUpperCase();
+  const fname = p => p.split('/').pop();
+
+  function actionHTML(t){
+    if (unlocked()) {
+      return `<div class="tk-dl" id="tkDl" tabindex="-1">
+        <p class="tk-ok">✓ Download unlocked</p>
+        <h4>Download ${esc(t.name)}</h4>
+        <div class="tk-row">
+          <button type="button" class="tk-btn tk-primary" data-download>Download .${esc(extOf(t.file))}</button>
+          <button type="button" class="tk-btn" data-src>View Source</button>
+          ${(t.extras || []).map(x => `<a class="tk-btn" href="${esc(x.path)}" download>${esc(x.label)} (.${esc(extOf(x.path))})</a>`).join('')}
+        </div>
+        <p class="tk-honor" id="tkDlStatus" role="status" aria-live="polite">The file never runs automatically.</p>
+        <section class="tk-how" aria-labelledby="tkHowTitle">
+          <h4 id="tkHowTitle">How to run it</h4>
+          <ol class="tk-list">
+            <li>Click <strong>Download</strong>. The file is saved to your Downloads folder and is not opened. If Chrome or Edge says it “isn’t commonly downloaded”, choose <strong>Keep</strong>.</li>
+            <li>Optional but recommended: right-click the file, choose <strong>Open with</strong>, then <strong>Notepad</strong>, to read what it does.</li>
+            ${t.runNote ? `<li>${esc(t.runNote)}</li>` : ''}
+            <li>${t.admin ? 'Right-click the file and choose <strong>Run as administrator</strong>, then click <strong>Yes</strong> on the Windows prompt.' : 'Double-click the file to run it.'}</li>
+            <li>If Windows shows “Windows protected your PC”, click <strong>More info</strong>, check the file name, and only then choose <strong>Run anyway</strong>.</li>
+            <li>A Command Prompt window shows each step. Wait until it finishes or asks you to press a key.</li>
+          </ol>
+        </section>
+      </div>`;
+    }
+    return `<div class="tk-support">
+      <h4>Support My Work</h4>
+      <p>These free Windows tools are created and maintained as part of my IT learning and practical projects. If you find them useful, consider supporting my work.</p>
+      <div class="tk-row">
+        ${need.yt ? `<a class="tk-btn" href="${esc(TOOLKIT_CONFIG.youtubeUrl)}" target="_blank" rel="noopener noreferrer" data-social="yt"><span aria-hidden="true">▶</span> Subscribe on YouTube</a>` : ''}
+        ${need.ig ? `<a class="tk-btn" href="${esc(TOOLKIT_CONFIG.instagramUrl)}" target="_blank" rel="noopener noreferrer" data-social="ig"><span aria-hidden="true">◎</span> Follow on Instagram</a>` : ''}
+      </div>
+      <p class="tk-honor">This is an honor-based unlock. This website cannot check whether you subscribed or followed.</p>
+      <button type="button" class="tk-btn tk-primary" data-unlock hidden>I’ve Supported — Unlock Download</button>
+      <p class="tk-honor" data-social-status role="status" aria-live="polite"></p>
+    </div>
+    <div class="tk-row" style="margin-top:14px"><button type="button" class="tk-btn" data-src>View Source</button></div>`;
+  }
+
+  function detailHTML(t){
+    return `
+      <header class="tk-mh"><div class="tk-ico">${ICON[t.icon] || ICON.terminal}</div>
+        <div><h3 id="tkmTitle">${esc(t.name)}</h3><p class="tk-mv"><span class="tk-chip">${esc(t.version)}</span><span class="tk-chip">${esc(t.platform)}</span></p></div></header>
+      <p class="tk-md">${esc(t.long || t.desc)}</p>
+      <dl class="tk-facts">
+        <div><dt>Version</dt><dd>${esc(t.version)}</dd></div>
+        <div><dt>Windows compatibility</dt><dd>${esc(t.platform)}</dd></div>
+        <div><dt>Administrator privileges required</dt><dd>${t.admin ? 'Yes' : 'No'}</dd></div>
+        <div><dt>Last updated</dt><dd>${esc(t.updated)}</dd></div>
+        <div><dt>File size</dt><dd>${esc(t.size)}</dd></div>
+        <div><dt>File</dt><dd>${esc(fname(t.file))}</dd></div>
+        <div class="wide"><dt>SHA-256</dt><dd class="mono">${esc(t.sha256 || 'Not published yet')}</dd>
+          <span class="tk-hint">Compare after download: certutil -hashfile ${esc(fname(t.file))} SHA256</span></div>
+      </dl>
+      <div class="tk-cols">
+        <section><h4>What the script does</h4>${list(t.does)}</section>
+        <section><h4>Requirements</h4>${list(t.requires)}</section>
+      </div>
+      <h4>Safety information</h4>${list(t.safety)}
+      <p class="tk-warn" role="note"><strong>Important:</strong> Always review a script before running it. Create a backup when appropriate.</p>
+      <div id="tkAction">${actionHTML(t)}</div>
+      <div class="tk-src" id="tkSrc" hidden>
+        <div class="tk-src-bar"><span>${esc(fname(t.file))}</span><button type="button" class="tk-btn" data-copy>Copy Code</button></div>
+        <pre tabindex="0" aria-label="Source code of ${esc(fname(t.file))}"><code id="tkCode">Loading…</code></pre>
+      </div>
+      <p class="tk-honor" id="tkCopyStatus" role="status" aria-live="polite"></p>`;
+  }
+
+  function open(id, trigger){
+    const t = TOOLKIT_TOOLS.find(x => x.id === id);
+    if (!t || t.status !== 'available') return;
+    clearTimeout(closing);
+    cur = t; done.yt = done.ig = false; lastFocus = trigger || document.activeElement;
+    body.innerHTML = detailHTML(t);
+    modal.classList.toggle('tk-ink', $('#toolkit').classList.contains('blur-ink'));   // follow the site's Aa text-colour switch
+    modal.hidden = false;
+    document.documentElement.classList.add('tk-open');
+    panel.scrollTop = 0;
+    requestAnimationFrame(() => modal.classList.add('is-open'));
+    panel.focus();
+  }
+  function close(){
+    if (modal.hidden) return;
+    modal.classList.remove('is-open');
+    document.documentElement.classList.remove('tk-open');
+    closing = setTimeout(() => { modal.hidden = true; }, reduceMotion ? 0 : 240);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  async function toggleSource(){
+    const box = $('#tkSrc'), code = $('#tkCode');
+    if (!box.hidden) { box.hidden = true; return; }
+    box.hidden = false;
+    code.textContent = 'Loading…';
+    try {
+      code.innerHTML = highlight(await loadSource(cur.file));
+    } catch(e) {
+      code.textContent = 'The source could not be loaded here. Check that the file exists at ' + cur.file + ' on the server.';
+    }
+    box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block:'nearest' });
+  }
+
+  /* Downloads straight from this site as a Blob: no new tab, no Drive page, no navigation.
+     If the browser supports it, the bytes are checked against the published SHA-256 first. */
+  async function sha256Hex(buf){
+    if (!(window.crypto && crypto.subtle)) return null;   // needs https or localhost
+    const h = await crypto.subtle.digest('SHA-256', buf);
+    return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  async function downloadTool(btn){
+    const st = $('#tkDlStatus'), label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Preparing…'; st.textContent = 'Preparing your download…';
+    try {
+      const r = await fetch(cur.file, { cache:'no-cache' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const buf = await r.arrayBuffer();
+      const hash = cur.sha256 ? await sha256Hex(buf) : null;
+      if (hash && hash !== cur.sha256.toLowerCase()) {
+        st.textContent = 'Download stopped: the file on the server does not match the published SHA-256. The site owner needs to update the hash or re-upload the file.';
+        btn.disabled = false; btn.textContent = label; return;
+      }
+      const url = URL.createObjectURL(new Blob([buf], { type:'application/octet-stream' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = fname(cur.file); document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      btn.textContent = 'Downloaded ✓'; btn.classList.add('done');
+      st.textContent = 'Downloaded ' + fname(cur.file) + (hash ? ' (SHA-256 matched the published value)' : '') + '. Nothing was run. Find it in your Downloads folder.';
+      setTimeout(() => { btn.disabled = false; btn.textContent = label; btn.classList.remove('done'); }, 2500);
+    } catch(err) {
+      btn.disabled = false; btn.textContent = label;
+      if (location.protocol === 'file:') {
+        /* Browsers cannot read or force-save files from a page opened from disk, and would only display the script. */
+        st.textContent = 'Downloads need the page to be served over http(s). This page is opened from a local file, so nothing was downloaded. Run “python -m http.server 8000” in your site folder and open http://localhost:8000, or test on the live site.';
+      } else {
+        const a = document.createElement('a');
+        a.href = cur.file; a.download = fname(cur.file); document.body.appendChild(a); a.click(); a.remove();
+        st.innerHTML = 'Direct download started without the SHA-256 check. If nothing downloads, the file is not on the server at <code>' + esc(cur.file) + '</code>.';
+      }
+    }
+  }
+
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('[data-open]');
+    if (b) open(b.dataset.open, b);
+  });
+
+  modal.addEventListener('click', async e => {
+    if (e.target.closest('[data-tk-close]')) { close(); return; }
+    const soc = e.target.closest('[data-social]');
+    if (soc) {   // the link opens normally in a new tab; we only note that it was clicked
+      done[soc.dataset.social] = true;
+      soc.classList.add('done');
+      if (!soc.textContent.includes('✓')) soc.append(' ✓ Opened');
+      const ready = (!need.yt || done.yt) && (!need.ig || done.ig);
+      const unlock = $('[data-unlock]', modal);
+      if (ready && unlock) {
+        unlock.hidden = false;
+        $('[data-social-status]', modal).textContent = 'Thanks. You can unlock the download now.';
+      }
+      return;
+    }
+    if (e.target.closest('[data-unlock]')) {
+      store.set(UNLOCK_KEY, '1');
+      $('#tkAction').innerHTML = actionHTML(cur);
+      $('#tkDl').focus();
+      return;
+    }
+    if (e.target.closest('[data-download]')) { downloadTool(e.target.closest('[data-download]')); return; }
+    if (e.target.closest('[data-src]')) { toggleSource(); return; }
+    if (e.target.closest('[data-copy]')) {
+      const ok = await copyText($('#tkCode').textContent);
+      const st = $('#tkCopyStatus'), btn = $('[data-copy]', modal);
+      st.textContent = ok ? 'Code copied to clipboard.' : 'Copy failed. Select the code and copy it manually.';
+      if (ok && btn) { btn.textContent = 'Copied ✓'; setTimeout(() => { btn.textContent = 'Copy Code'; }, 1800); }
+    }
+  });
+
+  /* Esc closes; Tab stays inside the dialog; other keys don't leak to the site's shortcuts ("/" and Ctrl+K) */
+  modal.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+    if (e.key !== 'Tab') return;
+    const f = $$('a[href],button:not([disabled]),pre[tabindex]', panel).filter(x => !x.closest('[hidden]') && x.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === panel)) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 })();

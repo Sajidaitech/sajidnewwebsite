@@ -65,6 +65,7 @@
     <a href="#projects" class="nav-link">Missions</a>
     <a href="#proof" class="nav-link">Proof</a>
     <a href="#lab" class="nav-link">Lab</a>
+    <a href="#toolkit" class="nav-link">Toolkit</a>
     <a href="#education" class="nav-link">Education</a>
     <a href="#achievements" class="nav-link">Achievements</a>
     <a href="#references" class="nav-link">References</a>
@@ -86,6 +87,7 @@
   <a href="#projects" class="nav-link">Missions</a>
   <a href="#proof" class="nav-link">Proof</a>
   <a href="#lab" class="nav-link">Lab</a>
+  <a href="#toolkit" class="nav-link">Toolkit</a>
   <a href="#education" class="nav-link">Education</a>
   <a href="#achievements" class="nav-link">Achievements</a>
   <a href="#references" class="nav-link">References</a>
@@ -991,6 +993,26 @@
     </div>
   </section>
 
+  <!-- ============ SAJID IT TOOLKIT ============ -->
+  <section class="section tk-section" id="toolkit" aria-labelledby="tkTitle">
+    <div class="container">
+      <div class="section-label"><span class="dot"></span>Toolkit</div>
+      <div class="tk-head">
+        <div>
+          <h2 id="tkTitle">Sajid IT Toolkit</h2>
+          <p class="section-intro">Practical Windows utilities built for everyday IT support, maintenance, and productivity.</p>
+        </div>
+        <span class="tk-badge">Windows 10 / Windows 11</span>
+      </div>
+      <p class="tk-seo">Free Windows IT tools and maintenance scripts (BAT) for troubleshooting and IT support on Windows 10 and Windows 11. Each script's source code is viewable before you download it.</p>
+      <div class="tk-filter" id="tkFilter" hidden></div>
+      <div class="tk-grid" id="tkGrid" role="list" aria-label="IT toolkit downloads"></div>
+      <p class="tk-empty" id="tkEmpty" hidden>No tools match your search. Try a different word or choose “All”.</p>
+      <noscript><p class="tk-seo">The toolkit needs JavaScript to list its downloads.</p></noscript>
+      <p class="tk-note">Windows scripts can make system-level changes. Review the source code and understand what the script does before running it. Use administrator privileges only when required.</p>
+    </div>
+  </section>
+
   <!-- ============ EDUCATION ============ -->
   <section class="section" id="education">
     <div class="container">
@@ -1236,6 +1258,15 @@
   </div>
 </div>
 <div class="cmdk-toast" id="cmdkToast" role="status" aria-live="polite"></div>
+
+<!-- ============ TOOLKIT DETAILS MODAL ============ -->
+<div class="tk-modal" id="tkModal" role="dialog" aria-modal="true" aria-labelledby="tkmTitle" hidden>
+  <div class="tk-scrim" data-tk-close></div>
+  <div class="tk-panel" id="tkPanel" tabindex="-1">
+    <button type="button" class="tk-x" data-tk-close aria-label="Close tool details">&times;</button>
+    <div id="tkmBody"></div>
+  </div>
+</div>
 
 <script src="script.js" defer></script>
 </body>
