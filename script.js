@@ -1394,6 +1394,7 @@ $$('[data-case]').forEach(card => {
     update:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12A8 8 0 0 1 18.3 7.1"/><path d="M18.5 3v4.5H14M5.5 21v-4.5H10"/></svg>',
     broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 3l-6.5 6.5"/><path d="M11 8l5 5-3.5 3.5c-1.8 1.8-4.6 1.9-6.5.3L4 15l1-1c.8-.8 2-.8 2.8 0L11 8z"/><path d="M8 17l-1.5 4M11 18l-.5 3M5 15l-2 4"/></svg>',
     folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M8 13h8"/></svg>',
+    request:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 9v6M9 12h6"/></svg>',
     terminal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9l3 3-3 3M13 15h4"/></svg>'
   };
 
@@ -1422,7 +1423,7 @@ $$('[data-case]').forEach(card => {
         ${t.status === 'available'
           ? `<button type="button" class="tk-btn tk-primary" data-open="${esc(t.id)}" aria-label="View tool: ${esc(t.name)}">View Tool</button>`
           : `<button type="button" class="tk-btn" disabled aria-disabled="true">Coming soon</button>`}
-      </article>`).join('');
+      </article>`).join('') + requestCard();
     if (empty) empty.hidden = list.length > 0;
   }
 
@@ -1548,18 +1549,22 @@ $$('[data-case]').forEach(card => {
       <p class="tk-honor" id="tkCopyStatus" role="status" aria-live="polite"></p>`;
   }
 
-  function open(id, trigger){
-    const t = TOOLKIT_TOOLS.find(x => x.id === id);
-    if (!t || t.status !== 'available') return;
+  function show(html, trigger){
     clearTimeout(closing);
-    cur = t; done.yt = done.ig = false; lastFocus = trigger || document.activeElement;
-    body.innerHTML = detailHTML(t);
+    lastFocus = trigger || document.activeElement;
+    body.innerHTML = html;
     modal.classList.toggle('tk-ink', $('#toolkit').classList.contains('blur-ink'));   // follow the site's Aa text-colour switch
     modal.hidden = false;
     document.documentElement.classList.add('tk-open');
     panel.scrollTop = 0;
     requestAnimationFrame(() => modal.classList.add('is-open'));
     panel.focus();
+  }
+  function open(id, trigger){
+    const t = TOOLKIT_TOOLS.find(x => x.id === id);
+    if (!t || t.status !== 'available') return;
+    cur = t; done.yt = done.ig = false;
+    show(detailHTML(t), trigger);
   }
   function close(){
     if (modal.hidden) return;
@@ -1662,10 +1667,97 @@ $$('[data-case]').forEach(card => {
     e.stopPropagation();
     if (e.key === 'Escape') { e.preventDefault(); close(); return; }
     if (e.key !== 'Tab') return;
-    const f = $$('a[href],button:not([disabled]),pre[tabindex]', panel).filter(x => !x.closest('[hidden]') && x.offsetParent !== null);
+    const f = $$('a[href],button:not([disabled]),input:not([type=hidden]),textarea,pre[tabindex]', panel).filter(x => !x.closest('[hidden]') && x.offsetParent !== null);
     if (!f.length) return;
     const first = f[0], last = f[f.length - 1];
     if (e.shiftKey && (document.activeElement === first || document.activeElement === panel)) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
+
+  /* =================================================================
+     CUSTOM SCRIPT REQUESTS
+     A visitor describes a .bat they need + leaves an email. It lands in
+     your inbox via Formspree (subject "BAT request BAT-XXXX"). You build
+     the script, add it to TOOLKIT_TOOLS, upload the file, then reply with
+     a direct link:  https://www.sajidmk.com/?tool=<tool-id>#toolkit
+  ================================================================= */
+  const REQUEST_ENDPOINT = 'https://formspree.io/f/mbglyrwl';   // same Formspree form as the contact section
+  const KINDS = ['Cleanup','Network','Backup','Install / Update','Other'];
+  let reqId = '', reqKind = 'Other';
+
+  function requestCard(){
+    return `<article class="tk-card tk-req" role="listitem">
+      <div class="tk-ico">${ICON.request}</div>
+      <h3>Need a custom BAT?<span class="tk-cursor" aria-hidden="true">_</span></h3>
+      <p>Describe the task and leave your email. I’ll build it, publish it here, and email you when it’s ready.</p>
+      <ul class="tk-meta"><li>Free</li><li>Made to order</li></ul>
+      <button type="button" class="tk-btn tk-primary" data-request>Request a script</button>
+    </article>`;
+  }
+  function requestHTML(){
+    reqId = 'BAT-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    reqKind = 'Other';
+    return `<header class="tk-mh"><div class="tk-ico">${ICON.request}</div>
+        <div><h3 id="tkmTitle">Request a custom script</h3><p class="tk-mv"><span class="tk-chip">${reqId}</span><span class="tk-chip">Free · made to order</span></p></div></header>
+      <p class="tk-md">Tell me what you want automated. I’ll write the .bat file, publish it in this Toolkit with viewable source code, and email you when it’s live.</p>
+      <ol class="tk-track" aria-label="How it works"><li class="on">Send request</li><li>I build it</li><li>Emailed to you</li></ol>
+      <form class="tk-rq" id="tkReq" novalidate>
+        <div class="tk-chips" role="group" aria-label="Type of script">${KINDS.map(k => `<button type="button" class="tk-fchip" data-kind="${esc(k)}" aria-pressed="${k === 'Other'}">${esc(k)}</button>`).join('')}</div>
+        <label class="tk-lab">Your email<input class="tk-in" type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <label class="tk-lab">What should the script do?<textarea class="tk-in" name="message" rows="4" required maxlength="1000" placeholder="e.g. Back up my Documents folder to a USB drive every time I run it"></textarea></label>
+        <input type="text" name="_gotcha" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <pre class="tk-rq-pre" aria-hidden="true"><code id="rqPrev"></code></pre>
+        <div class="tk-row"><button type="submit" class="tk-btn tk-primary" id="rqSend">Send request</button></div>
+        <p class="tk-honor" id="rqStatus" role="status" aria-live="polite"></p>
+      </form>
+      <p class="tk-warn" role="note"><strong>Please don’t include</strong> passwords, license keys or private company data in your request.</p>`;
+  }
+  function rqPreview(){
+    const f = $('#tkReq'), out = $('#rqPrev'); if (!f || !out) return;
+    const task = f.message.value.trim().replace(/\s+/g, ' ').slice(0, 56) || '…';
+    out.textContent = `@echo off\n:: request  ${reqId}  [${reqKind}]\n:: for      ${f.email.value.trim() || '…'}\n:: task     ${task}\n:: status   queued`;
+  }
+
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('[data-request]'); if (!b) return;
+    cur = null;
+    show(requestHTML(), b);
+    rqPreview();
+  });
+  modal.addEventListener('click', e => {
+    const k = e.target.closest('[data-kind]'); if (!k) return;
+    reqKind = k.dataset.kind;
+    $$('[data-kind]', modal).forEach(x => x.setAttribute('aria-pressed', String(x === k)));
+    rqPreview();
+  });
+  modal.addEventListener('input', rqPreview);
+  modal.addEventListener('submit', async e => {
+    const f = e.target.closest('#tkReq'); if (!f) return;
+    e.preventDefault();
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const btn = $('#rqSend'), st = $('#rqStatus'), mail = f.email.value.trim();
+    btn.disabled = true; btn.textContent = 'Sending…'; st.textContent = '';
+    const fd = new FormData(f);
+    fd.append('request_id', reqId);
+    fd.append('script_type', reqKind);
+    fd.append('_subject', `BAT request ${reqId} — ${reqKind}`);
+    try {
+      const r = await fetch(REQUEST_ENDPOINT, { method:'POST', body:fd, headers:{ Accept:'application/json' } });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      f.outerHTML = `<div class="tk-dl" tabindex="-1" id="rqDone"><p class="tk-ok">✓ Request ${esc(reqId)} received</p>
+        <p>I’ll build your script, publish it in the Toolkit, and email <strong>${esc(mail)}</strong> as soon as it’s live. Keep the request ID handy if you want to follow up.</p>
+        <div class="tk-row"><button type="button" class="tk-btn" data-tk-close>Close</button></div></div>`;
+      const first = $('.tk-track li:nth-child(2)', modal); if (first) first.classList.add('on');
+      $('#rqDone').focus();
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'Try again';
+      st.textContent = 'Could not send your request. Check your connection and try again.';
+    }
+  });
+
+  /* Direct link to a tool — use it in the "your script is ready" email: /?tool=<tool-id>#toolkit */
+  const want = new URLSearchParams(location.search).get('tool');
+  if (want && TOOLKIT_TOOLS.some(t => t.id === want && t.status === 'available')) {
+    setTimeout(() => { $('#toolkit').scrollIntoView(); open(want); }, 700);
+  }
 })();
