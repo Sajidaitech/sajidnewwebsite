@@ -1,6 +1,75 @@
+/* ==================================================================
+   TABLE OF CONTENTS — styles.css
+   Search this file for a tag like [CSS-05] to jump to a section.
+   ==================================================================
+   [CSS-01]  BASE — reset and defaults
+   [CSS-02]  BACKGROUND — photo backdrop
+   [CSS-03]  LAYOUT — helpers
+   [CSS-04]  GLASS — base material
+   [CSS-05]  GLASS-CLEAR — nav and drawer
+   [CSS-06]  NAV — base
+   [CSS-07]  HERO
+   [CSS-08]  ABOUT
+   [CSS-09]  WHY HIRE
+   [CSS-10]  EMOJI ICONS
+   [CSS-11]  EXPERIENCE — timeline
+   [CSS-12]  EXPERIENCE — engagement cards
+   [CSS-13]  EXPERIENCE — nested roles
+   [CSS-14]  SKILLS
+   [CSS-15]  CERTIFICATIONS
+   [CSS-16]  PROJECTS — case studies
+   [CSS-17]  INFRASTRUCTURE LAB
+   [CSS-18]  EDUCATION
+   [CSS-19]  ACHIEVEMENTS
+   [CSS-20]  REFERENCES
+   [CSS-21]  CONTACT — base
+   [CSS-22]  FOOTER
+   [CSS-23]  SCROLL REVEAL — basic
+   [CSS-24]  ANIMATION FOUNDATION — data-reveal / tilt / depth
+   [CSS-25]  SCROLL PROGRESS BAR
+   [CSS-26]  HERO — scroll-scrubbed photo + cycling role text
+   [CSS-27]  SECTION HEADERS — mirrored
+   [CSS-28]  CARD DIAMOND corner accent
+   [CSS-29]  RECRUITER BAR + TECHNICAL ARSENAL + PROOF OF WORK
+   [CSS-30]  GLASS OVERRIDE — crystal-clear pass (later rules win)
+   [CSS-31]  GLASS OVERRIDE — Liquid Glass refinement
+   [CSS-32]  AMBIENT MOTION
+   [CSS-33]  BUTTONS 1 — pill shape
+   [CSS-34]  BUTTONS 2 — Liquid Capsule system
+   [CSS-35]  BUTTONS 3 — shared base
+   [CSS-36]  BUTTONS 4 — roles (primary / secondary / ghost)
+   [CSS-37]  BUTTONS 5 — glass lens (icon-only round controls)
+   [CSS-38]  BUTTONS 6 — hover
+   [CSS-39]  BUTTONS 7 — focus ring
+   [CSS-40]  BUTTONS 8 — press
+   [CSS-41]  BUTTONS 9 — responsive
+   [CSS-42]  BUTTONS 10 — accessibility
+   [CSS-43]  LOGOS — Pearl Plate system
+   [CSS-44]  NAVBAR — capsule links + mobile fixes
+   [CSS-45]  CONTACT — Liquid Pane (overrides Contact base)
+   [CSS-46]  WIDE SCREENS — ambient rail
+   [CSS-47]  WIDE SCREENS — side rail
+   [CSS-48]  NAV — one "Let's talk" on phones / tablets
+   [CSS-49]  COMMAND CONSOLE
+   [CSS-50]  PANELS — one size, home to footer
+   [CSS-51]  READABILITY pass (white text)
+   [CSS-52]  VIEWER GATE + DOCUMENT VIEWER
+   [CSS-53]  STATUS PAGE
+   [CSS-54]  REFERENCE-CALL BUTTON
+   [CSS-55]  QR DIGITAL BUSINESS CARD
+   [CSS-56]  LIVE FOCUS SLIDER
+   [CSS-57]  NETWORK DIAGNOSTICS DEMO
+   [CSS-58]  TICKET TRIAGE DEMO
+   [CSS-59]  IT TOOLKIT
+   [CSS-60]  ACCENT SWITCHER — colour dots next to the Aa toggle
+   [CSS-61]  FILE ORGANIZER PREVIEW — toolkit modal
+   [CSS-end]  STAGGER INDEX + small helpers (replaces old inline style="" attributes)
+   Note: later PART sections intentionally override earlier ones (CSS cascade), so order matters. Do not reorder.
+   ================================================================== */
+
 /* =============================================================
    Sajid Mehmood — Portfolio
-   Neutral frosted-glass design system (gray tint, green + slate-blue accents)
+   Neutral frosted-glass design system (gray tint, blue + slate accents)
    ============================================================= */
 
 :root{
@@ -15,8 +84,12 @@
   --glass-tint-strong: rgba(255,255,255, calc(.13 * var(--glass-amt)));
   --glass-border: rgba(255,255,255,.18);
   --glass-border-bright: rgba(255,255,255,.55);
-  --teal:#22D3A6;
-  --teal-dim: rgba(34,211,166,.16);
+  --accent:#5BAEF5;
+  --accent-rgb:91,174,245;
+  --accent-deep:#2F86D6;  --accent-deep-rgb:47,134,214;
+  --accent-light:#CFE6FB; --accent-light-rgb:207,230,251;
+  /* the accent switcher (script.js, ACCENT SWITCHER) overwrites the 6 values above */
+  --accent-dim: rgba(var(--accent-rgb),.16);
   --amber:#8FA8BD;
   --amber-dim: rgba(143,168,189,.16);
   /* text hierarchy — white-based alpha scale so contrast is guaranteed
@@ -56,6 +129,10 @@
   --panel-gutter: clamp(16px, 3.2vw, 40px);
 }
 
+/* ==================================================================
+   [CSS-01]  BASE — reset and defaults
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Reset & base
 --------------------------------------------------------------- */
@@ -87,10 +164,10 @@ h1,h2,h3,h4{ font-family:var(--ff-display); margin:0; font-weight:600; letter-sp
 p{ margin:0; }
 button{ font-family:inherit; cursor:pointer; }
 
-::selection{ background:var(--teal-dim); color:var(--text); }
+::selection{ background:var(--accent-dim); color:var(--text); }
 
 :focus-visible{
-  outline:2px solid var(--teal);
+  outline:2px solid var(--accent);
   outline-offset:3px;
   border-radius:4px;
 }
@@ -98,6 +175,10 @@ button{ font-family:inherit; cursor:pointer; }
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
 }
+
+/* ==================================================================
+   [CSS-02]  BACKGROUND — photo backdrop
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Backdrop — the landscape photo, with a dark gradient wash for
@@ -122,7 +203,7 @@ button{ font-family:inherit; cursor:pointer; }
   content:'';
   position:absolute; inset:0;
   background:
-    radial-gradient(ellipse 900px 600px at 12% -6%, rgba(34,211,166,.09), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 12% -6%, rgba(var(--accent-rgb),.09), transparent 60%),
     radial-gradient(ellipse 700px 500px at 92% 18%, rgba(143,168,189,.10), transparent 55%),
     linear-gradient(180deg, rgba(8,9,10,.28) 0%, rgba(8,9,10,.30) 40%, rgba(8,9,10,.56) 100%);
 }
@@ -131,6 +212,10 @@ button{ font-family:inherit; cursor:pointer; }
   opacity:.03;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* ==================================================================
+   [CSS-03]  LAYOUT — helpers
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Layout helpers
@@ -157,12 +242,16 @@ button{ font-family:inherit; cursor:pointer; }
 .section:last-of-type{ margin-bottom:0; }
 .section-label{
   display:flex; align-items:center; gap:10px;
-  font-family:var(--ff-mono); font-size:13px; color:var(--teal);
+  font-family:var(--ff-mono); font-size:13px; color:var(--accent);
   margin-bottom:14px;
 }
-.section-label .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 10px var(--teal); }
+.section-label .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
 .section h2{ font-size:clamp(28px,3.4vw,40px); max-width:640px; }
 .section-intro{ color:var(--text-dim); max-width:560px; margin-top:14px; font-size:16px; }
+
+/* ==================================================================
+   [CSS-04]  GLASS — base material
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    The glass material — used everywhere a panel appears
@@ -196,6 +285,10 @@ button{ font-family:inherit; cursor:pointer; }
 
 .glass-tight{ border-radius:var(--radius-md); }
 
+/* ==================================================================
+   [CSS-05]  GLASS-CLEAR — nav and drawer
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Glass-clear — nav + mobile drawer (Part 2).
    Tied to the same --glass-amt slider as every other glass panel:
@@ -220,6 +313,10 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .glass-clear > *{ position:relative; z-index:1; }
 
+/* ==================================================================
+   [CSS-06]  NAV — base
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Nav
 --------------------------------------------------------------- */
@@ -240,20 +337,24 @@ button{ font-family:inherit; cursor:pointer; }
   .nav-in{ animation:none; }
 }
 .nav-brand{ display:flex; align-items:center; gap:10px; white-space:nowrap; flex:none; font-family:var(--ff-display); font-weight:600; font-size:16px; }
-.nav-brand .ping{ width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); }
+.nav-brand .ping{ width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
 .nav-links{ display:flex; gap:var(--nav-gap,6px); align-items:center; flex:none; margin:0 var(--nav-gap,6px) 0 auto; padding-left:14px; }
 .nav-links a{ white-space:nowrap; flex:none; }
 .nav-cta{
-  padding:9px 18px; border-radius:999px; background:var(--teal); color:#052018;
+  padding:9px 18px; border-radius:999px; background:var(--accent); color:#06182B;
   font-size:14px; font-weight:600; white-space:nowrap;
-  box-shadow:0 8px 20px -8px rgba(34,211,166,.55);
+  box-shadow:0 8px 20px -8px rgba(var(--accent-rgb),.55);
   transition:transform .2s ease, box-shadow .2s ease;
 }
-.nav-cta:hover{ transform:translateY(-1px); box-shadow:0 12px 26px -8px rgba(34,211,166,.7); }
+.nav-cta:hover{ transform:translateY(-1px); box-shadow:0 12px 26px -8px rgba(var(--accent-rgb),.7); }
 .nav-toggle{ display:none; background:none; border:0; color:var(--text); padding:8px; }
 .nav-toggle svg{ width:22px; height:22px; }
 
 /* breakpoint + mobile drawer: see PART 11 at the end of this file */
+
+/* ==================================================================
+   [CSS-07]  HERO
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Hero
@@ -287,10 +388,10 @@ button{ font-family:inherit; cursor:pointer; }
 .status-chip{
   display:inline-flex; align-items:center; gap:8px;
   padding:7px 14px 7px 10px; border-radius:999px;
-  font-family:var(--ff-mono); font-size:12.5px; color:var(--teal);
+  font-family:var(--ff-mono); font-size:12.5px; color:var(--accent);
   margin-bottom:24px;
 }
-.status-chip .ping{ width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:pulse 2.2s ease-in-out infinite; }
+.status-chip .ping{ width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:pulse 2.2s ease-in-out infinite; }
 @keyframes pulse{ 0%,100%{ opacity:1 } 50%{ opacity:.35 } }
 
 .hero h1{
@@ -311,9 +412,9 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .btn-arrow{ display:inline-block; transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
 .btn-primary{
-  background:linear-gradient(135deg, var(--teal), #1FB37E);
-  color:#052018;
-  box-shadow:0 10px 24px -10px rgba(34,211,166,.6);
+  background:linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color:#06182B;
+  box-shadow:0 10px 24px -10px rgba(var(--accent-rgb),.6);
   clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
   overflow:hidden;
 }
@@ -324,7 +425,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .btn-primary:hover::before{ transform:translateX(120%); }
 .btn-primary > *{ position:relative; z-index:1; }
-.btn-primary:hover{ transform:perspective(700px) translateY(-2px) translateZ(6px) scale(1.012); box-shadow:0 14px 30px -10px rgba(34,211,166,.75); }
+.btn-primary:hover{ transform:perspective(700px) translateY(-2px) translateZ(6px) scale(1.012); box-shadow:0 14px 30px -10px rgba(var(--accent-rgb),.75); }
 .btn-primary:hover .btn-arrow{ transform:translateX(5px); }
 .btn-ghost{
   background:rgba(255,255,255,.035); border-color:var(--glass-border); color:var(--text);
@@ -332,7 +433,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .btn-ghost::before, .btn-ghost::after{
   content:''; position:absolute; width:9px; height:9px; z-index:2;
-  border:1.5px solid var(--teal); opacity:0;
+  border:1.5px solid var(--accent); opacity:0;
   transition:opacity .25s ease, transform .25s ease;
 }
 .btn-ghost::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; transform:translate(5px,5px); }
@@ -379,6 +480,10 @@ button{ font-family:inherit; cursor:pointer; }
   .status-item:last-child{ border-bottom:none; padding-bottom:0; }
 }
 
+/* ==================================================================
+   [CSS-08]  ABOUT
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    About
 --------------------------------------------------------------- */
@@ -397,13 +502,17 @@ button{ font-family:inherit; cursor:pointer; }
 
 .highlight-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:32px; }
 .highlight-card{ padding:20px; }
-.highlight-card .val{ font-family:var(--ff-mono); font-size:24px; color:var(--teal); }
+.highlight-card .val{ font-family:var(--ff-mono); font-size:24px; color:var(--accent); }
 .highlight-card .lbl{ font-size:13px; color:var(--text-dim); margin-top:4px; }
 
 @media (max-width:860px){
   .about-grid{ grid-template-columns:1fr; }
   .highlight-row{ grid-template-columns:1fr 1fr; }
 }
+
+/* ==================================================================
+   [CSS-09]  WHY HIRE
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Why hire — trait list (not generic identical-card grid: split rows)
@@ -417,7 +526,7 @@ button{ font-family:inherit; cursor:pointer; }
   width:64px; height:64px; border-radius:14px; padding:8px;
   display:flex; align-items:center; justify-content:center;
   font-size:32px;
-  background:var(--teal-dim); border:1px solid rgba(34,211,166,.3);
+  background:var(--accent-dim); border:1px solid rgba(var(--accent-rgb),.3);
   transition:transform .3s cubic-bezier(.34,1.56,.64,1);
 }
 .trait-row:hover .trait-icon{ transform:scale(1.1) rotate(-4deg); }
@@ -427,6 +536,10 @@ button{ font-family:inherit; cursor:pointer; }
 .trait-list .trait-row:nth-child(4){ transition-delay:0s; }
 .trait-list .trait-row:nth-child(5){ transition-delay:0s; }
 .trait-list .trait-row:nth-child(6){ transition-delay:0s; }
+
+/* ==================================================================
+   [CSS-10]  EMOJI ICONS
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    3D emoji icons — used in place of flat glyphs/Font Awesome.
@@ -444,6 +557,10 @@ button{ font-family:inherit; cursor:pointer; }
   .trait-tag{ text-align:left; }
 }
 
+/* ==================================================================
+   [CSS-11]  EXPERIENCE — timeline
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Experience — timeline (real sequence => numbering/connector earned)
 --------------------------------------------------------------- */
@@ -454,8 +571,8 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .tl-progress{
   position:absolute; left:11px; top:8px; width:1px; height:0%;
-  background:linear-gradient(var(--teal), rgba(34,211,166,.2));
-  box-shadow:0 0 8px var(--teal); transition:height .15s linear; pointer-events:none;
+  background:linear-gradient(var(--accent), rgba(var(--accent-rgb),.2));
+  box-shadow:0 0 8px var(--accent); transition:height .15s linear; pointer-events:none;
 }
 .tl-item{ position:relative; padding:0 0 52px 44px; }
 .tl-item:last-child{ padding-bottom:0; }
@@ -464,7 +581,7 @@ button{ font-family:inherit; cursor:pointer; }
   background:var(--bg-panel); border:1px solid var(--glass-border-bright);
   display:flex; align-items:center; justify-content:center;
 }
-.tl-dot::after{ content:''; width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); }
+.tl-dot::after{ content:''; width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
 @keyframes tlDotIn{ 0%{ transform:scale(.3); opacity:.3; } 60%{ transform:scale(1.4); opacity:1; } 100%{ transform:scale(1); opacity:1; } }
 .tl-item.visible .tl-dot::after{ animation:tlDotIn .5s cubic-bezier(.34,1.56,.64,1); }
 .tl-dot.is-visible::after{ animation:tlDotIn .5s cubic-bezier(.34,1.56,.64,1); }
@@ -475,7 +592,7 @@ button{ font-family:inherit; cursor:pointer; }
 .tl-org{ font-size:14.5px; color:var(--text-dim); margin-bottom:16px; }
 .tl-bullets{ display:flex; flex-direction:column; gap:9px; margin-bottom:16px; }
 .tl-bullets li{ font-size:14.5px; color:var(--text-dim); padding-left:18px; position:relative; }
-.tl-bullets li::before{ content:''; position:absolute; left:0; top:8px; width:5px; height:5px; border-radius:50%; background:var(--teal); }
+.tl-bullets li::before{ content:''; position:absolute; left:0; top:8px; width:5px; height:5px; border-radius:50%; background:var(--accent); }
 .tl-stats{ display:flex; gap:10px; flex-wrap:wrap; }
 .tl-stat{
   font-family:var(--ff-mono); font-size:12.5px; color:var(--text);
@@ -484,19 +601,23 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .tl-quote{
   margin-top:18px; padding:18px 20px; font-size:14px; font-style:italic; color:var(--text-dim);
-  border-left:2px solid var(--teal);
+  border-left:2px solid var(--accent);
   background:rgba(255,255,255,.02);
 }
 .tl-quote cite{ display:block; margin-top:10px; font-style:normal; font-size:12.5px; color:var(--text-faint); }
 .tl-item .cert-actions{ margin-top:16px; padding-top:0; }
 .tl-item .skill-tags{ margin:14px 0 0; }
 .tl-more{ margin-top:16px; border-top:1px solid var(--glass-border); padding-top:14px; }
-.tl-more summary{ cursor:pointer; font-family:var(--ff-mono); font-size:12px; color:var(--teal); list-style:none; }
+.tl-more summary{ cursor:pointer; font-family:var(--ff-mono); font-size:12px; color:var(--accent); list-style:none; }
 .tl-more summary::-webkit-details-marker{ display:none; }
 .tl-more summary::after{ content:' +'; }
 .tl-more[open] summary::after{ content:' –'; }
 .tl-more p{ font-size:13.5px; color:var(--text-dim); margin-top:10px; }
 .tl-more p strong{ color:var(--text); }
+
+/* ==================================================================
+   [CSS-12]  EXPERIENCE — engagement cards
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Engagement breakdown — interactive capability cards
@@ -507,7 +628,7 @@ button{ font-family:inherit; cursor:pointer; }
 --------------------------------------------------------------- */
 .bd{ margin-top:22px; }
 .bd-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
-.bd-eyebrow{ font-family:var(--ff-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--teal); }
+.bd-eyebrow{ font-family:var(--ff-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
 .bd-head h3{ font-family:var(--ff-display); font-size:14.5px; color:var(--text-dim); font-weight:500; margin:0; }
 .bd-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
 .bd-card{
@@ -519,12 +640,12 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .bd-card::before{
   content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background:linear-gradient(120deg, transparent 30%, rgba(34,211,166,.10) 48%, transparent 66%);
+  background:linear-gradient(120deg, transparent 30%, rgba(var(--accent-rgb),.10) 48%, transparent 66%);
   transform:translateX(-120%); transition:transform .7s ease;
 }
 .bd-card:hover::before{ transform:translateX(120%); }
 .bd-card:hover{ transform:translateY(-3px); border-color:var(--glass-border-bright); background:rgba(255,255,255,.05); box-shadow:0 16px 30px -18px rgba(0,0,0,.5); }
-.bd-card.is-open{ border-color:var(--teal); box-shadow:0 0 0 1px rgba(34,211,166,.25), 0 16px 34px -18px rgba(0,0,0,.55); background:rgba(34,211,166,.045); }
+.bd-card.is-open{ border-color:var(--accent); box-shadow:0 0 0 1px rgba(var(--accent-rgb),.25), 0 16px 34px -18px rgba(0,0,0,.55); background:rgba(var(--accent-rgb),.045); }
 .bd-card-top{ display:flex; align-items:center; gap:12px; position:relative; z-index:1; }
 .bd-icon{
   flex:none; width:48px; height:48px; border-radius:12px; padding:6px; display:flex; align-items:center; justify-content:center;
@@ -532,7 +653,7 @@ button{ font-family:inherit; cursor:pointer; }
   transition:transform .4s cubic-bezier(.34,1.56,.64,1), border-color .3s ease;
 }
 .bd-icon img{ width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 3px 8px rgba(0,0,0,.4)); }
-.bd-card.is-open .bd-icon{ transform:rotate(-8deg) scale(1.08); border-color:var(--teal); }
+.bd-card.is-open .bd-icon{ transform:rotate(-8deg) scale(1.08); border-color:var(--accent); }
 .bd-card-titlewrap{ flex:1 1 auto; min-width:0; }
 .bd-card-title{ font-family:var(--ff-display); font-size:14.5px; color:var(--text); margin-bottom:2px; }
 .bd-card-tag{ font-family:var(--ff-mono); font-size:11px; color:var(--text-faint); }
@@ -541,7 +662,7 @@ button{ font-family:inherit; cursor:pointer; }
   border:1px solid var(--glass-border); font-size:14px; color:var(--text-faint); line-height:1;
   transition:transform .4s cubic-bezier(.34,1.56,.64,1), color .3s ease, border-color .3s ease;
 }
-.bd-card.is-open .bd-card-plus{ transform:rotate(135deg); color:var(--teal); border-color:var(--teal); }
+.bd-card.is-open .bd-card-plus{ transform:rotate(135deg); color:var(--accent); border-color:var(--accent); }
 .bd-card-bodywrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.16,1,.3,1); position:relative; z-index:1; }
 .bd-card.is-open .bd-card-bodywrap{ grid-template-rows:1fr; }
 .bd-card-body{ overflow:hidden; }
@@ -554,6 +675,10 @@ button{ font-family:inherit; cursor:pointer; }
   height:26px; max-width:86px; object-fit:contain; border-radius:6px;
   padding:5px 9px; background:rgba(255,255,255,.05); border:1px solid var(--glass-border);
 }
+
+/* ==================================================================
+   [CSS-13]  EXPERIENCE — nested roles
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Timeline — nested sub-positions (LinkedIn-style grouped roles
@@ -586,6 +711,10 @@ button{ font-family:inherit; cursor:pointer; }
 .tl-subrole-bullets li::before{ content:''; position:absolute; left:0; top:7px; width:4px; height:4px; border-radius:50%; background:var(--amber); }
 .tl-subrole .cert-actions{ margin-top:12px; }
 
+/* ==================================================================
+   [CSS-14]  SKILLS
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Skills — categorized
 --------------------------------------------------------------- */
@@ -611,6 +740,10 @@ button{ font-family:inherit; cursor:pointer; }
 @media (max-width:900px){ .skills-grid{ grid-template-columns:1fr 1fr; } }
 @media (max-width:620px){ .skills-grid{ grid-template-columns:1fr; } }
 
+/* ==================================================================
+   [CSS-15]  CERTIFICATIONS
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Certifications
 --------------------------------------------------------------- */
@@ -625,7 +758,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .cert-card:hover .cert-icon{ transform:scale(1.1) rotate(-4deg); }
 .cert-badge{ font-family:var(--ff-mono); font-size:11px; padding:4px 9px; border-radius:999px; white-space:nowrap; }
-.cert-badge.verified{ color:var(--teal); background:var(--teal-dim); }
+.cert-badge.verified{ color:var(--accent); background:var(--accent-dim); }
 .cert-badge.award{ color:var(--amber); background:var(--amber-dim); }
 .cert-badge.progress{ color:var(--text-dim); background:rgba(255,255,255,.06); }
 .cert-title{ font-family:var(--ff-display); font-size:16px; }
@@ -643,7 +776,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .cert-btn:hover{ background:rgba(255,255,255,.09); transform:translateY(-1px); }
 .cert-btn:active{ transform:translateY(0) scale(.96); }
-.cert-btn.primary{ color:var(--teal); background:var(--teal-dim); border-color:transparent; }
+.cert-btn.primary{ color:var(--accent); background:var(--accent-dim); border-color:transparent; }
 .edu-card .cert-actions{ margin-top:14px; padding-top:0; }
 
 /* Display-object hover — small lift + perspective tilt, no blur,
@@ -655,6 +788,10 @@ button{ font-family:inherit; cursor:pointer; }
 
 @media (max-width:900px){ .cert-grid{ grid-template-columns:1fr 1fr; } }
 @media (max-width:620px){ .cert-grid{ grid-template-columns:1fr; } }
+
+/* ==================================================================
+   [CSS-16]  PROJECTS — case studies
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Projects / case studies
@@ -712,6 +849,10 @@ button{ font-family:inherit; cursor:pointer; }
   .case-head{ padding:18px; }
 }
 
+/* ==================================================================
+   [CSS-17]  INFRASTRUCTURE LAB
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Infrastructure Lab
 --------------------------------------------------------------- */
@@ -738,7 +879,7 @@ button{ font-family:inherit; cursor:pointer; }
 .lab-ticket-head--static:hover{ background:none; }
 
 .lab-dot{ width:7px; height:7px; border-radius:50%; flex:none; }
-.lab-dot--done{ background:var(--teal); box-shadow:0 0 7px var(--teal); }
+.lab-dot--done{ background:var(--accent); box-shadow:0 0 7px var(--accent); }
 .lab-dot--doc{ background:var(--amber); box-shadow:0 0 7px rgba(143,168,189,.55); }
 .lab-dot--pending{ background:var(--text-faint); }
 
@@ -746,7 +887,7 @@ button{ font-family:inherit; cursor:pointer; }
 .lab-cat{ font-family:var(--ff-mono); font-size:11.5px; color:var(--amber); text-transform:uppercase; letter-spacing:.03em; }
 .lab-title{ flex:1 1 220px; min-width:140px; font-family:var(--ff-display); font-size:15px; color:var(--text); }
 .lab-status{ font-family:var(--ff-mono); font-size:11px; padding:4px 11px; border-radius:999px; white-space:nowrap; margin-left:auto; }
-.lab-status--done{ color:var(--teal); background:var(--teal-dim); }
+.lab-status--done{ color:var(--accent); background:var(--accent-dim); }
 .lab-status--doc{ color:var(--amber); background:var(--amber-dim); }
 .lab-status--pending{ color:var(--text-faint); background:rgba(255,255,255,.05); }
 
@@ -780,6 +921,10 @@ button{ font-family:inherit; cursor:pointer; }
   .lab-empty-note{ padding:0 20px 18px; }
 }
 
+/* ==================================================================
+   [CSS-18]  EDUCATION
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Education
 --------------------------------------------------------------- */
@@ -789,10 +934,14 @@ button{ font-family:inherit; cursor:pointer; }
 .edu-degree{ font-family:var(--ff-display); font-size:18px; }
 .edu-school{ font-size:14px; color:var(--text-dim); }
 .edu-date{ font-family:var(--ff-mono); font-size:12.5px; color:var(--amber); white-space:nowrap; }
-.edu-result{ font-size:13px; color:var(--teal); margin-bottom:10px; }
+.edu-result{ font-size:13px; color:var(--accent); margin-bottom:10px; }
 .edu-desc{ font-size:14px; color:var(--text-dim); margin-bottom:14px; }
 .edu-quote{ font-size:13px; font-style:italic; color:var(--text-dim); border-left:2px solid var(--amber); padding-left:14px; }
 .edu-quote cite{ display:block; margin-top:8px; font-style:normal; font-size:12px; color:var(--text-faint); }
+
+/* ==================================================================
+   [CSS-19]  ACHIEVEMENTS
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Achievements
@@ -815,6 +964,10 @@ button{ font-family:inherit; cursor:pointer; }
 
 @media (max-width:900px){ .award-grid{ grid-template-columns:1fr; } }
 
+/* ==================================================================
+   [CSS-20]  REFERENCES
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    References
 --------------------------------------------------------------- */
@@ -824,8 +977,8 @@ button{ font-family:inherit; cursor:pointer; }
 .ref-avatar{
   width:44px; height:44px; border-radius:50%; flex:none;
   display:flex; align-items:center; justify-content:center;
-  font-family:var(--ff-display); font-size:15px; color:var(--teal);
-  background:var(--teal-dim); border:1px solid rgba(34,211,166,.3);
+  font-family:var(--ff-display); font-size:15px; color:var(--accent);
+  background:var(--accent-dim); border:1px solid rgba(var(--accent-rgb),.3);
   transition:transform .3s cubic-bezier(.34,1.56,.64,1);
 }
 .ref-card:hover .ref-avatar{ transform:scale(1.1); }
@@ -836,11 +989,15 @@ button{ font-family:inherit; cursor:pointer; }
 .ref-org{ font-size:12.5px; color:var(--amber); font-family:var(--ff-mono); }
 .ref-meta{ display:flex; gap:10px; flex-wrap:wrap; font-size:12.5px; color:var(--text-faint); }
 .ref-desc{ font-size:13.5px; color:var(--text-dim); }
-.ref-link{ font-size:12.5px; color:var(--teal); text-decoration:none; margin-top:4px; }
+.ref-link{ font-size:12.5px; color:var(--accent); text-decoration:none; margin-top:4px; }
 .ref-link:hover{ text-decoration:underline; }
 .refs-note{ margin-top:18px; font-size:13px; color:var(--text-faint); font-style:italic; }
 
 @media (max-width:760px){ .refs-grid{ grid-template-columns:1fr; } }
+
+/* ==================================================================
+   [CSS-21]  CONTACT — base
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Contact — premium crystal-clear glass, redesigned.
@@ -874,7 +1031,7 @@ button{ font-family:inherit; cursor:pointer; }
   font-family:var(--ff-mono); font-size:12.5px; color:var(--text-dim);
   margin-bottom:26px;
 }
-.contact-avail .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); flex:none; }
+.contact-avail .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); flex:none; }
 .contact-avail .contact-time{ color:var(--text-faint); }
 .contact-avail .contact-time::before{ content:'· '; }
 
@@ -897,12 +1054,12 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .cf-field input::placeholder, .cf-field textarea::placeholder{ color:var(--text-faint); }
 .cf-field input:hover, .cf-field textarea:hover{ border-color:var(--glass-border-bright); }
-.cf-field input:focus, .cf-field textarea:focus{ outline:none; border-color:var(--teal); }
+.cf-field input:focus, .cf-field textarea:focus{ outline:none; border-color:var(--accent); }
 .cf-field-area textarea{
   border:1px solid var(--glass-border); border-radius:var(--radius-sm);
   padding:10px 12px; resize:vertical;
 }
-.cf-field-area textarea:focus{ border-color:var(--teal); }
+.cf-field-area textarea:focus{ border-color:var(--accent); }
 /* honeypot — visually hidden, still reachable by bots that fill every field */
 .cf-hp{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); opacity:0; pointer-events:none; }
 
@@ -920,7 +1077,7 @@ button{ font-family:inherit; cursor:pointer; }
 .cf-submit:active{ transform:translateY(0); }
 .cf-submit:disabled{ opacity:.65; cursor:default; transform:none; }
 .cf-status{ font-size:12.5px; color:var(--text-dim); margin:0; }
-.cf-status.is-success{ color:var(--teal); }
+.cf-status.is-success{ color:var(--accent); }
 .cf-status.is-error{ color:#ff9d9d; }
 
 @media (max-width:820px){
@@ -928,6 +1085,10 @@ button{ font-family:inherit; cursor:pointer; }
   .contact-left{ padding:32px 28px 28px; }
   .contact-right{ padding:0 28px 32px; border-left:none; border-top:1px solid var(--glass-border); margin-top:8px; padding-top:28px; transform:none; }
 }
+
+/* ==================================================================
+   [CSS-22]  FOOTER
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Footer
@@ -960,12 +1121,16 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   font-size:13px; color:var(--text-faint);
 }
 .footer-row a{ color:var(--text-dim); }
-.footer-row a:hover{ color:var(--teal); }
+.footer-row a:hover{ color:var(--accent); }
 
 @media (max-width:640px){
   .footer-row{ justify-content:center; text-align:center; }
   .footer-line{ font-size:14px; }
 }
+
+/* ==================================================================
+   [CSS-23]  SCROLL REVEAL — basic
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Scroll reveal (single, restrained — no slide, fade only)
@@ -973,6 +1138,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 
 .reveal{ opacity:0; transition:opacity .6s ease; }
 .reveal.visible{ opacity:1; }
+
+/* ==================================================================
+   [CSS-24]  ANIMATION FOUNDATION — data-reveal / tilt / depth
+   ================================================================== */
 
 /* =============================================================
    Spatial Animation Foundation — Part 1
@@ -1021,13 +1190,21 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 
 
+/* ==================================================================
+   [CSS-25]  SCROLL PROGRESS BAR
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Scroll progress
 --------------------------------------------------------------- */
 .scroll-progress{
-  position:fixed; top:0; left:0; height:2px; background:var(--teal);
-  box-shadow:0 0 8px var(--teal); z-index:60; width:0%;
+  position:fixed; top:0; left:0; height:2px; background:var(--accent);
+  box-shadow:0 0 8px var(--accent); z-index:60; width:0%;
 }
+
+/* ==================================================================
+   [CSS-26]  HERO — scroll-scrubbed photo + cycling role text
+   ================================================================== */
 
 /* =================================================================
    NEW — Scroll-scrubbed hero photo + cycling role text
@@ -1050,10 +1227,14 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   color:var(--text-faint); letter-spacing:.04em;
 }
 .scroll-scrub-hint span{
-  display:inline-block; color:var(--teal);
+  display:inline-block; color:var(--accent);
 }
 
 @media (max-width:900px){ .scroll-scrub-hint{ justify-content:flex-start; } }
+
+/* ==================================================================
+   [CSS-27]  SECTION HEADERS — mirrored
+   ================================================================== */
 
 /* =================================================================
    NEW — Mirrored / reflected section headers
@@ -1075,16 +1256,20 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 
 /* one-time glitch flicker as each heading enters view */
 @keyframes glitchFlicker{
-  0%{   text-shadow:2px 0 var(--teal), -2px 0 var(--amber); transform:translateX(-1.5px); }
-  20%{  text-shadow:-2px 0 var(--teal), 2px 0 var(--amber); transform:translateX(1.5px); }
-  40%{  text-shadow:1.5px 0 var(--teal), -1.5px 0 var(--amber); transform:translateX(-.75px); }
-  60%{  text-shadow:-1px 0 var(--teal), 1px 0 var(--amber); transform:translateX(.75px); }
-  80%{  text-shadow:.5px 0 var(--teal), -.5px 0 var(--amber); transform:translateX(0); }
+  0%{   text-shadow:2px 0 var(--accent), -2px 0 var(--amber); transform:translateX(-1.5px); }
+  20%{  text-shadow:-2px 0 var(--accent), 2px 0 var(--amber); transform:translateX(1.5px); }
+  40%{  text-shadow:1.5px 0 var(--accent), -1.5px 0 var(--amber); transform:translateX(-.75px); }
+  60%{  text-shadow:-1px 0 var(--accent), 1px 0 var(--amber); transform:translateX(.75px); }
+  80%{  text-shadow:.5px 0 var(--accent), -.5px 0 var(--amber); transform:translateX(0); }
   100%{ text-shadow:none; transform:translateX(0); }
 }
 .section h2.glitch-in, .contact-panel h2.glitch-in{
   animation: glitchFlicker .55s steps(3,end) both;
 }
+
+/* ==================================================================
+   [CSS-28]  CARD DIAMOND corner accent
+   ================================================================== */
 
 /* =================================================================
    NEW — Diamond corner accent on cards
@@ -1094,7 +1279,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 ================================================================= */
 .trait-row, .award-card, .cert-card, .skill-card, .edu-card,
 .ref-card, .highlight-card, .case-card, .credential-list{
-  --diamond: var(--teal);
+  --diamond: var(--accent);
 }
 .award-card, .edu-card{ --diamond: var(--amber); }
 
@@ -1114,6 +1299,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 /* case-card gets its diamond mirrored to the left so it doesn't
    collide with the open/close chevron */
 .case-card::after{ right:auto; left:14px; top:14px; }
+
+/* ==================================================================
+   [CSS-29]  RECRUITER BAR + TECHNICAL ARSENAL + PROOF OF WORK
+   ================================================================== */
 
 /* =================================================================
    PART 4 — Recruiter fast-pass, Technical Arsenal, Proof of Work
@@ -1142,7 +1331,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 .recruiter-inner{ display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; width:100%; padding:0; }
 .recruiter-label{ display:flex; align-items:center; gap:8px; font-family:var(--ff-mono); font-size:12.5px; color:var(--text-dim); white-space:nowrap; }
-.recruiter-label .ping{ width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:pulse 2.2s ease-in-out infinite; }
+.recruiter-label .ping{ width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:pulse 2.2s ease-in-out infinite; }
 .recruiter-links{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 .recruiter-link{
   font-size:13px; color:var(--text-dim); padding:8px 14px; border-radius:999px;
@@ -1150,10 +1339,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 .recruiter-link:hover{ color:var(--text); border-color:var(--glass-border-bright); }
 .recruiter-link-cv{
-  color:#052018; background:var(--teal); border-color:transparent; font-weight:600;
+  color:#06182B; background:var(--accent); border-color:transparent; font-weight:600;
   display:inline-flex; align-items:center; gap:6px;
 }
-.recruiter-link-cv:hover{ color:#052018; filter:brightness(1.08); }
+.recruiter-link-cv:hover{ color:#06182B; filter:brightness(1.08); }
 @media (max-width:640px){
   .recruiter-bar{ margin-top:0; }
   .recruiter-inner{ flex-direction:column; align-items:flex-start; }
@@ -1171,7 +1360,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   background:rgba(255,255,255,.03); cursor:pointer; transition:all .2s ease;
 }
 .arsenal-tab:hover{ color:var(--text); border-color:var(--glass-border-bright); }
-.arsenal-tab.active{ color:#052018; background:var(--teal); border-color:transparent; }
+.arsenal-tab.active{ color:#06182B; background:var(--accent); border-color:transparent; }
 .arsenal-panel{ padding:26px; position:relative; }
 .arsenal-cloud{ display:none; flex-wrap:wrap; gap:10px; }
 .arsenal-cloud.active{ display:flex; }
@@ -1183,7 +1372,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   margin-top:18px; padding-top:16px; border-top:1px solid var(--glass-border);
   font-size:12.5px; color:var(--text-faint);
 }
-.arsenal-proof a{ color:var(--teal); }
+.arsenal-proof a{ color:var(--accent); }
 
 /* --- Proof of work strip --- */
 .proof-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
@@ -1192,11 +1381,15 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   text-align:center; transition:transform .25s ease, border-color .25s ease;
 }
 .proof-stat:hover{ transform:translateY(-3px); border-color:var(--glass-border-bright); }
-.proof-stat .val{ font-family:var(--ff-mono); font-size:32px; color:var(--teal); }
+.proof-stat .val{ font-family:var(--ff-mono); font-size:32px; color:var(--accent); }
 .proof-stat .lbl{ font-size:12.5px; color:var(--text-dim); margin-top:6px; }
 @media (max-width:760px){
   .proof-grid{ grid-template-columns:repeat(2,1fr); }
 }
+
+/* ==================================================================
+   [CSS-30]  GLASS OVERRIDE — crystal-clear pass (later rules win)
+   ================================================================== */
 
 /* =================================================================
    PART 5 — Final visual language pass: crystal-clear, not frosted.
@@ -1224,6 +1417,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 /* Contact form styling now lives with the rest of the Contact
    redesign, up near .contact-panel — this Formspree-integration
    pass only added behavior (script.js), not a second style block. */
+
+/* ==================================================================
+   [CSS-31]  GLASS OVERRIDE — Liquid Glass refinement
+   ================================================================== */
 
 /* =================================================================
    PART 6 — iOS 27 / Liquid Glass visual refinement
@@ -1311,12 +1508,12 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .btn{ border-radius:16px; }
 .btn-primary{
   clip-path:none;
-  background:linear-gradient(168deg, rgba(255,255,255,.22), rgba(34,211,166,.92) 55%, #1FB37E);
+  background:linear-gradient(168deg, rgba(255,255,255,.22), rgba(var(--accent-rgb),.92) 55%, var(--accent-deep));
   box-shadow:
-    0 14px 30px -12px rgba(34,211,166,.55),
+    0 14px 30px -12px rgba(var(--accent-rgb),.55),
     inset 0 1px 0 rgba(255,255,255,.55);
 }
-.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 18px 36px -12px rgba(34,211,166,.7), inset 0 1px 0 rgba(255,255,255,.6); }
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 18px 36px -12px rgba(var(--accent-rgb),.7), inset 0 1px 0 rgba(255,255,255,.6); }
 .btn-primary:active{ transform:translateY(0) scale(.98); }
 .btn-ghost{
   background:var(--glass-surface);
@@ -1338,7 +1535,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .cf-submit:hover{ background:var(--glass-surface-strong); }
 
 /* ---- Turn off the two neon/gaming-coded decorative effects -------
-   1) The colored-glow "glitch" flicker on section headings (teal /
+   1) The colored-glow "glitch" flicker on section headings (accent /
       amber text-shadow) reads as cyberpunk neon, not premium Apple,
       and the brief explicitly asks to avoid glowing typography.
       The mirrored reflection under each heading is left in place —
@@ -1361,6 +1558,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 @media (max-width:640px){
   :root{ --blur-glass-liquid: blur(calc(14px * var(--glass-amt))) saturate(calc(1 - .5 * var(--glass-amt))) brightness(calc(1 - .12 * var(--glass-amt))); }
 }
+
+/* ==================================================================
+   [CSS-32]  AMBIENT MOTION
+   ================================================================== */
 
 /* =================================================================
    PART 7 — Ambient motion pass
@@ -1402,7 +1603,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .ping{ position:relative; }
 .ping::after{
   content:''; position:absolute; inset:0; border-radius:50%;
-  background:var(--teal);
+  background:var(--accent);
   animation: pingRadar 2.6s cubic-bezier(0,0,.2,1) infinite;
   pointer-events:none;
 }
@@ -1434,11 +1635,11 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 /* ---- Lab ticket status dots: a soft "live system" breathing glow -
    Only on resolved/documented tickets — the pending/not-logged dot
    stays static, which also reinforces its meaning. */
-.lab-dot--done{ animation: dotBreatheTeal 3.4s ease-in-out infinite; }
+.lab-dot--done{ animation: dotBreatheAccent 3.4s ease-in-out infinite; }
 .lab-dot--doc{ animation: dotBreatheAmber 3.4s ease-in-out infinite; }
-@keyframes dotBreatheTeal{
-  0%,100%{ box-shadow:0 0 5px var(--teal); }
-  50%{ box-shadow:0 0 12px var(--teal); }
+@keyframes dotBreatheAccent{
+  0%,100%{ box-shadow:0 0 5px var(--accent); }
+  50%{ box-shadow:0 0 12px var(--accent); }
 }
 @keyframes dotBreatheAmber{
   0%,100%{ box-shadow:0 0 5px rgba(143,168,189,.55); }
@@ -1454,6 +1655,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   0%,100%{ transform:translateX(0); }
   50%{ transform:translateX(3px); }
 }
+
+/* ==================================================================
+   [CSS-33]  BUTTONS 1 — pill shape
+   ================================================================== */
 
 /* =================================================================
    PART 8 — Glass pill buttons
@@ -1495,12 +1700,12 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   transform:translateY(-2px);
 }
 
-/* Primary / active actions keep a teal accent so they still read as
+/* Primary / active actions keep a accent accent so they still read as
    "the" button to press — now as a tinted glass pill instead of a
    solid fill. */
 .btn-primary, .recruiter-link-cv, .nav-cta, .arsenal-tab.active{
-  color:var(--teal);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 14px 30px -14px rgba(34,211,166,.5);
+  color:var(--accent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 14px 30px -14px rgba(var(--accent-rgb),.5);
 }
 
 /* Buttons nested inside an already-glass card (certificate actions,
@@ -1516,9 +1721,13 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   background:var(--glass-surface-strong);
   border-color:var(--glass-border-bright);
 }
-.cert-btn.primary{ color:var(--teal); }
+.cert-btn.primary{ color:var(--accent); }
 
 
+
+/* ==================================================================
+   [CSS-34]  BUTTONS 2 — Liquid Capsule system
+   ================================================================== */
 
 /* =================================================================
    PART 9 — Liquid Capsule / Spatial Glass button system
@@ -1545,7 +1754,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
    comes only from hover / focus / active / reveal states.
 ================================================================= */
 
-/* Registered so glass tint, reflection strength and the teal core can
+/* Registered so glass tint, reflection strength and the accent core can
    fade smoothly instead of snapping (gradients cannot transition). */
 @property --lg-spec{ syntax:'<number>'; inherits:false; initial-value:.14; }
 @property --lg-veil{ syntax:'<number>'; inherits:false; initial-value:.3; }
@@ -1602,6 +1811,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
     outline-offset .2s ease;
 }
 
+/* ==================================================================
+   [CSS-35]  BUTTONS 3 — shared base
+   ================================================================== */
+
 /* -----------------------------------------------------------------
    REST — the shared Liquid Capsule
    ":not(.lg-none)" is a specificity lift (the class never exists) so
@@ -1616,10 +1829,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   --lg-sh:var(--lg-sh-rest);
   --lg-glow:inset 0 0 0 0 transparent, 0 0 0 0 transparent;
   --lg-bc:rgba(255,255,255,.40) rgba(255,255,255,.16) rgba(255,255,255,.10) rgba(255,255,255,.28);
-  /* the teal "energy" layer — invisible until --lg-core > 0 */
+  /* the accent "energy" layer — invisible until --lg-core > 0 */
   --lg-extra:
-    radial-gradient(100% 120% at 50% 138%, rgba(34,211,166,calc(var(--lg-core) * .40)) 0%, rgba(34,211,166,calc(var(--lg-core) * .13)) 42%, transparent 70%),
-    radial-gradient(42% 70% at 74% 124%, rgba(150,255,230,calc(var(--lg-core) * .22)), transparent 100%);
+    radial-gradient(100% 120% at 50% 138%, rgba(var(--accent-rgb),calc(var(--lg-core) * .40)) 0%, rgba(var(--accent-rgb),calc(var(--lg-core) * .13)) 42%, transparent 70%),
+    radial-gradient(42% 70% at 74% 124%, rgba(var(--accent-light-rgb),calc(var(--lg-core) * .22)), transparent 100%);
 
   position:relative; isolation:isolate; overflow:hidden;
   display:inline-flex; align-items:center; justify-content:center;
@@ -1701,19 +1914,23 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .btn-arrow{ transition:transform .6s var(--lg-ease), text-shadow .5s ease, color .5s ease; text-shadow:0 0 0 rgba(255,255,255,0); }
 .btn-primary .btn-arrow{ animation:none; } /* calm the idle nudge — depth stays static */
 
+/* ==================================================================
+   [CSS-36]  BUTTONS 4 — roles (primary / secondary / ghost)
+   ================================================================== */
+
 /* -----------------------------------------------------------------
    ROLES
 ----------------------------------------------------------------- */
-/* Liquid Core — teal lives inside the glass, not on it */
+/* Liquid Core — accent lives inside the glass, not on it */
 :is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active){
   --lg-core:1;
   --lg-fg:#fff;
   --lg-veil:.26;
   --lg-bc:rgba(255,255,255,.60) rgba(255,255,255,.26) rgba(255,255,255,.14) rgba(255,255,255,.44);
-  --lg-glow:inset 0 -10px 18px -10px rgba(34,211,166,.22), 0 12px 26px -16px rgba(34,211,166,.30);
+  --lg-glow:inset 0 -10px 18px -10px rgba(var(--accent-rgb),.22), 0 12px 26px -16px rgba(var(--accent-rgb),.30);
   font-weight:600;
 }
-:is(.btn-primary,.recruiter-link-cv,.cf-submit) .btn-arrow{ color:#aef2df; }
+:is(.btn-primary,.recruiter-link-cv,.cf-submit) .btn-arrow{ color:var(--accent-light); }
 /* the small moving light: the crescent drifts slowly inside the glass */
 :is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):not(.lg-none)::before{
   animation:lgDrift 9s ease-in-out infinite alternate;
@@ -1737,6 +1954,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 .btn.btn-ghost::before{ opacity:.35; }
 
+/* ==================================================================
+   [CSS-37]  BUTTONS 5 — glass lens (icon-only round controls)
+   ================================================================== */
+
 /* -----------------------------------------------------------------
    GLASS LENS — icon-only round controls
    The old rotate() on the whole control is replaced by rotating only
@@ -1748,7 +1969,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   --lg-sh:0 1px 1.5px rgba(0,0,0,.34), 0 6px 12px -6px rgba(0,0,0,.5), 0 14px 20px -14px rgba(0,0,0,.45);
   --lg-glow:inset 0 0 0 0 transparent, 0 0 0 0 transparent;
   --lg-bc:rgba(255,255,255,.42) rgba(255,255,255,.16) rgba(255,255,255,.10) rgba(255,255,255,.30);
-  --lg-extra:radial-gradient(circle at 50% 122%, rgba(34,211,166,calc(var(--lg-core) * .46)), transparent 72%);
+  --lg-extra:radial-gradient(circle at 50% 122%, rgba(var(--accent-rgb),calc(var(--lg-core) * .46)), transparent 72%);
 
   position:relative; isolation:isolate; overflow:hidden;
   align-items:center; justify-content:center;
@@ -1807,15 +2028,19 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   transition:filter .5s ease, opacity .4s ease;
 }
 
-/* open state — teal wakes up inside the lens, glyph turns to ×  */
+/* open state — accent wakes up inside the lens, glyph turns to ×  */
 .bd-card.is-open .bd-card-plus,
 .case-card.open .case-toggle{
   --lg-core:1;
-  --lg-bc:rgba(140,255,225,.62) rgba(255,255,255,.22) rgba(255,255,255,.12) rgba(190,255,238,.42);
-  transform:none; color:#c4f6e9; border-color:var(--lg-bc);
+  --lg-bc:rgba(var(--accent-light-rgb),.62) rgba(255,255,255,.22) rgba(255,255,255,.12) rgba(var(--accent-light-rgb),.42);
+  transform:none; color:var(--accent-light); border-color:var(--lg-bc);
 }
 .bd-card.is-open .bd-card-plus::after,
 .case-card.open .case-toggle::after{ transform:rotate(45deg); opacity:1; }
+
+/* ==================================================================
+   [CSS-38]  BUTTONS 6 — hover
+   ================================================================== */
 
 /* -----------------------------------------------------------------
    HOVER — Vision Pro optical response (real pointers only)
@@ -1836,7 +2061,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   :is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):hover{
     --lg-core:1.3;
     --lg-bc:rgba(255,255,255,.86) rgba(255,255,255,.40) rgba(255,255,255,.24) rgba(255,255,255,.64);
-    --lg-glow:inset 0 -10px 20px -10px rgba(34,211,166,.30), 0 14px 30px -14px rgba(34,211,166,.38);
+    --lg-glow:inset 0 -10px 20px -10px rgba(var(--accent-rgb),.30), 0 14px 30px -14px rgba(var(--accent-rgb),.38);
   }
   .btn.btn-ghost:hover{
     --lg-veil:.13; --lg-spec:.16;
@@ -1880,22 +2105,30 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   .case-head:hover .case-toggle:not(.lg-none)::before{ opacity:1; }
 }
 
+/* ==================================================================
+   [CSS-39]  BUTTONS 7 — focus ring
+   ================================================================== */
+
 /* -----------------------------------------------------------------
    FOCUS — spatial ring: thin silver outline, soft translucent halo,
-   a faint teal glow inside the glass
+   a faint accent glow inside the glass
 ----------------------------------------------------------------- */
 :is(.btn,.nav-cta,.nav-link,.contact-pill,.recruiter-link,.cert-btn,.cf-submit,.arsenal-tab,.nav-toggle):not(.lg-none):focus-visible{
   outline:1.5px solid rgba(236,242,244,.80); outline-offset:3px;
-  --lg-glow:inset 0 0 16px rgba(34,211,166,.20), 0 0 0 7px rgba(255,255,255,.055);
+  --lg-glow:inset 0 0 16px rgba(var(--accent-rgb),.20), 0 0 0 7px rgba(255,255,255,.055);
   --lg-fg:#fff;
 }
 :is(.btn-primary,.nav-cta,.recruiter-link-cv,.cert-btn.primary,.cf-submit,.arsenal-tab.active):not(.lg-none):focus-visible{
-  --lg-glow:inset 0 0 18px rgba(34,211,166,.30), 0 0 0 7px rgba(255,255,255,.055);
+  --lg-glow:inset 0 0 18px rgba(var(--accent-rgb),.30), 0 0 0 7px rgba(255,255,255,.055);
 }
 .bd-card:focus-visible .bd-card-plus:not(.lg-none){
   --lg-bc:rgba(255,255,255,.68) rgba(255,255,255,.28) rgba(255,255,255,.18) rgba(255,255,255,.50);
-  --lg-glow:inset 0 0 8px rgba(34,211,166,.30), 0 0 0 3px rgba(255,255,255,.07);
+  --lg-glow:inset 0 0 8px rgba(var(--accent-rgb),.30), 0 0 0 3px rgba(255,255,255,.07);
 }
+
+/* ==================================================================
+   [CSS-40]  BUTTONS 8 — press
+   ================================================================== */
 
 /* -----------------------------------------------------------------
    PRESS — a glass control pushed in 1.5px: shadow compresses, rim
@@ -1920,6 +2153,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .nav-toggle:not(.lg-none):active::before{ opacity:1; }
 
 .cf-submit:disabled{ pointer-events:none; opacity:.6; }
+
+/* ==================================================================
+   [CSS-41]  BUTTONS 9 — responsive
+   ================================================================== */
 
 /* -----------------------------------------------------------------
    RESPONSIVE
@@ -1946,6 +2183,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   .nav-toggle:not(.lg-none){ width:44px; height:44px; }
 }
 
+/* ==================================================================
+   [CSS-42]  BUTTONS 10 — accessibility
+   ================================================================== */
+
 /* -----------------------------------------------------------------
    ACCESSIBILITY
 ----------------------------------------------------------------- */
@@ -1964,13 +2205,17 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 
 
+/* ==================================================================
+   [CSS-43]  LOGOS — Pearl Plate system
+   ================================================================== */
+
 /* =================================================================
    PART 10 — Pearl Plate logo system
    Most partner logos are dark artwork on white, so on the dark glass
    theme they were tiny and low-contrast. Each logo now sits on its
    own thin pearl-glass plate: bright enough to read at a glance,
-   depth from layered shadow, a small teal foot-mark that lengthens
-   on hover, and a faint teal sheen that crosses once. The plate is a
+   depth from layered shadow, a small accent foot-mark that lengthens
+   on hover, and a faint accent sheen that crosses once. The plate is a
    wrapper span; logos are multiplied into it so white JPG backgrounds
    melt away. Sizes scale from one variable (--plate-h).
 ================================================================= */
@@ -2007,18 +2252,18 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   filter:saturate(1.05) contrast(1.03);
 }
 
-/* teal foot-mark: a small index tab at rest, longer on hover */
+/* accent foot-mark: a small index tab at rest, longer on hover */
 .logo-plate::after{
   content:''; position:absolute; z-index:2; pointer-events:none;
   left:50%; bottom:0; width:16%; height:2px;
-  border-radius:2px 2px 0 0; background:var(--teal); opacity:.6;
+  border-radius:2px 2px 0 0; background:var(--accent); opacity:.6;
   translate:-50% 0;
   transition:width .5s var(--lg-ease,ease), opacity .4s ease;
 }
-/* one faint teal sheen, parked off-plate */
+/* one faint accent sheen, parked off-plate */
 .logo-plate::before{
   content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
-  background:linear-gradient(105deg, transparent 34%, rgba(34,211,166,.10) 46%, rgba(255,255,255,.85) 50%, rgba(34,211,166,.10) 54%, transparent 66%);
+  background:linear-gradient(105deg, transparent 34%, rgba(var(--accent-rgb),.10) 46%, rgba(255,255,255,.85) 50%, rgba(var(--accent-rgb),.10) 54%, transparent 66%);
   translate:-110% 0;
   transition:translate 0s linear .5s;
 }
@@ -2058,12 +2303,16 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 
 
+/* ==================================================================
+   [CSS-44]  NAVBAR — capsule links + mobile fixes
+   ================================================================== */
+
 /* =================================================================
    PART 11 — Navbar: every link is a Liquid Capsule + mobile fixes
    Every nav link now uses the exact same glass-capsule material as
    the "Let's talk" button (the .nav-link class is part of the shared
-   selector lists in Part 9). "Let's talk" keeps the teal core; links
-   are the silver secondary role, the active link gets a soft teal
+   selector lists in Part 9). "Let's talk" keeps the accent core; links
+   are the silver secondary role, the active link gets a soft accent
    core so you can see where you are. Spacing is one variable:
    --nav-gap (same gap between every pill, links and CTA alike).
 ================================================================= */
@@ -2093,13 +2342,13 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   .nav-brand{ font-size:15px; }
 }
 
-/* current section — same glass, brighter rim, teal waking inside */
+/* current section — same glass, brighter rim, accent waking inside */
 .nav-link.active:not(.lg-none){
   --lg-core:.75; --lg-spec:.22; --lg-veil:.22;
   --lg-fg:#fff;
   --lg-edge:var(--lg-edge-hover);
   --lg-bc:rgba(255,255,255,.66) rgba(255,255,255,.28) rgba(255,255,255,.18) rgba(255,255,255,.48);
-  --lg-glow:inset 0 -8px 16px -10px rgba(34,211,166,.26), 0 10px 22px -14px rgba(34,211,166,.30);
+  --lg-glow:inset 0 -8px 16px -10px rgba(var(--accent-rgb),.26), 0 10px 22px -14px rgba(var(--accent-rgb),.30);
 }
 
 /* hamburger ⇄ close */
@@ -2108,8 +2357,8 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .nav-toggle[aria-expanded="true"] .i-close{ display:inline; }
 .nav-toggle[aria-expanded="true"]:not(.lg-none){
   --lg-core:1;
-  --lg-bc:rgba(140,255,225,.62) rgba(255,255,255,.22) rgba(255,255,255,.12) rgba(190,255,238,.42);
-  color:#c4f6e9;
+  --lg-bc:rgba(var(--accent-light-rgb),.62) rgba(255,255,255,.22) rgba(255,255,255,.12) rgba(var(--accent-light-rgb),.42);
+  color:var(--accent-light);
 }
 
 /* ---- Desktop: full row of pills ---------------------------------- */
@@ -2215,8 +2464,6 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   .recruiter-link:last-child:nth-child(even){ grid-column:auto; }
 }
 
-}
-
 
 /* Contact-panel shortcuts (CV · Email · WhatsApp · LinkedIn): same
    glass capsule as the rest of the site's secondary buttons */
@@ -2263,6 +2510,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 
 
+/* ==================================================================
+   [CSS-45]  CONTACT — Liquid Pane (overrides Contact base)
+   ================================================================== */
+
 /* =================================================================
    PART 12 — Contact: "Liquid Pane"
    A one-off material reserved for the contact panel. Where the other
@@ -2274,7 +2525,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
        light dispersing through thick glass
      · a light streak that crosses the pane every few seconds
      · inputs pressed into the glass as dark wells
-     · the column divider is a hairline with a single teal bead
+     · the column divider is a hairline with a single accent bead
    HTML: one decorative <span class="cp-liquid"> added; JS untouched.
 ================================================================= */
 .contact-panel.glass{
@@ -2313,7 +2564,7 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 .cp-liquid i:nth-child(1){
   width:52%; left:-12%; top:-24%;
-  background:radial-gradient(circle at 38% 36%, rgba(34,211,166,.85), rgba(34,211,166,0) 68%);
+  background:radial-gradient(circle at 38% 36%, rgba(var(--accent-rgb),.85), rgba(var(--accent-rgb),0) 68%);
   animation:cpPool1 21s ease-in-out infinite alternate;
 }
 .cp-liquid i:nth-child(2){
@@ -2365,9 +2616,9 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   border:1px solid rgba(255,255,255,.14); border-top-color:rgba(255,255,255,.34);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 8px 18px -12px rgba(0,0,0,.6);
 }
-.contact-panel .contact-avail .dot{ width:7px; height:7px; box-shadow:0 0 10px rgba(34,211,166,.85); }
+.contact-panel .contact-avail .dot{ width:7px; height:7px; box-shadow:0 0 10px rgba(var(--accent-rgb),.85); }
 
-/* divider: hairline + one teal bead (vertical on desktop) */
+/* divider: hairline + one accent bead (vertical on desktop) */
 .contact-panel .contact-right{ border-left:0; position:relative; }
 .contact-right::before{
   content:''; position:absolute; left:0; top:8%; bottom:8%; width:1px;
@@ -2376,8 +2627,8 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 .contact-right::after{
   content:''; position:absolute; left:-3.5px; top:50%; width:8px; height:8px; border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, #fff, rgba(34,211,166,.95) 55%, rgba(34,211,166,.35));
-  box-shadow:0 0 14px rgba(34,211,166,.65);
+  background:radial-gradient(circle at 35% 30%, #fff, rgba(var(--accent-rgb),.95) 55%, rgba(var(--accent-rgb),.35));
+  box-shadow:0 0 14px rgba(var(--accent-rgb),.65);
 }
 
 /* inputs: pressed into the glass */
@@ -2393,8 +2644,8 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .contact-panel .cf-field textarea:hover{ border-color:rgba(255,255,255,.28); border-top-color:rgba(0,0,0,.35); }
 .contact-panel .cf-field input:focus,
 .contact-panel .cf-field textarea:focus{
-  outline:none; border-color:rgba(34,211,166,.7); border-top-color:rgba(34,211,166,.5);
-  box-shadow:inset 0 2px 7px rgba(0,0,0,.38), 0 0 0 3px rgba(34,211,166,.16), 0 0 24px -6px rgba(34,211,166,.5);
+  outline:none; border-color:rgba(var(--accent-rgb),.7); border-top-color:rgba(var(--accent-rgb),.5);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.38), 0 0 0 3px rgba(var(--accent-rgb),.16), 0 0 24px -6px rgba(var(--accent-rgb),.5);
 }
 .contact-panel .cf-field label{ padding-left:4px; }
 .contact-form{ gap:18px; }
@@ -2433,6 +2684,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 .tl-logos--sub .logo-plate{ --plate-h:56px; border-radius:16px; }
 @media (max-width:560px){ .tl-logos--sub .logo-plate{ --plate-h:50px; } }
 
+/* ==================================================================
+   [CSS-46]  WIDE SCREENS — ambient rail
+   ================================================================== */
+
 /* =================================================================
    PART 13 — Wide-viewport "ambient rail"
    On very wide monitors the fixed 1320px container still leaves a
@@ -2450,9 +2705,9 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
     content:'';
     position:fixed; top:8%; bottom:8%; width:1px; z-index:1; pointer-events:none;
     background:
-      radial-gradient(circle at 50% 14%, rgba(34,211,166,.85) 0 2px, transparent 3px),
-      radial-gradient(circle at 50% 50%, rgba(34,211,166,.85) 0 2px, transparent 3px),
-      radial-gradient(circle at 50% 86%, rgba(34,211,166,.85) 0 2px, transparent 3px),
+      radial-gradient(circle at 50% 14%, rgba(var(--accent-rgb),.85) 0 2px, transparent 3px),
+      radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb),.85) 0 2px, transparent 3px),
+      radial-gradient(circle at 50% 86%, rgba(var(--accent-rgb),.85) 0 2px, transparent 3px),
       linear-gradient(180deg, transparent 0%, rgba(255,255,255,.16) 12%, rgba(255,255,255,.16) 88%, transparent 100%);
     opacity:.7;
     animation:pulse 3.6s ease-in-out infinite;
@@ -2465,13 +2720,17 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   body::before, body::after{ animation:none; }
 }
 
+/* ==================================================================
+   [CSS-47]  WIDE SCREENS — side rail
+   ================================================================== */
+
 /* =================================================================
    PART 14 — Side rail: puts the wide left gutter to work
    On the wide monitors where the gutter is largest, this gives it a
    job — one glass "dock" holding the quick-contact links (reusing
    real links already in the Contact section) instead of empty
    space. One cohesive capsule, not separate floating orbs — icons
-   sit monochrome at rest and light up teal on hover, matching the
+   sit monochrome at rest and light up accent on hover, matching the
    rest of the site's glass material instead of clashing brand
    colors. Vertically centered, fully hidden below the width where
    the gutter is too narrow to hold it without crowding the panels.
@@ -2505,9 +2764,9 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   transition:background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease;
 }
 .side-rail-link:hover{
-  background:rgba(34,211,166,.14);
-  border-color:rgba(34,211,166,.4);
-  color:var(--teal);
+  background:rgba(var(--accent-rgb),.14);
+  border-color:rgba(var(--accent-rgb),.4);
+  color:var(--accent);
   transform:scale(1.08);
 }
 .side-rail-icon{ width:19px; height:19px; display:block; }
@@ -2524,6 +2783,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
 }
 
 
+/* ==================================================================
+   [CSS-48]  NAV — one "Let's talk" on phones / tablets
+   ================================================================== */
+
 /* =================================================================
    PART 11 — One "Let's talk" on phones / tablets
    Below 1180px the menu button opens the drawer, which already ends
@@ -2536,6 +2799,10 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
   .nav .nav-toggle{ margin-left:auto; }
 }
 
+
+/* ==================================================================
+   [CSS-49]  COMMAND CONSOLE
+   ================================================================== */
 
 /* =================================================================
    PART 12 — Command Console (Ctrl/⌘ + K)
@@ -2580,7 +2847,7 @@ html.cmdk-open{ overflow:hidden; }
   border-bottom:1px solid rgba(255,255,255,.10);
   transition:box-shadow .3s ease;
 }
-.cmdk-search:focus-within{ box-shadow:inset 0 -1px 0 rgba(34,211,166,.55); }
+.cmdk-search:focus-within{ box-shadow:inset 0 -1px 0 rgba(var(--accent-rgb),.55); }
 .cmdk-search-icon{ width:20px; height:20px; flex:none; color:rgba(255,255,255,.62); }
 .cmdk-search input{
   flex:1; min-width:0; background:none; border:0; outline:none;
@@ -2602,7 +2869,7 @@ html.cmdk-open{ overflow:hidden; }
 .cmdk-item:hover{ background:rgba(255,255,255,.05); }
 .cmdk-item.is-active{
   background:rgba(255,255,255,.09);
-  box-shadow:inset 1px 1px 0 rgba(255,255,255,.22), inset 0 0 0 1px rgba(34,211,166,.30);
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.22), inset 0 0 0 1px rgba(var(--accent-rgb),.30);
 }
 .cmdk-ico{
   display:grid; place-items:center; width:28px; height:28px; border-radius:50%;
@@ -2610,7 +2877,7 @@ html.cmdk-open{ overflow:hidden; }
   background:radial-gradient(circle at 31% 23%, rgba(255,255,255,.26), rgba(255,255,255,.04) 45%, transparent 60%), rgba(18,20,22,.4);
   box-shadow:inset 1px 1px 0 rgba(255,255,255,.34), inset -1px -1px 0 rgba(16,18,20,.4);
 }
-.cmdk-item.is-active .cmdk-ico{ color:var(--teal); }
+.cmdk-item.is-active .cmdk-ico{ color:var(--accent); }
 .cmdk-hint{ font:500 11px/1 var(--ff-mono); color:rgba(255,255,255,.5); white-space:nowrap; max-width:46vw; overflow:hidden; text-overflow:ellipsis; }
 .cmdk-item.is-active .cmdk-hint{ color:rgba(255,255,255,.72); }
 .cmdk-empty{ padding:26px 12px; text-align:center; font-size:14px; color:rgba(255,255,255,.6); }
@@ -2650,7 +2917,7 @@ button.side-rail-link{ padding:0; cursor:pointer; appearance:none; -webkit-appea
   font:500 12px/1 var(--ff-mono); letter-spacing:.06em; color:var(--text-faint);
   transition:color .3s ease;
 }
-.cmdk-tip-btn:hover{ color:var(--teal); }
+.cmdk-tip-btn:hover{ color:var(--accent); }
 .cmdk-tip-btn:focus-visible{ outline:1.5px solid rgba(236,242,244,.8); outline-offset:3px; border-radius:999px; }
 .cmdk-tip-keys{ margin-left:8px; }
 @media (hover:none){ .cmdk-tip-keys{ display:none; }}
@@ -2664,6 +2931,10 @@ button.side-rail-link{ padding:0; cursor:pointer; appearance:none; -webkit-appea
   .cmdk-scrim, .cmdk-panel, .cmdk-toast{ transition:none; }
 }
 
+
+/* ==================================================================
+   [CSS-50]  PANELS — one size, home to footer
+   ================================================================== */
 
 /* =================================================================
    PART 13 — One panel size, home → footer
@@ -2715,6 +2986,10 @@ footer{ padding-top:0; }
 }
 
 
+/* ==================================================================
+   [CSS-51]  READABILITY pass (white text)
+   ================================================================== */
+
 /* =================================================================
    PART 14 — Readability pass (text stays white)
    White on the dark glass is the right call: the panels are only a
@@ -2742,6 +3017,10 @@ footer{ padding-top:0; }
 /* tracked uppercase labels: 11px → 12px */
 .bd-card-tag, .bd-eyebrow, .cert-badge, .cert-category, .contact-panel .contact-avail,
 .lab-board-head, .lab-status, .tl-subroles-label{ font-size:12px; }
+
+/* ==================================================================
+   [CSS-52]  VIEWER GATE + DOCUMENT VIEWER
+   ================================================================== */
 
 /* =================================================================
    VIEWER GATE + IN-SITE DOCUMENT VIEWER
@@ -2807,13 +3086,13 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   outline:none; transition:border-color .18s ease, background .18s ease;
 }
 .vgate-input::placeholder{ color:rgba(255,255,255,.34); }
-.vgate-input:focus{ border-color:rgba(34,211,166,.55); background:rgba(255,255,255,.09); }
+.vgate-input:focus{ border-color:rgba(var(--accent-rgb),.55); background:rgba(255,255,255,.09); }
 .vgate-input:invalid.is-touched{ border-color:rgba(240,110,110,.6); }
 
 .vgate-submit{
   margin-top:4px; padding:12px 16px; border-radius:12px; border:none; cursor:pointer;
-  font-size:14.5px; font-weight:700; color:#06110d;
-  background:var(--teal,#22d3a6);
+  font-size:14.5px; font-weight:700; color:#06182B;
+  background:var(--accent,#5BAEF5);
   transition:opacity .18s ease, transform .18s ease;
 }
 .vgate-submit:hover{ opacity:.9; }
@@ -2844,7 +3123,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 }
 .vview-title{ font-size:14.5px; font-weight:700; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .vview-actions{ display:flex; align-items:center; gap:14px; flex:none; }
-.vview-open{ font-size:12.5px; font-weight:600; color:var(--teal,#22d3a6); text-decoration:none; white-space:nowrap; }
+.vview-open{ font-size:12.5px; font-weight:600; color:var(--accent,#5BAEF5); text-decoration:none; white-space:nowrap; }
 .vview-open:hover{ text-decoration:underline; }
 .vview-close{
   width:30px; height:30px; display:flex; align-items:center; justify-content:center;
@@ -2881,6 +3160,10 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   .vview-body{ padding-bottom:env(safe-area-inset-bottom,0px); }
 }
 
+/* ==================================================================
+   [CSS-53]  STATUS PAGE
+   ================================================================== */
+
 /* =================================================================
    STATUS PAGE — live availability widget styled like a real status
    page (recruiter-facing, reuses .glass/.glass-clear/.ping tokens).
@@ -2892,7 +3175,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 .sp-overall{
   display:flex; align-items:center; gap:10px; font-size:15px; font-weight:700; color:#fff;
 }
-.sp-overall .ping{ width:9px; height:9px; border-radius:50%; background:var(--teal,#22d3a6); box-shadow:0 0 10px var(--teal,#22d3a6); flex:none; }
+.sp-overall .ping{ width:9px; height:9px; border-radius:50%; background:var(--accent,#5BAEF5); box-shadow:0 0 10px var(--accent,#5BAEF5); flex:none; }
 .sp-metrics{ display:flex; gap:28px; flex-wrap:wrap; }
 .sp-metric{ display:flex; flex-direction:column; gap:2px; }
 .sp-val{ font:700 17px/1.1 var(--ff-mono); color:#fff; }
@@ -2904,8 +3187,8 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 .sp-inc-top{ display:flex; align-items:center; gap:10px; margin-bottom:6px; }
 .sp-inc-badge{
   font:700 10.5px/1 var(--ff-mono); text-transform:uppercase; letter-spacing:.04em;
-  color:var(--teal,#22d3a6); background:rgba(34,211,166,.12);
-  border:1px solid rgba(34,211,166,.3); border-radius:999px; padding:4px 9px;
+  color:var(--accent,#5BAEF5); background:rgba(var(--accent-rgb),.12);
+  border:1px solid rgba(var(--accent-rgb),.3); border-radius:999px; padding:4px 9px;
 }
 .sp-inc-date{ font:500 11.5px/1 var(--ff-mono); color:rgba(255,255,255,.45); }
 .sp-inc-title{ font-size:14.5px; font-weight:700; color:#fff; margin-bottom:4px; }
@@ -2915,6 +3198,10 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   .sp-summary{ flex-direction:column; align-items:flex-start; gap:14px; padding:18px; }
   .sp-metrics{ gap:20px; width:100%; }
 }
+
+/* ==================================================================
+   [CSS-54]  REFERENCE-CALL BUTTON
+   ================================================================== */
 
 /* =================================================================
    REFERENCE-CALL CTA — sits below the education testimonials.
@@ -2931,11 +3218,15 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   background:rgba(255,255,255,.06); color:#fff; font-size:13.5px; font-weight:700;
   cursor:pointer; transition:background .18s ease, border-color .18s ease;
 }
-.ref-cta-btn:hover{ background:rgba(255,255,255,.11); border-color:rgba(34,211,166,.4); }
+.ref-cta-btn:hover{ background:rgba(255,255,255,.11); border-color:rgba(var(--accent-rgb),.4); }
 @media (max-width:640px){
   .ref-cta{ flex-direction:column; align-items:flex-start; }
   .ref-cta-btn{ width:100%; justify-content:center; }
 }
+
+/* ==================================================================
+   [CSS-55]  QR DIGITAL BUSINESS CARD
+   ================================================================== */
 
 /* =================================================================
    QR DIGITAL BUSINESS CARD — sits under the contact quick-links.
@@ -2946,10 +3237,14 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 }
 .qr-img{ width:64px; height:64px; border-radius:8px; background:#fff; padding:4px; flex:none; }
 .qr-title{ font-size:13px; font-weight:700; color:#fff; margin-bottom:3px; }
-.qr-download{ font-size:12px; font-weight:600; color:var(--teal,#22d3a6); text-decoration:none; }
+.qr-download{ font-size:12px; font-weight:600; color:var(--accent,#5BAEF5); text-decoration:none; }
 .qr-download:hover{ text-decoration:underline; }
 .qr-card.qr-failed .qr-title::after{ content:" — scan unavailable right now"; font-weight:400; color:rgba(255,255,255,.5); }
 .qr-noscript{ display:block; font-size:11.5px; color:rgba(255,255,255,.55); margin-top:4px; max-width:220px; }
+
+/* ==================================================================
+   [CSS-56]  LIVE FOCUS SLIDER
+   ================================================================== */
 
 /* =================================================================
    LIVE FOCUS SLIDER — sits between the nav and the hero panel.
@@ -2968,7 +3263,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   border-radius:999px;
   display:flex; align-items:center;
   background:
-    linear-gradient(120deg, rgba(34,211,166,.16) 0%, rgba(255,255,255,.05) 45%, rgba(34,211,166,.10) 100%),
+    linear-gradient(120deg, rgba(var(--accent-rgb),.16) 0%, rgba(255,255,255,.05) 45%, rgba(var(--accent-rgb),.10) 100%),
     rgba(16,18,20,.4);
   border:1px solid var(--glass-border);
   border-top-color:var(--glass-border-bright);
@@ -2995,8 +3290,8 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   white-space:nowrap;
 }
 .focus-icon{
-  width:11px; height:11px; border-radius:50%; background:var(--teal); flex:none;
-  box-shadow:0 0 0 3px rgba(34,211,166,.16);
+  width:11px; height:11px; border-radius:50%; background:var(--accent); flex:none;
+  box-shadow:0 0 0 3px rgba(var(--accent-rgb),.16);
 }
 .focus-icon--soft{ filter:blur(2.5px); opacity:.9; }
 
@@ -3008,30 +3303,30 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   -webkit-appearance:none; appearance:none;
   width:100%; height:6px; border-radius:999px; outline:none; cursor:pointer;
   background:linear-gradient(90deg,
-    var(--teal) 0%, var(--teal) var(--focus-fill, 0%),
+    var(--accent) 0%, var(--accent) var(--focus-fill, 0%),
     rgba(255,255,255,.16) var(--focus-fill, 0%));
 }
 .focus-slider-input::-webkit-slider-thumb{
   -webkit-appearance:none; appearance:none;
   width:20px; height:20px; border-radius:50%; cursor:pointer;
-  background:#fff; border:2px solid var(--teal);
-  box-shadow:0 2px 8px rgba(0,0,0,.45), 0 0 0 6px rgba(34,211,166,.14);
+  background:#fff; border:2px solid var(--accent);
+  box-shadow:0 2px 8px rgba(0,0,0,.45), 0 0 0 6px rgba(var(--accent-rgb),.14);
   transition:transform .15s ease, box-shadow .15s ease;
 }
 .focus-slider-input::-webkit-slider-thumb:hover{
   transform:scale(1.15);
-  box-shadow:0 2px 10px rgba(0,0,0,.5), 0 0 0 9px rgba(34,211,166,.2);
+  box-shadow:0 2px 10px rgba(0,0,0,.5), 0 0 0 9px rgba(var(--accent-rgb),.2);
 }
 .focus-slider-input::-moz-range-track{ height:6px; border-radius:999px; background:rgba(255,255,255,.16); }
-.focus-slider-input::-moz-range-progress{ height:6px; border-radius:999px; background:var(--teal); }
+.focus-slider-input::-moz-range-progress{ height:6px; border-radius:999px; background:var(--accent); }
 .focus-slider-input::-moz-range-thumb{
   width:20px; height:20px; border-radius:50%; cursor:pointer;
-  background:#fff; border:2px solid var(--teal);
+  background:#fff; border:2px solid var(--accent);
   box-shadow:0 2px 8px rgba(0,0,0,.45);
 }
 
 .focus-slider-readout{
-  font-family:var(--ff-mono); font-size:12px; font-weight:700; color:var(--teal);
+  font-family:var(--ff-mono); font-size:12px; font-weight:700; color:var(--accent);
   min-width:40px; text-align:right; flex:none;
 }
 
@@ -3046,7 +3341,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 }
 .focus-ink-toggle:hover{ border-color:var(--glass-border-bright); }
 .focus-ink-toggle[aria-pressed="true"]{
-  color:#06110d; background:var(--teal); border-color:var(--teal);
+  color:#06182B; background:var(--accent); border-color:var(--accent);
 }
 
 @media (max-width:560px){
@@ -3069,6 +3364,10 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 .blur-ink svg{ color:#000 !important; }
 .blur-ink ::placeholder{ color:rgba(0,0,0,.55) !important; }
 
+/* ==================================================================
+   [CSS-57]  NETWORK DIAGNOSTICS DEMO
+   ================================================================== */
+
 /* =================================================================
    LIVE NETWORK DIAGNOSTICS SIMULATOR
 ================================================================= */
@@ -3079,10 +3378,10 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   background:var(--glass-tint); border:1px solid var(--glass-border); outline:none;
   font-family:var(--ff-mono);
 }
-.diag-input:focus{ border-color:rgba(34,211,166,.55); }
+.diag-input:focus{ border-color:rgba(var(--accent-rgb),.55); }
 .diag-run{
   padding:11px 20px; border-radius:12px; border:none; cursor:pointer;
-  font-size:14px; font-weight:700; color:#06110d; background:var(--teal);
+  font-size:14px; font-weight:700; color:#06182B; background:var(--accent);
   transition:opacity .18s ease;
 }
 .diag-run:hover{ opacity:.9; }
@@ -3095,7 +3394,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 }
 .diag-line{ white-space:pre-wrap; word-break:break-word; opacity:0; animation:diagIn .25s ease forwards; }
 @keyframes diagIn{ from{ opacity:0; translate:0 3px; } to{ opacity:1; translate:0 0; } }
-.diag-line.ok{ color:var(--teal,#22d3a6); }
+.diag-line.ok{ color:var(--accent,#5BAEF5); }
 .diag-line.warn{ color:#f0c96e; }
 .diag-line.muted{ color:rgba(255,255,255,.45); }
 .diag-hop{ display:flex; gap:10px; }
@@ -3105,6 +3404,10 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   .diag-form{ flex-direction:column; }
   .diag-run{ width:100%; }
 }
+
+/* ==================================================================
+   [CSS-58]  TICKET TRIAGE DEMO
+   ================================================================== */
 
 /* =================================================================
    LIVE TICKET TRIAGE DEMO
@@ -3120,7 +3423,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
 .triage-badge{ font-family:var(--ff-mono); font-size:11px; padding:4px 10px; border-radius:999px; white-space:nowrap; font-weight:700; }
 .triage-badge.p1{ color:var(--danger); background:rgba(255,107,107,.16); }
 .triage-badge.p2{ color:#f0c96e; background:rgba(240,201,110,.14); }
-.triage-badge.p3{ color:var(--teal); background:var(--teal-dim); }
+.triage-badge.p3{ color:var(--accent); background:var(--accent-dim); }
 .triage-badge.p4{ color:var(--text-faint); background:rgba(255,255,255,.06); }
 .triage-cat{ font-size:15px; font-weight:600; margin-bottom:12px; }
 .triage-row{ display:flex; justify-content:space-between; gap:12px; font-size:13px; color:var(--text-dim); margin-bottom:4px; }
@@ -3130,6 +3433,10 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   .triage-card{ padding:16px; }
 }
 
+
+/* ==================================================================
+   [CSS-59]  IT TOOLKIT
+   ================================================================== */
 
 /* =================================================================
    SAJID IT TOOLKIT — follows the site's "Aa" text-colour switch.
@@ -3141,7 +3448,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   --tk-ink:#fff; --tk-dim:#fff; --tk-line:rgba(255,255,255,.26);
   --tk-card:rgba(255,255,255,.08); --tk-soft:rgba(255,255,255,.10); --tk-field:rgba(255,255,255,.12);
   --tk-btn:rgba(255,255,255,.10); --tk-btn-h:rgba(255,255,255,.20);
-  --tk-acc:#0F766E; --tk-acc-2:#0b5f58; --tk-on-acc:#fff; --tk-tint:rgba(34,211,166,.18); --tk-tint-line:rgba(34,211,166,.55);
+  --tk-acc:var(--accent-deep); --tk-acc-2:var(--accent-deep); --tk-on-acc:#fff; --tk-tint:rgba(var(--accent-rgb),.18); --tk-tint-line:rgba(var(--accent-rgb),.55);
   --tk-warn-bg:rgba(240,201,110,.16); --tk-warn-line:rgba(240,201,110,.6);
   --tk-code-bg:#0b1218; --tk-code-fg:#fff;
   color:var(--tk-ink);
@@ -3150,7 +3457,7 @@ html.vgate-open, html.vview-open{ overflow:hidden; }
   --tk-ink:#000; --tk-dim:#000; --tk-line:rgba(0,0,0,.24);
   --tk-card:#ffffff; --tk-soft:rgba(0,0,0,.06); --tk-field:#ffffff;
   --tk-btn:#ffffff; --tk-btn-h:#f1f5f7;
-  --tk-acc:#22D3A6; --tk-acc-2:#17b58c; --tk-on-acc:#000; --tk-tint:rgba(15,118,110,.14); --tk-tint-line:rgba(15,118,110,.55);
+  --tk-acc:var(--accent); --tk-acc-2:var(--accent-deep); --tk-on-acc:#000; --tk-tint:rgba(var(--accent-deep-rgb),.14); --tk-tint-line:rgba(var(--accent-deep-rgb),.55);
   --tk-warn-bg:rgba(240,190,60,.28); --tk-warn-line:rgba(150,100,0,.6);
   --tk-code-bg:#f3f6f8; --tk-code-fg:#000;
 }
@@ -3274,3 +3581,48 @@ html.tk-open{ overflow:hidden; }
 .tk-in::placeholder{ color:var(--tk-dim); opacity:.6; }
 .tk-rq-pre{ margin:16px 0; padding:14px 16px; border-radius:12px; background:var(--tk-code-bg); color:var(--tk-code-fg); font:400 12.5px/1.6 var(--ff-mono); overflow-x:auto; white-space:pre; }
 @media (max-width:520px){ .tk-track{ flex-direction:column; } }
+
+
+/* ==================================================================
+   [CSS-end]  STAGGER INDEX + small helpers (replaces old inline style="" attributes)
+   ================================================================== */
+
+/* data-sp="N" in index.html sets the reveal delay order. Change the order by editing the number there. */
+[data-sp="0"]{ --sp-i:0; }
+[data-sp="1"]{ --sp-i:1; }
+[data-sp="2"]{ --sp-i:2; }
+[data-sp="3"]{ --sp-i:3; }
+[data-sp="4"]{ --sp-i:4; }
+[data-sp="5"]{ --sp-i:5; }
+[data-sp="6"]{ --sp-i:6; }
+[data-sp="7"]{ --sp-i:7; }
+[data-sp="8"]{ --sp-i:8; }
+[data-sp="9"]{ --sp-i:9; }
+[data-sp="10"]{ --sp-i:10; }
+[data-sp="11"]{ --sp-i:11; }
+[data-sp="12"]{ --sp-i:12; }
+[data-sp="13"]{ --sp-i:13; }
+
+/* hero photo tag: small accent status dot */
+.hero-photo-tag .ping{ width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); flex:none; }
+
+/* ==================================================================
+   [CSS-60]  ACCENT SWITCHER — colour dots next to the Aa toggle
+   ================================================================== */
+
+.accent-picker{ display:inline-flex; gap:8px; align-items:center; margin-left:10px; }
+.accent-dot{ width:18px; height:18px; border-radius:50%; padding:0; cursor:pointer; border:2px solid rgba(255,255,255,.35); background:var(--dot); transition:transform .15s ease, border-color .15s ease; }
+.accent-dot:hover{ transform:scale(1.15); }
+.accent-dot[aria-pressed="true"]{ border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.25); }
+
+/* ==================================================================
+   [CSS-61]  FILE ORGANIZER PREVIEW — "what would happen" box in the toolkit modal
+   ================================================================== */
+
+.tk-preview{ margin-top:18px; padding:16px; border-radius:var(--radius-sm); border:1px solid var(--glass-border); }
+.tk-preview h4{ margin:0 0 6px; }
+.tk-preview textarea{ width:100%; min-height:72px; resize:vertical; padding:10px 12px; border-radius:10px; border:1px solid var(--glass-border); background:rgba(0,0,0,.25); color:inherit; font:13px/1.5 var(--ff-mono); box-sizing:border-box; }
+.tk-prev-list{ list-style:none; margin:10px 0 0; padding:0; display:grid; gap:6px; font:13px/1.4 var(--ff-mono); }
+.tk-prev-list li{ display:flex; justify-content:space-between; gap:12px; padding:6px 10px; border-radius:8px; background:rgba(255,255,255,.05); }
+.tk-prev-list .to{ color:var(--accent); font-weight:600; white-space:nowrap; }
+.tk-prev-list .stay{ color:var(--text-faint); white-space:nowrap; }

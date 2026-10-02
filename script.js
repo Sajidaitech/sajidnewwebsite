@@ -1,3 +1,39 @@
+/* ==================================================================
+   TABLE OF CONTENTS — script.js
+   Search this file for a tag like [JS-05] to jump to a section.
+   ==================================================================
+   [JS-01]  SCROLL DISPATCHER — one shared scroll listener for all features
+   [JS-02]  NAV — transparent bar that thickens after the hero
+   [JS-03]  NAV — measured height (CSS variable)
+   [JS-04]  GLASS — pointer-tracked highlight + cursor glow
+   [JS-05]  STAT COUNTERS — hero readout + About numbers
+   [JS-06]  EXPERIENCE — timeline progress line
+   [JS-07]  CONTACT — live Doha time
+   [JS-08]  HERO — scroll-scrubbed photo
+   [JS-09]  SECTION HEADERS — mirrored glitch effect
+   [JS-10]  SCROLL REVEAL — basic fade
+   [JS-11]  NAV — active link, mobile drawer, smooth scroll
+   [JS-12]  SCROLL PROGRESS BAR
+   [JS-13]  PROJECTS — case study accordion
+   [JS-14]  ANIMATION ENGINE — stagger, reveal, parallax, tilt
+   [JS-15]  SKILLS — Technical Arsenal tab switcher
+   [JS-16]  EXPERIENCE — engagement breakdown cards
+   [JS-17]  CONTACT FORM — Formspree submission
+   [JS-18]  COMMAND CONSOLE — Ctrl/⌘ + K
+   [JS-19]  VIEWER GATE + DOCUMENT VIEWER — CV and certificates
+   [JS-20]  QR DIGITAL BUSINESS CARD
+   [JS-21]  REFERENCE-CALL BUTTON
+   [JS-22]  LIVE FOCUS SLIDER — glass blur control
+   [JS-23]  TEXT COLOR TOGGLE — White / Black
+   [JS-24]  DIAGNOSTICS DEMO — DNS / ping simulation
+   [JS-25]  TICKET TRIAGE DEMO
+   [JS-26]  IT TOOLKIT — config, cards, details modal, download + hash check
+   [JS-27]  TOOLKIT — custom script requests
+   [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
+   [JS-29]  FILE ORGANIZER PREVIEW — toolkit modal, mirrors the .bat rules
+   Toolkit tips: edit tools in TOOLKIT_TOOLS (SHA-256, size, version live there); social links in TOOLKIT_CONFIG.
+   ================================================================== */
+
 const $  = (s, c=document) => c.querySelector(s);
 const $$ = (s, c=document) => [...c.querySelectorAll(s)];
 
@@ -5,6 +41,10 @@ const $$ = (s, c=document) => [...c.querySelectorAll(s)];
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hasHover = matchMedia('(hover:hover)').matches;
+
+/* ==================================================================
+   [JS-01]  SCROLL DISPATCHER — one shared scroll listener for all features
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Part 5 — shared rAF-batched scroll dispatcher.
@@ -21,6 +61,10 @@ window.addEventListener('scroll', () => {
   requestAnimationFrame(() => { scrollUpdaters.forEach(fn => fn()); scrollTicking = false; });
 }, { passive: true });
 
+/* ==================================================================
+   [JS-02]  NAV — transparent bar that thickens after the hero
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Transparent nav — gains a touch of body once the page has
    scrolled past the hero, so links stay legible over busy sections
@@ -34,6 +78,10 @@ window.addEventListener('scroll', () => {
     scrollUpdaters.push(setNavState);
   }
 }
+
+/* ==================================================================
+   [JS-03]  NAV — measured height (CSS variable)
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Real nav height, not a guess — .nav is position:fixed so nothing
@@ -58,6 +106,10 @@ window.addEventListener('scroll', () => {
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(setNavH);
   }
 }
+
+/* ==================================================================
+   [JS-04]  GLASS — pointer-tracked highlight + cursor glow
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Specular highlight on every glass panel — tracks the pointer via
@@ -86,6 +138,10 @@ if (hasHover) {
    Hero photo pointer-tilt now handled by the generic [data-tilt]
    system (Part 1 / Part 2 foundation) — see bottom of this file.
 --------------------------------------------------------------- */
+
+/* ==================================================================
+   [JS-05]  STAT COUNTERS — hero readout + About numbers
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Animated stat counters — the hero readout and the About section
@@ -121,6 +177,10 @@ const counterObserver = new IntersectionObserver(entries => {
 }, { threshold: .4 });
 $$('.status-item .val, .highlight-card .val').forEach(el => counterObserver.observe(el));
 
+/* ==================================================================
+   [JS-06]  EXPERIENCE — timeline progress line
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Timeline progress line — fills as you scroll through Experience,
    echoing an uptime meter rather than a generic scrollbar.
@@ -139,6 +199,10 @@ if (tlProgress && timelineEl && !reduceMotion) {
   updateTlProgress();
 }
 
+/* ==================================================================
+   [JS-07]  CONTACT — live Doha time
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Contact section — live Doha time readout
 --------------------------------------------------------------- */
@@ -151,6 +215,10 @@ if (dohaClock) {
   tickClock();
   setInterval(tickClock, 1000);
 }
+
+/* ==================================================================
+   [JS-08]  HERO — scroll-scrubbed photo
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Scroll-scrubbed hero photo — as you scroll through the hero,
@@ -198,6 +266,10 @@ if (heroSection && heroPhoto && !reduceMotion) {
   updateHeroScrub();
 }
 
+/* ==================================================================
+   [JS-09]  SECTION HEADERS — mirrored glitch effect
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Mirrored / reflected section headers with a one-time glitch
    flicker as each heading scrolls into view.
@@ -217,6 +289,10 @@ if (!reduceMotion) {
   $$('.section h2, .contact-panel h2').forEach(h2 => glitchObserver.observe(h2));
 }
 
+/* ==================================================================
+   [JS-10]  SCROLL REVEAL — basic fade
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Scroll reveal — single fade, no slide (kept restrained)
 --------------------------------------------------------------- */
@@ -229,6 +305,10 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { threshold: .15 });
 $$('.reveal').forEach(el => observer.observe(el));
+
+/* ==================================================================
+   [JS-11]  NAV — active link, mobile drawer, smooth scroll
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Nav: active link + mobile drawer + smooth scroll
@@ -277,6 +357,10 @@ document.addEventListener('keydown', e => {
 /* rotating a phone / resizing to desktop must not leave the menu open */
 matchMedia('(min-width:1180px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 
+/* ==================================================================
+   [JS-12]  SCROLL PROGRESS BAR
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Scroll progress bar
 --------------------------------------------------------------- */
@@ -289,6 +373,10 @@ function updateProgress(){
 scrollUpdaters.push(updateProgress);
 updateProgress();
 
+/* ==================================================================
+   [JS-13]  PROJECTS — case study accordion
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Case study accordion
 --------------------------------------------------------------- */
@@ -300,6 +388,10 @@ $$('[data-case]').forEach(card => {
     if (!wasOpen) card.classList.add('open');
   });
 });
+
+/* ==================================================================
+   [JS-14]  ANIMATION ENGINE — stagger, reveal, parallax, tilt
+   ================================================================== */
 
 /* =============================================================
    Spatial Animation Foundation — Part 1
@@ -384,6 +476,10 @@ $$('[data-case]').forEach(card => {
   }
 })();
 
+/* ==================================================================
+   [JS-15]  SKILLS — Technical Arsenal tab switcher
+   ================================================================== */
+
 /* =================================================================
    PART 4 — Technical Arsenal tab switcher
    Simple click-to-show tag cloud, no external deps, respects the
@@ -402,6 +498,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-16]  EXPERIENCE — engagement breakdown cards
+   ================================================================== */
+
 /* =================================================================
    PART 4b — Engagement breakdown cards (click-to-expand)
    Each .bd-card toggles its own .is-open state independently
@@ -417,6 +517,10 @@ $$('[data-case]').forEach(card => {
     });
   });
 })();
+
+/* ==================================================================
+   [JS-17]  CONTACT FORM — Formspree submission
+   ================================================================== */
 
 /* =================================================================
    CONTACT FORM — Formspree AJAX submission
@@ -502,6 +606,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+
+/* ==================================================================
+   [JS-18]  COMMAND CONSOLE — Ctrl/⌘ + K
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Command Console — press Ctrl/⌘ + K (or "/") anywhere.
@@ -691,6 +799,10 @@ $$('[data-case]').forEach(card => {
     }
   });
 })();
+
+/* ==================================================================
+   [JS-19]  VIEWER GATE + DOCUMENT VIEWER — CV and certificates
+   ================================================================== */
 
 /* =================================================================
    VIEWER GATE + IN-SITE DOCUMENT VIEWER
@@ -923,6 +1035,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-20]  QR DIGITAL BUSINESS CARD
+   ================================================================== */
+
 /* =================================================================
    QR DIGITAL BUSINESS CARD
    Builds a vCard from the contact details already on the page and
@@ -978,6 +1094,10 @@ $$('[data-case]').forEach(card => {
   tryNext();
 })();
 
+/* ==================================================================
+   [JS-21]  REFERENCE-CALL BUTTON
+   ================================================================== */
+
 /* =================================================================
    REFERENCE-CALL CTA
    Scrolls to the contact form and pre-fills subject + a starter
@@ -1003,6 +1123,10 @@ $$('[data-case]').forEach(card => {
     setTimeout(() => { if (name) name.focus(); }, 500);
   });
 })();
+
+/* ==================================================================
+   [JS-22]  LIVE FOCUS SLIDER — glass blur control
+   ================================================================== */
 
 /* =================================================================
    LIVE FOCUS SLIDER — blurs every glass panel's BACKGROUND only
@@ -1067,6 +1191,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-23]  TEXT COLOR TOGGLE — White / Black
+   ================================================================== */
+
 /* =================================================================
    TEXT-COLOR (INK) TOGGLE — a manual White/Black switch for text on
    every blurred glass panel, next to the focus slider. Replaces the
@@ -1100,6 +1228,10 @@ $$('[data-case]').forEach(card => {
     apply(next, true);
   });
 })();
+
+/* ==================================================================
+   [JS-24]  DIAGNOSTICS DEMO — DNS / ping simulation
+   ================================================================== */
 
 /* =================================================================
    INTERACTIVE DIAGNOSTICS DEMO
@@ -1204,6 +1336,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-25]  TICKET TRIAGE DEMO
+   ================================================================== */
+
 /* =================================================================
    LIVE TICKET TRIAGE DEMO
    A rule-based classifier mirroring real service-desk triage:
@@ -1302,6 +1438,10 @@ $$('[data-case]').forEach(card => {
 })();
 
 
+/* ==================================================================
+   [JS-26]  IT TOOLKIT — config, cards, details modal, download + hash check
+   ================================================================== */
+
 /* =================================================================
    SAJID IT TOOLKIT
    ONE place to edit: TOOLKIT_CONFIG (social links) and TOOLKIT_TOOLS
@@ -1382,15 +1522,60 @@ $$('[data-case]').forEach(card => {
       safety:['Copy the script into the folder you want to organize; do not run it from a system folder.','There is no confirmation prompt and no undo. Back up the folder first.','The script skips itself and will not overwrite a file that already exists in a destination folder.']
     },
     {
-      id:'it-quick-tools', status:'soon', category:'IT Support', icon:'terminal',
+      id:'pc-performance-optimizer', status:'available', category:'Windows', icon:'gauge',
+      name:'Windows & PC Performance Optimizer',
+      desc:'Tune Windows 11 for speed and responsiveness, with a restore point created first.',
+      long:'Creates a restore point, switches to the Ultimate Performance power plan, turns on Game Mode and GPU scheduling, trims visual effects, resets the network stack, checks system files and clears temporary files.',
+      version:'v1.0.0', updated:'2 October 2026', platform:'Windows 11',
+      admin:true, size:'5462 bytes',
+      sha256:'01c7437ec88b2ba471b2098791ff4cc5e6febd3dbd807e6c3362b79a89bfc349',
+      file:'assets/toolkit/windows-pc-performance-optimizer.bat',
+      runNote:'Save your work and close other programs first. The tool asks for administrator rights and offers to restart the PC when it finishes.',
+      extras:[],
+      does:[
+        'Asks for administrator rights and relaunches itself as administrator if needed.',
+        'Creates a System Restore Point before changing anything.',
+        'Adds the Ultimate Performance power plan and makes it active.',
+        'Turns on Windows Game Mode and Hardware-Accelerated GPU Scheduling.',
+        'Reduces visual effects (faster menus, no window animations).',
+        'Flushes the DNS cache and resets Winsock and the IP stack (netsh).',
+        'Runs “DISM /CheckHealth” and “sfc /scannow” to check Windows files.',
+        'Deletes the contents of your user Temp folder and C:\\Windows\\Temp.',
+        'Sets processor scheduling to favour foreground programs and removes the desktop startup delay.'
+      ],
+      requires:['Windows 11','Administrator rights'],
+      safety:['Save your work first: a restart is needed to apply every change.','The network reset can clear custom network settings, so VPNs or static IPs may need to be set up again.','The Ultimate Performance plan uses more power, which can shorten laptop battery life.','A restore point may be skipped if System Protection is off or one was already made in the last 24 hours.','DISM and SFC can take several minutes. Files removed from Temp folders are not recoverable.']
+    },
+    {
+      id:'it-quick-tools', status:'available', category:'IT Support', icon:'terminal',
       name:'Windows IT Quick Tools',
-      desc:'A collection of useful Windows commands and utilities for everyday IT support.',
-      version:'v0.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11'
+      desc:'Menu-driven disk health checks and quick Windows troubleshooting for everyday IT support.',
+      long:'A menu of read-only checks: physical disk health, volumes and free space, an online file-system scan, Windows component and system-file checks, quick network tests and key service status. Repairs only run when you choose them.',
+      version:'v1.0.0', updated:'2 October 2026', platform:'Windows 11',
+      admin:true, size:'9092 bytes',
+      sha256:'111f98fa11c1bb8e495aae9ecef757847d1c76c70f91bfc65401a816c56827db',
+      file:'assets/toolkit/windows-it-quick-tools.bat',
+      runNote:'Run it, then pick a number from the menu. Nothing is changed unless you choose the repair option and confirm it.',
+      extras:[],
+      does:[
+        'Asks for administrator rights and relaunches itself as administrator if needed.',
+        'Shows physical disk health, type, status and reliability counters (temperature, power-on hours, errors, wear).',
+        'Lists volumes, file systems, free space and disk partition information.',
+        'Runs “chkdsk C: /scan” (online scan only, no /f repair) after you confirm.',
+        'Runs “DISM /CheckHealth” and “sfc /verifyonly” to check Windows files without repairing them.',
+        'Offers “sfc /scannow” to repair system files, only after you confirm.',
+        'Runs quick network tests: IP configuration, DNS cache, nslookup and pings.',
+        'Shows the status of key services (Windows Update, BITS, DHCP, DNS Client, Event Log and others).',
+        'Option 9 runs a complete non-destructive diagnostic in one go.'
+      ],
+      requires:['Windows 11','Administrator rights'],
+      safety:['Almost every option is read-only. Only the SFC repair (option 6) changes files, and it asks first.','CHKDSK and SFC can take several minutes; the complete diagnostic (option 9) takes longest.','The DNS cache view in the network test pauses for a key press, so press Space to continue.','Disk reliability counters depend on the drive and driver, and may show as unavailable.']
     }
   ];
 
   const CATS = ['All','Windows','Cleanup','Productivity','Networking','IT Support'];
   const ICON = {
+    gauge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1116 0"/><path d="M12 17l4-5"/><circle cx="12" cy="17" r="1"/></svg>',
     update:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12A8 8 0 0 1 18.3 7.1"/><path d="M18.5 3v4.5H14M5.5 21v-4.5H10"/></svg>',
     broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 3l-6.5 6.5"/><path d="M11 8l5 5-3.5 3.5c-1.8 1.8-4.6 1.9-6.5.3L4 15l1-1c.8-.8 2-.8 2.8 0L11 8z"/><path d="M8 17l-1.5 4M11 18l-.5 3M5 15l-2 4"/></svg>',
     folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M8 13h8"/></svg>',
@@ -1553,6 +1738,10 @@ $$('[data-case]').forEach(card => {
     clearTimeout(closing);
     lastFocus = trigger || document.activeElement;
     body.innerHTML = html;
+    if (cur && cur.id === 'file-organizer') {
+      body.insertAdjacentHTML('beforeend', organizerPreviewHTML());
+      organizerPreviewRender(body);
+    }
     modal.classList.toggle('tk-ink', $('#toolkit').classList.contains('blur-ink'));   // follow the site's Aa text-colour switch
     modal.hidden = false;
     document.documentElement.classList.add('tk-open');
@@ -1674,6 +1863,10 @@ $$('[data-case]').forEach(card => {
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 
+  /* ==================================================================
+     [JS-27]  TOOLKIT — custom script requests
+     ================================================================== */
+
   /* =================================================================
      CUSTOM SCRIPT REQUESTS
      A visitor describes a .bat they need + leaves an email. It lands in
@@ -1761,3 +1954,82 @@ $$('[data-case]').forEach(card => {
     setTimeout(() => { $('#toolkit').scrollIntoView(); open(want); }, 700);
   }
 })();
+
+/* ==================================================================
+   [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
+   ================================================================== */
+
+(function accentSwitcher(){
+  const box = document.getElementById('accentPicker');
+  if (!box) return;
+  /* Edit colours here: [main, deep, light] as R,G,B */
+  const PALETTES = {
+    blue:   [[91,174,245],  [47,134,214], [207,230,251]],
+    violet: [[167,139,250], [124,92,214], [226,217,253]],
+    amber:  [[245,185,66],  [214,142,28], [253,235,198]],
+    rose:   [[244,114,152], [214,70,115], [252,210,224]]
+  };
+  const hex = a => '#' + a.map(v => v.toString(16).padStart(2,'0')).join('');
+  const root = document.documentElement;
+  function apply(name){
+    const p = PALETTES[name] || PALETTES.blue;
+    const set = (k, v) => root.style.setProperty(k, v);
+    set('--accent', hex(p[0]));        set('--accent-rgb', p[0].join(','));
+    set('--accent-deep', hex(p[1]));   set('--accent-deep-rgb', p[1].join(','));
+    set('--accent-light', hex(p[2]));  set('--accent-light-rgb', p[2].join(','));
+    box.querySelectorAll('[data-accent]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.accent === name)));
+  }
+  box.querySelectorAll('[data-accent]').forEach(b => {
+    b.style.setProperty('--dot', hex((PALETTES[b.dataset.accent] || PALETTES.blue)[0]));
+    b.addEventListener('click', () => {
+      apply(b.dataset.accent);
+      try { localStorage.setItem('accentName', b.dataset.accent); } catch(e) {}
+    });
+  });
+  let saved = 'blue';
+  try { saved = localStorage.getItem('accentName') || 'blue'; } catch(e) {}
+  apply(saved);
+})();
+
+/* ==================================================================
+   [JS-29]  FILE ORGANIZER PREVIEW — mirrors the rules in automatic-file-organizer.bat
+   ================================================================== */
+
+/* Keep these rules in sync with the .bat. If you add an extension there, add it here too. */
+const ORGANIZER_RULES = {
+  'Videos':'mp4 mkv avi mov wmv flv webm 3gp', 'Photos':'jpg jpeg png gif bmp webp heic svg',
+  'Documents':'pdf doc docx xls xlsx csv ppt pptx', 'Txt Files':'txt',
+  'Music':'mp3 wav aac flac m4a ogg', 'Zip':'zip rar 7z tar gz', 'Apps':'exe msi apk'
+};
+const ORGANIZER_SKIP = ['crdownload','part','tmp'];   /* unfinished downloads stay put */
+const ORGANIZER_SELF = 'automatic-file-organizer.bat';
+function organizerTarget(name){
+  const n = name.trim().toLowerCase();
+  if (n === ORGANIZER_SELF) return null;
+  const ext = n.includes('.') ? n.split('.').pop() : '';
+  if (ORGANIZER_SKIP.includes(ext)) return null;
+  for (const [folder, list] of Object.entries(ORGANIZER_RULES)) if (list.split(' ').includes(ext)) return folder;
+  return 'Others';
+}
+function organizerPreviewHTML(){
+  return '<section class="tk-preview"><h4>Try it before you download</h4>'
+    + '<p class="tk-hint">Type or paste file names (comma or new line). Nothing is uploaded; this only shows where each file would go.</p>'
+    + '<textarea data-prev-input aria-label="File names" spellcheck="false">cv.pdf, holiday.JPG, song.mp3, setup.exe, notes.txt, backup.zip, movie.mkv, file.crdownload, data.xyz</textarea>'
+    + '<ul class="tk-prev-list" data-prev-out aria-live="polite"></ul></section>';
+}
+function organizerPreviewRender(root){
+  const input = root.querySelector('[data-prev-input]'), out = root.querySelector('[data-prev-out]');
+  if (!input || !out) return;
+  out.textContent = '';
+  input.value.split(/[,\n]+/).map(s => s.trim()).filter(Boolean).slice(0, 60).forEach(name => {
+    const to = organizerTarget(name), li = document.createElement('li');
+    const a = document.createElement('span'), b = document.createElement('span');
+    a.textContent = name; b.textContent = to ? '→ ' + to : 'stays here'; b.className = to ? 'to' : 'stay';
+    li.append(a, b); out.append(li);
+  });
+}
+
+/* live update while typing in the preview box */
+document.addEventListener('input', e => {
+  if (e.target.matches && e.target.matches('[data-prev-input]')) organizerPreviewRender(e.target.closest('.tk-preview'));
+});

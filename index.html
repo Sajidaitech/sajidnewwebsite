@@ -27,20 +27,50 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="assets/photo.jpg" as="image" fetchpriority="high">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://www.sajidmk.com/#person","name":"Sajid Mehmood","jobTitle":"IT Support Engineer","url":"https://www.sajidmk.com/","image":"https://www.sajidmk.com/assets/photo.jpg","description":"CCNA Certified IT Support Engineer with enterprise infrastructure experience across aviation, healthcare and government in Qatar and the UAE.","address":{"@type":"PostalAddress","addressLocality":"Doha","addressCountry":"QA"},"knowsAbout":["Network infrastructure","Windows and Linux administration","Microsoft 365","Azure AD","Intune","Incident response","ITIL"],"hasCredential":{"@type":"EducationalOccupationalCredential","name":"CCNA","credentialCategory":"Professional certification"},"sameAs":["https://www.linkedin.com/in/imsajid-mehmood-1b3954333/"]},{"@type":"WebSite","@id":"https://www.sajidmk.com/#website","url":"https://www.sajidmk.com/","name":"Sajid Mehmood","publisher":{"@id":"https://www.sajidmk.com/#person"}},{"@type":"WebPage","@id":"https://www.sajidmk.com/#webpage","url":"https://www.sajidmk.com/","name":"Sajid Mehmood — IT Support Engineer | Qatar","isPartOf":{"@id":"https://www.sajidmk.com/#website"},"about":{"@id":"https://www.sajidmk.com/#person"},"description":"CCNA Certified IT Support Engineer. Enterprise infrastructure across aviation, healthcare and government in Qatar & the UAE."}]}
 </script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<!--
+  ==================================================================
+  TABLE OF CONTENTS — index.html (search for a tag like [HTML-05])
+  Styles live in styles.css, behaviour in script.js. Nothing is coded inline here.
+  [HTML-01]  SIDE RAIL — puts the wide left gutter to work on big screens
+  [HTML-02]  NAV
+  [HTML-03]  LIVE FOCUS SLIDER — drag to blur the hero panel (+ accent colour dots)
+  [HTML-04]  HERO
+  [HTML-05]  RECRUITER FAST-PASS
+  [HTML-06]  STATUS PAGE (uptime/response widget, styled like a real status page)
+  [HTML-07]  ABOUT
+  [HTML-08]  WHY HIRE
+  [HTML-09]  EXPERIENCE
+  [HTML-10]  SKILLS
+  [HTML-11]  PROOF OF WORK
+  [HTML-12]  CERTIFICATIONS
+  [HTML-13]  PROJECTS
+  [HTML-14]  INFRASTRUCTURE LAB
+  [HTML-15]  INTERACTIVE DIAGNOSTICS DEMO
+  [HTML-16]  LIVE TICKET TRIAGE DEMO
+  [HTML-17]  SAJID IT TOOLKIT
+  [HTML-18]  EDUCATION
+  [HTML-19]  ACHIEVEMENTS
+  [HTML-20]  REFERENCES
+  [HTML-21]  CONTACT
+  [HTML-22]  VIEWER GATE (name capture before CV/certificate view or download)
+  [HTML-23]  IN-SITE DOCUMENT VIEWER (CV / certificates, no Drive redirect)
+  [HTML-24]  COMMAND CONSOLE (Ctrl/⌘ + K, or "/")
+  [HTML-25]  TOOLKIT DETAILS MODAL
+  ==================================================================
+-->
 
 <div class="bg-field"></div>
 <div class="bg-grain"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 
-<!-- ============ SIDE RAIL — puts the wide left gutter to work on big screens ============ -->
+<!-- ============ [HTML-01] SIDE RAIL — puts the wide left gutter to work on big screens ============ -->
 <aside class="side-rail" aria-label="Quick contact">
   <div class="side-rail-dock">
     <a href="mailto:sajiditeech@gmail.com" class="side-rail-link" aria-label="Email Sajid" title="Email"><svg class="side-rail-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/></svg></a>
@@ -51,7 +81,7 @@
   </div>
 </aside>
 
-<!-- ============ NAV ============ -->
+<!-- ============ [HTML-02] NAV ============ -->
 <nav class="nav glass-clear glass-tight nav-in" id="topNav">
   <a href="#home" class="nav-brand"><span class="ping"></span> Sajid Mehmood</a>
   <div class="nav-links" id="navLinks">
@@ -94,7 +124,7 @@
   <a href="#contact" class="nav-cta mob-cta">Let's talk</a>
 </div>
 
-<!-- ============ LIVE FOCUS SLIDER — drag to blur the hero panel ============ -->
+<!-- ============ [HTML-03] LIVE FOCUS SLIDER — drag to blur the hero panel (+ accent colour dots) ============ -->
 <div class="focus-slider" id="focusSlider">
   <div class="focus-slider-inner">
     <div class="focus-slider-label focus-slider-label--left">
@@ -111,52 +141,53 @@
       <span class="focus-icon focus-icon--soft" aria-hidden="true"></span>
     </div>
     <button type="button" class="focus-ink-toggle" id="inkToggle" aria-pressed="false" title="Toggle text color on blurred panels">Aa · White text</button>
+    <div class="accent-picker" id="accentPicker" role="group" aria-label="Accent colour"><button type="button" class="accent-dot" data-accent="blue" aria-pressed="false" aria-label="Blue accent" title="Blue"></button><button type="button" class="accent-dot" data-accent="violet" aria-pressed="false" aria-label="Violet accent" title="Violet"></button><button type="button" class="accent-dot" data-accent="amber" aria-pressed="false" aria-label="Amber accent" title="Amber"></button><button type="button" class="accent-dot" data-accent="rose" aria-pressed="false" aria-label="Rose accent" title="Rose"></button></div>
   </div>
 </div>
 
 <main id="home">
 
-  <!-- ============ HERO ============ -->
+  <!-- ============ [HTML-04] HERO ============ -->
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <div class="status-chip glass-clear glass-tight" data-reveal="depth" style="--sp-i:1"><span class="ping"></span> Available — Doha, Qatar (GMT+3)</div>
-        <h1 data-reveal="up" style="--sp-i:2">
+        <div class="status-chip glass-clear glass-tight" data-reveal="depth" data-sp="1"><span class="ping"></span> Available — Doha, Qatar (GMT+3)</div>
+        <h1 data-reveal="up" data-sp="2">
           <span class="sr-only">Sajid Mehmood — IT Support Engineer in Doha, Qatar. </span>
           <span>I develop</span>
           <span>reliable</span>
           <span>systems.</span>
         </h1>
-        <p class="hero-sub" data-reveal="up" style="--sp-i:3">4+ years keeping aviation, healthcare and government systems running across Qatar & the UAE — CCNA certified, zero downtime record.</p>
+        <p class="hero-sub" data-reveal="up" data-sp="3">4+ years keeping aviation, healthcare and government systems running across Qatar & the UAE — CCNA certified, zero downtime record.</p>
         <div class="hero-actions">
-          <a href="#experience" class="btn btn-primary" data-reveal="up" style="--sp-i:4">View experience <span class="btn-arrow">→</span></a>
-          <a href="https://drive.google.com/file/d/1-Ktw3XGNO4UZvxATGR9ED44NZiFMlwz_/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-reveal="up" style="--sp-i:5">View CV</a>
-          <a href="https://drive.google.com/uc?export=download&id=1-Ktw3XGNO4UZvxATGR9ED44NZiFMlwz_" class="btn btn-ghost" data-reveal="up" style="--sp-i:6">Download CV</a>
+          <a href="#experience" class="btn btn-primary" data-reveal="up" data-sp="4">View experience <span class="btn-arrow">→</span></a>
+          <a href="https://drive.google.com/file/d/1-Ktw3XGNO4UZvxATGR9ED44NZiFMlwz_/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-reveal="up" data-sp="5">View CV</a>
+          <a href="https://drive.google.com/uc?export=download&id=1-Ktw3XGNO4UZvxATGR9ED44NZiFMlwz_" class="btn btn-ghost" data-reveal="up" data-sp="6">Download CV</a>
         </div>
         <div class="status-strip glass-clear">
-          <div class="status-item" data-reveal="up" style="--sp-i:7"><span class="val">4+</span><span class="lbl">Years enterprise</span></div>
-          <div class="status-item" data-reveal="up" style="--sp-i:8"><span class="val">600+</span><span class="lbl">Systems managed</span></div>
-          <div class="status-item" data-reveal="up" style="--sp-i:9"><span class="val">0</span><span class="lbl">EMR downtime</span></div>
-          <div class="status-item" data-reveal="up" style="--sp-i:10"><span class="val">CCNA</span><span class="lbl">Certified</span></div>
+          <div class="status-item" data-reveal="up" data-sp="7"><span class="val">4+</span><span class="lbl">Years enterprise</span></div>
+          <div class="status-item" data-reveal="up" data-sp="8"><span class="val">600+</span><span class="lbl">Systems managed</span></div>
+          <div class="status-item" data-reveal="up" data-sp="9"><span class="val">0</span><span class="lbl">EMR downtime</span></div>
+          <div class="status-item" data-reveal="up" data-sp="10"><span class="val">CCNA</span><span class="lbl">Certified</span></div>
         </div>
       </div>
-      <div class="hero-photo-wrap" data-reveal="depth" style="--sp-i:11" data-tilt data-tilt-max="5">
+      <div class="hero-photo-wrap" data-reveal="depth" data-sp="11" data-tilt data-tilt-max="5">
         <div class="glass-clear hero-photo">
           <img src="assets/photo.jpg" alt="Sajid Mehmood — IT Support Engineer" fetchpriority="high" decoding="async">
           <div class="hero-photo-tag glass-clear glass-tight">
-            <span class="ping" style="width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);flex:none;"></span>
+            <span class="ping"></span>
             <div>
               <div class="name">Sajid Mehmood</div>
               <div class="role" id="heroRoleCycle">Infrastructure & Networking</div>
             </div>
           </div>
         </div>
-        <div class="scroll-scrub-hint" data-reveal="up" style="--sp-i:13"><span>↓</span> Scroll to explore</div>
+        <div class="scroll-scrub-hint" data-reveal="up" data-sp="13"><span>↓</span> Scroll to explore</div>
       </div>
     </div>
   </section>
 
-  <!-- ============ RECRUITER FAST-PASS ============ -->
+  <!-- ============ [HTML-05] RECRUITER FAST-PASS ============ -->
   <section class="recruiter-bar" id="recruiter" data-reveal="up" aria-label="Recruiter quick access">
     <div class="container recruiter-inner">
       <div class="recruiter-label"><span class="ping"></span> Recruiter fast-pass</div>
@@ -171,12 +202,12 @@
     </div>
   </section>
 
-  <!-- ============ STATUS PAGE (uptime/response widget, styled like a real status page) ============ -->
+  <!-- ============ [HTML-06] STATUS PAGE (uptime/response widget, styled like a real status page) ============ -->
   <section class="section status-page" id="status" data-reveal="up" aria-label="Live availability status">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Status</div>
-      <h2 data-reveal="up" style="--sp-i:1">Currently operational.</h2>
-      <div class="sp-summary glass-clear" data-reveal="up" style="--sp-i:2">
+      <h2 data-reveal="up" data-sp="1">Currently operational.</h2>
+      <div class="sp-summary glass-clear" data-reveal="up" data-sp="2">
         <div class="sp-overall"><span class="ping"></span> All systems operational</div>
         <div class="sp-metrics">
           <div class="sp-metric"><span class="sp-val">99.9%</span><span class="sp-lbl">Uptime</span></div>
@@ -186,17 +217,17 @@
       </div>
       <div class="sp-incidents" data-stagger>
         <div class="sp-inc-head">Recent incidents</div>
-        <div class="sp-incident glass" data-reveal="up" style="--sp-i:3">
+        <div class="sp-incident glass" data-reveal="up" data-sp="3">
           <div class="sp-inc-top"><span class="sp-inc-badge">Resolved</span><span class="sp-inc-date">HIA · Western Taxiway</span></div>
           <div class="sp-inc-title">10kVA UPS failure during heavy rainfall</div>
           <p class="sp-inc-desc">Solo emergency recovery under live airside operations. Zero downtime maintained — Safety Excellence Award.</p>
         </div>
-        <div class="sp-incident glass" data-reveal="up" style="--sp-i:4">
+        <div class="sp-incident glass" data-reveal="up" data-sp="4">
           <div class="sp-inc-top"><span class="sp-inc-badge">Resolved</span><span class="sp-inc-date">MMCH · Hospital network</span></div>
           <div class="sp-inc-title">EMR downtime risk during peak ticket periods</div>
           <p class="sp-inc-desc">Proactive monitoring and rapid escalation across 120–140 daily tickets. Zero clinical EMR downtime maintained.</p>
         </div>
-        <div class="sp-incident glass" data-reveal="up" style="--sp-i:5">
+        <div class="sp-incident glass" data-reveal="up" data-sp="5">
           <div class="sp-inc-top"><span class="sp-inc-badge">Resolved</span><span class="sp-inc-date">Ongoing</span></div>
           <div class="sp-inc-title">Coffee reserves — critical</div>
           <p class="sp-inc-desc">Auto-remediated. No recruiters were kept waiting.</p>
@@ -205,24 +236,24 @@
     </div>
   </section>
 
-  <!-- ============ ABOUT ============ -->
+  <!-- ============ [HTML-07] ABOUT ============ -->
   <section class="section" id="about">
     <div class="container">
       <div class="section-label"><span class="dot"></span>About</div>
-      <h2 data-reveal="up" style="--sp-i:1">A support engineer who actually runs the incident.</h2>
+      <h2 data-reveal="up" data-sp="1">A support engineer who actually runs the incident.</h2>
       <div class="about-grid">
-        <div class="about-copy" data-reveal="depth" style="--sp-i:0">
-          <p data-reveal="up" style="--sp-i:2">I'm a <strong>CCNA-certified IT Support Engineer</strong> with 4+ years in enterprise infrastructure, high-availability systems and mission-critical operations — across aviation and healthcare in Qatar, plus government immigration work in the UAE.</p>
-          <p data-reveal="up" style="--sp-i:3">My track record spans international airports, multi-site hospital networks, and government immigration centres. I specialise in <strong>systems lifecycle management</strong>, device provisioning, network infrastructure deployment and stakeholder coordination — working within ITIL frameworks for incident, change and problem management.</p>
-          <p data-reveal="up" style="--sp-i:4">Including hands-on response to a 4-day cyber attack during the 2022 FIFA World Cup, and a solo emergency UPS recovery at Hamad International Airport.</p>
+        <div class="about-copy" data-reveal="depth" data-sp="0">
+          <p data-reveal="up" data-sp="2">I'm a <strong>CCNA-certified IT Support Engineer</strong> with 4+ years in enterprise infrastructure, high-availability systems and mission-critical operations — across aviation and healthcare in Qatar, plus government immigration work in the UAE.</p>
+          <p data-reveal="up" data-sp="3">My track record spans international airports, multi-site hospital networks, and government immigration centres. I specialise in <strong>systems lifecycle management</strong>, device provisioning, network infrastructure deployment and stakeholder coordination — working within ITIL frameworks for incident, change and problem management.</p>
+          <p data-reveal="up" data-sp="4">Including hands-on response to a 4-day cyber attack during the 2022 FIFA World Cup, and a solo emergency UPS recovery at Hamad International Airport.</p>
           <div class="highlight-row" data-depth="0.04">
-            <div class="highlight-card glass glass-tight" data-reveal="up" style="--sp-i:6"><div class="val">600+</div><div class="lbl">Systems managed</div></div>
-            <div class="highlight-card glass glass-tight" data-reveal="up" style="--sp-i:7"><div class="val">3</div><div class="lbl">Hospital sites</div></div>
-            <div class="highlight-card glass glass-tight" data-reveal="up" style="--sp-i:8"><div class="val">10+</div><div class="lbl">Enterprise projects</div></div>
-            <div class="highlight-card glass glass-tight" data-reveal="up" style="--sp-i:9"><div class="val">Zero</div><div class="lbl">Data loss</div></div>
+            <div class="highlight-card glass glass-tight" data-reveal="up" data-sp="6"><div class="val">600+</div><div class="lbl">Systems managed</div></div>
+            <div class="highlight-card glass glass-tight" data-reveal="up" data-sp="7"><div class="val">3</div><div class="lbl">Hospital sites</div></div>
+            <div class="highlight-card glass glass-tight" data-reveal="up" data-sp="8"><div class="val">10+</div><div class="lbl">Enterprise projects</div></div>
+            <div class="highlight-card glass glass-tight" data-reveal="up" data-sp="9"><div class="val">Zero</div><div class="lbl">Data loss</div></div>
           </div>
         </div>
-        <div class="credential-list glass" data-tilt data-tilt-max="4" data-reveal="right" style="--sp-i:5">
+        <div class="credential-list glass" data-tilt data-tilt-max="4" data-reveal="right" data-sp="5">
           <div class="credential-item"><span class="k">Location</span><span class="v">Doha, Qatar</span></div>
           <div class="credential-item"><span class="k">Certification</span><span class="v">CCNA 200-301</span></div>
           <div class="credential-item"><span class="k">Education</span><span class="v">BSc Information Technology</span></div>
@@ -234,7 +265,7 @@
     </div>
   </section>
 
-  <!-- ============ WHY HIRE ============ -->
+  <!-- ============ [HTML-08] WHY HIRE ============ -->
   <section class="section" id="why-hire">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Why hire Sajid</div>
@@ -274,7 +305,7 @@
     </div>
   </section>
 
-  <!-- ============ EXPERIENCE ============ -->
+  <!-- ============ [HTML-09] EXPERIENCE ============ -->
   <section class="section" id="experience">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Experience</div>
@@ -282,29 +313,29 @@
       <div class="timeline" id="timeline">
         <div class="tl-progress" id="tlProgress"></div>
 
-        <div class="tl-item" data-reveal="depth" style="--sp-i:1">
-          <div class="tl-dot" data-reveal="scale" style="--sp-i:0"></div>
-          <div class="tl-meta" data-reveal="up" style="--sp-i:3"><span class="tl-date">May 2025 – Aug 2025</span><span class="tl-place">Dubai, UAE</span></div>
-          <div class="tl-role" data-reveal="up" style="--sp-i:3">IT Executive & Business Development</div>
-          <div class="tl-org" data-reveal="up" style="--sp-i:2">Al Tawkel Immigration Center · Government & Immigration Services</div>
-          <ul class="tl-bullets" data-reveal="up" style="--sp-i:4">
+        <div class="tl-item" data-reveal="depth" data-sp="1">
+          <div class="tl-dot" data-reveal="scale" data-sp="0"></div>
+          <div class="tl-meta" data-reveal="up" data-sp="3"><span class="tl-date">May 2025 – Aug 2025</span><span class="tl-place">Dubai, UAE</span></div>
+          <div class="tl-role" data-reveal="up" data-sp="3">IT Executive & Business Development</div>
+          <div class="tl-org" data-reveal="up" data-sp="2">Al Tawkel Immigration Center · Government & Immigration Services</div>
+          <ul class="tl-bullets" data-reveal="up" data-sp="4">
             <li>Enterprise L2 support — hardware repairs, reimaging, network troubleshooting, Office 365</li>
             <li>Installed and configured servers, LAN networks and multi-function peripherals</li>
             <li>Built a structured digital IT asset registry</li>
             <li>Coordinated with government authorities on credential recovery and documentation</li>
           </ul>
-          <div class="skill-tags" data-reveal="up" style="--sp-i:4"><span>Office 365</span><span>LAN Networking</span><span>Server Setup</span><span>Multi-function Peripherals</span></div>
-          <div class="tl-logos" data-reveal="up" style="--sp-i:5">
+          <div class="skill-tags" data-reveal="up" data-sp="4"><span>Office 365</span><span>LAN Networking</span><span>Server Setup</span><span>Multi-function Peripherals</span></div>
+          <div class="tl-logos" data-reveal="up" data-sp="5">
             <span class="logo-plate logo-plate--md"><img src="assets/ALTAWKEL.jpg" alt="Al Tawkel Immigration Center" width="293" height="172" loading="lazy" decoding="async"></span>
           </div>
         </div>
 
-        <div class="tl-item" data-reveal="depth" style="--sp-i:1">
-          <div class="tl-dot" data-reveal="scale" style="--sp-i:0"></div>
-          <div class="tl-meta" data-reveal="up" style="--sp-i:3"><span class="tl-date">Nov 2023 – Feb 2024</span><span class="tl-place">Al-Rayyan, Qatar</span></div>
-          <div class="tl-role" data-reveal="up" style="--sp-i:3">IT Support Engineer</div>
-          <div class="tl-org" data-reveal="up" style="--sp-i:2">Elegancia Healthcare · Military Medical City Hospital (MMCH) · Healthcare</div>
-          <ul class="tl-bullets" data-reveal="up" style="--sp-i:4">
+        <div class="tl-item" data-reveal="depth" data-sp="1">
+          <div class="tl-dot" data-reveal="scale" data-sp="0"></div>
+          <div class="tl-meta" data-reveal="up" data-sp="3"><span class="tl-date">Nov 2023 – Feb 2024</span><span class="tl-place">Al-Rayyan, Qatar</span></div>
+          <div class="tl-role" data-reveal="up" data-sp="3">IT Support Engineer</div>
+          <div class="tl-org" data-reveal="up" data-sp="2">Elegancia Healthcare · Military Medical City Hospital (MMCH) · Healthcare</div>
+          <ul class="tl-bullets" data-reveal="up" data-sp="4">
             <li>MMCH (primary site, Al-Rayyan): 120–140 daily tickets via ManageEngine ServiceDesk Plus</li>
             <li>KMC (Korean Medical Center, Lusail): deployments and full server room inventory</li>
             <li>TVH (The View Hospital): end-user support and a complete serial number audit</li>
@@ -312,20 +343,20 @@
             <li>L1/L2 escalation and scheduled preventive maintenance across all three sites</li>
             <li>Maintained zero EMR downtime across all three sites throughout the engagement</li>
           </ul>
-          <div class="skill-tags" data-reveal="up" style="--sp-i:4"><span>ManageEngine ServiceDesk</span><span>EMR Systems</span><span>L1/L2 Escalation</span><span>Preventive Maintenance</span></div>
-          <div class="tl-logos" data-reveal="up" style="--sp-i:5">
+          <div class="skill-tags" data-reveal="up" data-sp="4"><span>ManageEngine ServiceDesk</span><span>EMR Systems</span><span>L1/L2 Escalation</span><span>Preventive Maintenance</span></div>
+          <div class="tl-logos" data-reveal="up" data-sp="5">
             <span class="logo-plate logo-plate--sq"><img src="assets/mmch.jpg" alt="MMCH" width="200" height="200" loading="lazy" decoding="async"></span>
             <span class="logo-plate logo-plate--wd"><img src="assets/kmc.png" alt="KMC" width="369" height="137" loading="lazy" decoding="async"></span>
             <span class="logo-plate logo-plate--xw"><img src="assets/tvh.png" alt="TVH" width="550" height="91" loading="lazy" decoding="async"></span>
             <span class="logo-plate logo-plate--md"><img src="assets/PIH.png" alt="PIH Elegancia" width="274" height="150" loading="lazy" decoding="async"></span>
           </div>
-          <div class="tl-stats" data-reveal="up" style="--sp-i:5">
+          <div class="tl-stats" data-reveal="up" data-sp="5">
             <span class="tl-stat">3 hospital sites</span>
             <span class="tl-stat">300+ systems deployed</span>
             <span class="tl-stat">300+ staff supported</span>
             <span class="tl-stat">120–140 daily tickets</span>
           </div>
-          <div class="bd" data-reveal="up" style="--sp-i:6">
+          <div class="bd" data-reveal="up" data-sp="6">
             <div class="bd-head"><span class="bd-eyebrow">Site-by-site breakdown</span><h3>Three hospital sites, one coordinated rotation — tap a card.</h3></div>
             <div class="bd-grid" data-stagger>
 
@@ -391,21 +422,21 @@
 
             </div>
           </div>
-          <div class="tl-quote" data-reveal="up" style="--sp-i:6">"Sajid maintained zero EMR downtime across all three hospital sites throughout the entire project engagement — a truly extraordinary achievement in a high-stakes healthcare environment."
+          <div class="tl-quote" data-reveal="up" data-sp="6">"Sajid maintained zero EMR downtime across all three hospital sites throughout the entire project engagement — a truly extraordinary achievement in a high-stakes healthcare environment."
             <cite>— IT Project Manager, Military Medical City Hospital</cite>
           </div>
-          <div class="cert-actions" data-reveal="up" style="--sp-i:6">
+          <div class="cert-actions" data-reveal="up" data-sp="6">
             <a href="https://drive.google.com/file/d/161PTtyekepRwmq8FS3T45V5R6VXDTSya/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Experience Letter</a>
             <a href="https://drive.google.com/uc?export=download&id=161PTtyekepRwmq8FS3T45V5R6VXDTSya" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
 
-        <div class="tl-item" data-reveal="depth" style="--sp-i:1">
-          <div class="tl-dot" data-reveal="scale" style="--sp-i:0"></div>
-          <div class="tl-meta" data-reveal="up" style="--sp-i:3"><span class="tl-date">Feb 2022 – Nov 2023</span><span class="tl-place">Doha, Qatar</span></div>
-          <div class="tl-role" data-reveal="up" style="--sp-i:3">IT Support Engineer</div>
-          <div class="tl-org" data-reveal="up" style="--sp-i:2">Star Link — Power International Holding (PIH Group) · Corporate Enterprise · Aviation Project</div>
-          <ul class="tl-bullets" data-reveal="up" style="--sp-i:4">
+        <div class="tl-item" data-reveal="depth" data-sp="1">
+          <div class="tl-dot" data-reveal="scale" data-sp="0"></div>
+          <div class="tl-meta" data-reveal="up" data-sp="3"><span class="tl-date">Feb 2022 – Nov 2023</span><span class="tl-place">Doha, Qatar</span></div>
+          <div class="tl-role" data-reveal="up" data-sp="3">IT Support Engineer</div>
+          <div class="tl-org" data-reveal="up" data-sp="2">Star Link — Power International Holding (PIH Group) · Corporate Enterprise · Aviation Project</div>
+          <ul class="tl-bullets" data-reveal="up" data-sp="4">
             <li>Enterprise ticketing & ITSM across 10+ sites — 120–140 tickets/day via ManageEngine</li>
             <li>Executive-level support for C-suite and directors at PIH Head Office</li>
             <li>Incident escalation — 50–60 critical tickets handled during peak periods</li>
@@ -414,8 +445,8 @@
             <li>Solo emergency UPS recovery after a 10kVA unit failed during heavy rainfall at a live HIA site</li>
             <li>Cross-subsidiary IT coverage — Aura Group, UCC, InfraRoad, Elegancia, UBTJV</li>
           </ul>
-          <div class="skill-tags" data-reveal="up" style="--sp-i:4"><span>ManageEngine ServiceDesk</span><span>Kaspersky EDR</span><span>Network Infrastructure</span><span>Power Systems</span></div>
-          <div class="tl-logos" data-reveal="up" style="--sp-i:5">
+          <div class="skill-tags" data-reveal="up" data-sp="4"><span>ManageEngine ServiceDesk</span><span>Kaspersky EDR</span><span>Network Infrastructure</span><span>Power Systems</span></div>
+          <div class="tl-logos" data-reveal="up" data-sp="5">
             <span class="logo-plate logo-plate--md"><img src="assets/PIH.png" alt="PIH Group" width="274" height="150" loading="lazy" decoding="async"></span>
             <span class="logo-plate logo-plate--sq"><img src="assets/aura.png" alt="Aura Group" width="225" height="225" loading="lazy" decoding="async"></span>
             <span class="logo-plate logo-plate--md"><img src="assets/ucc.png" alt="UCC" width="330" height="153" loading="lazy" decoding="async"></span>
@@ -424,7 +455,7 @@
             <span class="logo-plate logo-plate--sq"><img src="assets/ubtjv.png" alt="UBTJV" width="247" height="204" loading="lazy" decoding="async"></span>
           </div>
 
-          <div class="tl-subroles glass glass-tight" data-reveal="up" style="--sp-i:5">
+          <div class="tl-subroles glass glass-tight" data-reveal="up" data-sp="5">
             <div class="tl-subroles-label">Positions in this engagement</div>
             <div class="tl-subrole">
               <div class="tl-subrole-role">IT Officer — HIA Project</div>
@@ -447,13 +478,13 @@
             </div>
           </div>
 
-          <div class="tl-stats" data-reveal="up" style="--sp-i:5">
+          <div class="tl-stats" data-reveal="up" data-sp="5">
             <span class="tl-stat">10+ enterprise sites</span>
             <span class="tl-stat">1000+ tickets managed</span>
             <span class="tl-stat">120–140 daily tickets</span>
             <span class="tl-stat">95% SLA compliance</span>
           </div>
-          <div class="bd" data-reveal="up" style="--sp-i:6">
+          <div class="bd" data-reveal="up" data-sp="6">
             <div class="bd-head"><span class="bd-eyebrow">Engagement breakdown</span><h3>Seven fronts of one two-year engagement — tap a card.</h3></div>
             <div class="bd-grid" data-stagger>
 
@@ -543,27 +574,27 @@
 
             </div>
           </div>
-          <div class="tl-quote" data-reveal="up" style="--sp-i:6">"Sajid was instrumental across multiple high-profile projects — from the HIA Airport Expansion to executive-level support at PIH headquarters. He is technically sharp, exceptionally reliable, and handles enterprise pressure with composure. One of the strongest engineers to come through our division."
+          <div class="tl-quote" data-reveal="up" data-sp="6">"Sajid was instrumental across multiple high-profile projects — from the HIA Airport Expansion to executive-level support at PIH headquarters. He is technically sharp, exceptionally reliable, and handles enterprise pressure with composure. One of the strongest engineers to come through our division."
             <cite>— IT Manager, Star Link – Power International Holding</cite>
           </div>
-          <div class="cert-actions" data-reveal="up" style="--sp-i:6">
+          <div class="cert-actions" data-reveal="up" data-sp="6">
             <a href="https://drive.google.com/file/d/16Sm6njPJ4bA2mw7NlzwJW1Xa1I_Dpdnd/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Experience Letter</a>
             <a href="https://drive.google.com/uc?export=download&id=16Sm6njPJ4bA2mw7NlzwJW1Xa1I_Dpdnd" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
 
-        <div class="tl-item" data-reveal="depth" style="--sp-i:1">
-          <div class="tl-dot" data-reveal="scale" style="--sp-i:0"></div>
-          <div class="tl-meta" data-reveal="up" style="--sp-i:3"><span class="tl-date">May 2021 – Feb 2022</span><span class="tl-place">Qatar</span></div>
-          <div class="tl-role" data-reveal="up" style="--sp-i:3">Customer Service Agent</div>
-          <div class="tl-org" data-reveal="up" style="--sp-i:2">Starlink (Ooredoo International) · Telecom</div>
-          <ul class="tl-bullets" data-reveal="up" style="--sp-i:4">
+        <div class="tl-item" data-reveal="depth" data-sp="1">
+          <div class="tl-dot" data-reveal="scale" data-sp="0"></div>
+          <div class="tl-meta" data-reveal="up" data-sp="3"><span class="tl-date">May 2021 – Feb 2022</span><span class="tl-place">Qatar</span></div>
+          <div class="tl-role" data-reveal="up" data-sp="3">Customer Service Agent</div>
+          <div class="tl-org" data-reveal="up" data-sp="2">Starlink (Ooredoo International) · Telecom</div>
+          <ul class="tl-bullets" data-reveal="up" data-sp="4">
             <li>Technical inbound support across Ooredoo product lines</li>
             <li>Maintained high first-call resolution rates</li>
             <li>CRM documentation, case tracking and customer troubleshooting</li>
           </ul>
-          <div class="skill-tags" data-reveal="up" style="--sp-i:4"><span>CRM</span><span>Technical Support</span><span>Customer Troubleshooting</span></div>
-          <div class="tl-logos" data-reveal="up" style="--sp-i:5">
+          <div class="skill-tags" data-reveal="up" data-sp="4"><span>CRM</span><span>Technical Support</span><span>Customer Troubleshooting</span></div>
+          <div class="tl-logos" data-reveal="up" data-sp="5">
             <span class="logo-plate logo-plate--sq"><img src="assets/sartlink_Ooredoo.png" alt="Starlink Ooredoo International" width="225" height="225" loading="lazy" decoding="async"></span>
           </div>
         </div>
@@ -572,7 +603,7 @@
     </div>
   </section>
 
-  <!-- ============ SKILLS ============ -->
+  <!-- ============ [HTML-10] SKILLS ============ -->
   <section class="section" id="skills">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Skills</div>
@@ -649,7 +680,7 @@
     </div>
   </section>
 
-  <!-- ============ PROOF OF WORK ============ -->
+  <!-- ============ [HTML-11] PROOF OF WORK ============ -->
   <section class="section proof-strip" id="proof">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Proof of work</div>
@@ -663,7 +694,7 @@
     </div>
   </section>
 
-  <!-- ============ CERTIFICATIONS ============ -->
+  <!-- ============ [HTML-12] CERTIFICATIONS ============ -->
   <section class="section" id="certifications">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Certifications</div>
@@ -751,7 +782,7 @@
     </div>
   </section>
 
-  <!-- ============ PROJECTS ============ -->
+  <!-- ============ [HTML-13] PROJECTS ============ -->
   <section class="section" id="projects">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Mission Log</div>
@@ -759,7 +790,7 @@
       <div class="case-list">
 
         <div class="case-card glass" data-case data-depth="0.035">
-          <div class="case-head" data-case-toggle data-reveal="left" data-tilt data-tilt-max="2" style="--sp-i:0">
+          <div class="case-head" data-case-toggle data-reveal="left" data-tilt data-tilt-max="2" data-sp="0">
             <div class="case-head-left">
               <span class="case-num" data-depth="0.018">01</span>
               <div data-depth="0.022"><div class="case-title">Airport Expansion IT Deployment</div><div class="case-sub">Hamad International Airport · Al Tawkel · 2023–2024</div></div>
@@ -780,7 +811,7 @@
         </div>
 
         <div class="case-card glass" data-case data-depth="0.035">
-          <div class="case-head" data-case-toggle data-reveal="right" data-tilt data-tilt-max="2" style="--sp-i:1">
+          <div class="case-head" data-case-toggle data-reveal="right" data-tilt data-tilt-max="2" data-sp="1">
             <div class="case-head-left">
               <span class="case-num" data-depth="0.018">02</span>
               <div data-depth="0.022"><div class="case-title">Multi-Site Hospital IT Rollout</div><div class="case-sub">MMCH · KMC · TVH — PIH Elegancia · 2022–2023</div></div>
@@ -801,7 +832,7 @@
         </div>
 
         <div class="case-card glass" data-case data-depth="0.035">
-          <div class="case-head" data-case-toggle data-reveal="left" data-tilt data-tilt-max="2" style="--sp-i:2">
+          <div class="case-head" data-case-toggle data-reveal="left" data-tilt data-tilt-max="2" data-sp="2">
             <div class="case-head-left">
               <span class="case-num" data-depth="0.018">03</span>
               <div data-depth="0.022"><div class="case-title">FIFA 2022 Cyber Attack — Incident Lead</div><div class="case-sub">Star Link · PIH Group · Doha, Qatar</div></div>
@@ -822,7 +853,7 @@
         </div>
 
         <div class="case-card glass" data-case data-depth="0.035">
-          <div class="case-head" data-case-toggle data-reveal="right" data-tilt data-tilt-max="2" style="--sp-i:3">
+          <div class="case-head" data-case-toggle data-reveal="right" data-tilt data-tilt-max="2" data-sp="3">
             <div class="case-head-left">
               <span class="case-num" data-depth="0.018">04</span>
               <div data-depth="0.022"><div class="case-title">Government Immigration Centre Infrastructure</div><div class="case-sub">MOI · Al Tawkel · Dubai, UAE</div></div>
@@ -844,7 +875,7 @@
         </div>
 
         <div class="case-card glass" data-case data-depth="0.035">
-          <div class="case-head" data-case-toggle data-reveal="left" data-tilt data-tilt-max="2" style="--sp-i:4">
+          <div class="case-head" data-case-toggle data-reveal="left" data-tilt data-tilt-max="2" data-sp="4">
             <div class="case-head-left">
               <span class="case-num" data-depth="0.018">05</span>
               <div data-depth="0.022"><div class="case-title">PIH Group — 10-Site Enterprise Support</div><div class="case-sub">Star Link · UCC · Aura · Lusail, Qatar</div></div>
@@ -868,7 +899,7 @@
     </div>
   </section>
 
-  <!-- ============ INFRASTRUCTURE LAB ============ -->
+  <!-- ============ [HTML-14] INFRASTRUCTURE LAB ============ -->
   <section class="section" id="lab">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Infrastructure Lab</div>
@@ -957,7 +988,7 @@
     </div>
   </section>
 
-  <!-- ============ INTERACTIVE DIAGNOSTICS DEMO ============ -->
+  <!-- ============ [HTML-15] INTERACTIVE DIAGNOSTICS DEMO ============ -->
   <section class="section" id="diagnostics">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Interactive Demo</div>
@@ -975,7 +1006,7 @@
     </div>
   </section>
 
-  <!-- ============ LIVE TICKET TRIAGE DEMO ============ -->
+  <!-- ============ [HTML-16] LIVE TICKET TRIAGE DEMO ============ -->
   <section class="section" id="triage">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Interactive Demo</div>
@@ -993,7 +1024,7 @@
     </div>
   </section>
 
-  <!-- ============ SAJID IT TOOLKIT ============ -->
+  <!-- ============ [HTML-17] SAJID IT TOOLKIT ============ -->
   <section class="section tk-section" id="toolkit" aria-labelledby="tkTitle">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Toolkit</div>
@@ -1013,7 +1044,7 @@
     </div>
   </section>
 
-  <!-- ============ EDUCATION ============ -->
+  <!-- ============ [HTML-18] EDUCATION ============ -->
   <section class="section" id="education">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Education</div>
@@ -1060,7 +1091,7 @@
     </div>
   </section>
 
-  <!-- ============ ACHIEVEMENTS ============ -->
+  <!-- ============ [HTML-19] ACHIEVEMENTS ============ -->
   <section class="section" id="achievements">
     <div class="container">
       <div class="section-label"><span class="dot"></span>Awards</div>
@@ -1088,7 +1119,7 @@
     </div>
   </section>
 
-  <!-- ============ REFERENCES ============ -->
+  <!-- ============ [HTML-20] REFERENCES ============ -->
   <section class="section" id="references">
     <div class="container">
       <div class="section-label"><span class="dot"></span>References</div>
@@ -1125,7 +1156,7 @@
     </div>
   </section>
 
-  <!-- ============ CONTACT ============ -->
+  <!-- ============ [HTML-21] CONTACT ============ -->
   <section class="section" id="contact">
     <div class="container">
       <div class="contact-panel glass" data-reveal="depth">
@@ -1134,21 +1165,21 @@
 
           <div class="contact-left">
             <div class="section-label"><span class="dot"></span>Engage</div>
-            <h2 data-reveal="up" style="--sp-i:1">Let's talk about your infrastructure.</h2>
-            <p class="lede" data-reveal="up" style="--sp-i:2">Enterprise challenge, critical infrastructure, or a new opportunity — I'm ready.</p>
-            <div class="contact-avail" data-reveal="up" style="--sp-i:3">
+            <h2 data-reveal="up" data-sp="1">Let's talk about your infrastructure.</h2>
+            <p class="lede" data-reveal="up" data-sp="2">Enterprise challenge, critical infrastructure, or a new opportunity — I'm ready.</p>
+            <div class="contact-avail" data-reveal="up" data-sp="3">
               <span class="dot"></span> Available — Doha, Qatar <span class="contact-time" id="dohaClock">--:--:--</span>
             </div>
-            <a href="mailto:sajiditeech@gmail.com" class="btn btn-primary" data-reveal="up" style="--sp-i:4">Email me <span class="btn-arrow">→</span></a>
+            <a href="mailto:sajiditeech@gmail.com" class="btn btn-primary" data-reveal="up" data-sp="4">Email me <span class="btn-arrow">→</span></a>
 
-            <div class="contact-shortcuts" data-reveal="up" style="--sp-i:5">
+            <div class="contact-shortcuts" data-reveal="up" data-sp="5">
               <a href="https://drive.google.com/file/d/1-Ktw3XGNO4UZvxATGR9ED44NZiFMlwz_/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="contact-pill contact-pill-icon" aria-label="View CV" title="CV"><svg class="pill-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0m2 5.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-.245S4 12 8 12s5 1.755 5 1.755"/></svg></a>
               <a href="mailto:sajiditeech@gmail.com" class="contact-pill contact-pill-icon" aria-label="Email Sajid" title="Email"><svg class="pill-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/></svg></a>
               <a href="https://wa.me/97466969598" target="_blank" rel="noopener noreferrer" class="contact-pill contact-pill-icon" aria-label="WhatsApp Sajid" title="WhatsApp"><svg class="pill-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="#25D366" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg></a>
               <a href="https://www.linkedin.com/in/imsajid-mehmood-1b3954333/" target="_blank" rel="noopener noreferrer" class="contact-pill contact-pill-icon" aria-label="Sajid on LinkedIn" title="LinkedIn"><svg class="pill-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="#0A66C2" d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg></a>
             </div>
 
-            <div class="qr-card glass-clear" data-reveal="up" style="--sp-i:6">
+            <div class="qr-card glass-clear" data-reveal="up" data-sp="6">
               <img class="qr-img" id="qrImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="QR code — scan to save Sajid's contact details" width="64" height="64" loading="lazy">
               <div class="qr-text">
                 <div class="qr-title">Scan to save my contact</div>
@@ -1162,25 +1193,25 @@
             <div class="section-label"><span class="dot"></span>Send a message</div>
 
             <form id="contactForm" class="contact-form" action="https://formspree.io/f/mbglyrwl" method="POST">
-              <div class="cf-field" data-reveal="up" style="--sp-i:1">
+              <div class="cf-field" data-reveal="up" data-sp="1">
                 <label for="cfName">Your name</label>
                 <input type="text" id="cfName" name="name" required autocomplete="name">
               </div>
-              <div class="cf-field" data-reveal="up" style="--sp-i:2">
+              <div class="cf-field" data-reveal="up" data-sp="2">
                 <label for="cfEmail">Your email</label>
                 <input type="email" id="cfEmail" name="email" required autocomplete="email">
               </div>
-              <div class="cf-field" data-reveal="up" style="--sp-i:3">
+              <div class="cf-field" data-reveal="up" data-sp="3">
                 <label for="cfSubject">Subject</label>
                 <input type="text" id="cfSubject" name="subject" autocomplete="off">
               </div>
-              <div class="cf-field cf-field-area" data-reveal="up" style="--sp-i:4">
+              <div class="cf-field cf-field-area" data-reveal="up" data-sp="4">
                 <label for="cfMessage">Message</label>
                 <textarea id="cfMessage" name="message" rows="4" required></textarea>
               </div>
               <!-- Honeypot spam trap (Formspree's convention) — hidden from real visitors, never shown, no CAPTCHA needed -->
               <input type="text" name="_gotcha" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-              <div class="cf-actions" data-reveal="up" style="--sp-i:5">
+              <div class="cf-actions" data-reveal="up" data-sp="5">
                 <button type="submit" class="cf-submit">
                   <span class="cf-submit-text">Send message</span> <span class="btn-arrow">→</span>
                 </button>
@@ -1208,7 +1239,7 @@
   </div>
 </footer>
 
-<!-- ============ VIEWER GATE (name capture before CV/certificate view or download) ============ -->
+<!-- ============ [HTML-22] VIEWER GATE (name capture before CV/certificate view or download) ============ -->
 <div class="vgate" id="vgate" role="dialog" aria-modal="true" aria-label="Quick details" hidden>
   <div class="vgate-scrim" data-vgate-close></div>
   <div class="vgate-panel">
@@ -1229,7 +1260,7 @@
   </div>
 </div>
 
-<!-- ============ IN-SITE DOCUMENT VIEWER (CV / certificates, no Drive redirect) ============ -->
+<!-- ============ [HTML-23] IN-SITE DOCUMENT VIEWER (CV / certificates, no Drive redirect) ============ -->
 <div class="vview" id="vview" role="dialog" aria-modal="true" aria-label="Document viewer" hidden>
   <div class="vview-scrim" data-vview-close></div>
   <div class="vview-panel">
@@ -1244,7 +1275,7 @@
   </div>
 </div>
 
-<!-- ============ COMMAND CONSOLE (Ctrl/⌘ + K, or "/") ============ -->
+<!-- ============ [HTML-24] COMMAND CONSOLE (Ctrl/⌘ + K, or "/") ============ -->
 <div class="cmdk" id="cmdk" role="dialog" aria-modal="true" aria-label="Command menu" hidden>
   <div class="cmdk-scrim" data-cmdk-close></div>
   <div class="cmdk-panel">
@@ -1259,7 +1290,7 @@
 </div>
 <div class="cmdk-toast" id="cmdkToast" role="status" aria-live="polite"></div>
 
-<!-- ============ TOOLKIT DETAILS MODAL ============ -->
+<!-- ============ [HTML-25] TOOLKIT DETAILS MODAL ============ -->
 <div class="tk-modal" id="tkModal" role="dialog" aria-modal="true" aria-labelledby="tkmTitle" hidden>
   <div class="tk-scrim" data-tk-close></div>
   <div class="tk-panel" id="tkPanel" tabindex="-1">
