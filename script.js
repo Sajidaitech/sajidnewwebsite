@@ -1366,20 +1366,20 @@ $$('[data-case]').forEach(card => {
       id:'file-organizer', status:'available', category:'Productivity', icon:'folder',
       name:'Automatic File Organizer',
       desc:'Automatically organize files into appropriate folders based on their file types.',
-      long:'Moves every file in the folder where the script is placed into a subfolder named after its file extension.',
-      version:'v1.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11',
-      admin:false, size:'139 bytes',
-      sha256:'ab5578f3df5dd819df1c9466077e0db60841f8d02b35c9931c2141a50045984b',
+      long:'Moves every file in the folder where the script is placed into a category folder (Videos, Photos, Documents, Txt Files, Music, Zip, Apps). Anything else goes into Others.',
+      version:'v1.1.0', updated:'2 October 2026', platform:'Windows 10 / Windows 11',
+      admin:false, size:'880 bytes',
+      sha256:'2def8dc13b8a1ae0f5d4bb7df3ac925141d1ff4981c32302b79a9ac0112dc7dc',
       file:'assets/toolkit/automatic-file-organizer.bat',
       runNote:'Copy the file into the folder you want to organize (for example a test folder), then run it there. It moves every file in its folder and cannot be undone.',
       extras:[],
       does:[
         'Looks at every file in the folder the script is run from.',
-        'Creates a subfolder for each file extension (for example “pdf” or “jpg”).',
-        'Moves each file into its matching subfolder.'
+        'Creates category folders as needed: Videos, Photos, Documents, Txt Files, Music, Zip, Apps and Others.',
+        'Moves each file into the folder that matches its type, skipping unfinished downloads (.crdownload, .part, .tmp).'
       ],
       requires:['Windows 10 or Windows 11','No administrator rights needed'],
-      safety:['Copy the script into the folder you want to organize; do not run it from a system folder.','There is no confirmation prompt and no undo. Back up the folder first.','The script moves itself too, because it is also a file in that folder.']
+      safety:['Copy the script into the folder you want to organize; do not run it from a system folder.','There is no confirmation prompt and no undo. Back up the folder first.','The script skips itself and will not overwrite a file that already exists in a destination folder.']
     },
     {
       id:'it-quick-tools', status:'soon', category:'IT Support', icon:'terminal',
