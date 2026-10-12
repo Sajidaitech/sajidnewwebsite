@@ -230,10 +230,10 @@ const heroSection = $('.hero');
 const heroPhoto = $('.hero-photo');
 const roleCycleEl = $('#heroRoleCycle');
 const roleCycle = [
-  'Infrastructure & Networking',
-  'Enterprise IT Support',
-  'CCNA Certified Engineer',
-  'Zero-Downtime Systems'
+  'IT Graduate · Doha',
+  'Networking Training',
+  'Windows Scripting',
+  'AI Technical Content Writing Intern (from Oct 2026)'
 ];
 let lastRoleIdx = 0;
 
@@ -1138,6 +1138,10 @@ $$('[data-case]').forEach(card => {
                straight through.
    Right(100)= fully Blurred, backdrop-filter:blur(100px), normal
                tinted glass background.
+   The same position also drives --glass-amt (0 = Clear … 1 = Tinted)
+   on <html>. styles.css scales every card's tint and blur (.glass,
+   .glass-clear, nav, drawer, role cards) by that token, so the cards
+   inside a panel follow the slider instead of staying at full tint.
    The chosen value is saved to localStorage and restored on the
    next visit, so a reload picks up right where the user left it.
    Text color on blurred panels is a separate, user-controlled
@@ -1171,6 +1175,11 @@ $$('[data-case]').forEach(card => {
       // otherwise let the CSS default (tinted glass) take back over.
       p.style.background = isClear ? 'transparent' : '';
     });
+
+    // Keep the CSS Clear→Tinted token in step with the slider. Without this
+    // line --glass-amt never leaves its stylesheet default, so cards inside
+    // a "Clear" panel would still render with their Tinted look.
+    document.documentElement.style.setProperty('--glass-amt', String(+(clamped / 100).toFixed(3)));
 
     slider.value = clamped;
     slider.style.setProperty('--focus-fill', clamped + '%');
@@ -1964,6 +1973,7 @@ $$('[data-case]').forEach(card => {
   if (!box) return;
   /* Edit colours here: [main, deep, light] as R,G,B */
   const PALETTES = {
+    olive:  [[92,107,60],   [70,82,44],   [226,231,210]],
     blue:   [[91,174,245],  [47,134,214], [207,230,251]],
     violet: [[167,139,250], [124,92,214], [226,217,253]],
     amber:  [[245,185,66],  [214,142,28], [253,235,198]],
@@ -1972,7 +1982,7 @@ $$('[data-case]').forEach(card => {
   const hex = a => '#' + a.map(v => v.toString(16).padStart(2,'0')).join('');
   const root = document.documentElement;
   function apply(name){
-    const p = PALETTES[name] || PALETTES.blue;
+    const p = PALETTES[name] || PALETTES.olive;
     const set = (k, v) => root.style.setProperty(k, v);
     set('--accent', hex(p[0]));        set('--accent-rgb', p[0].join(','));
     set('--accent-deep', hex(p[1]));   set('--accent-deep-rgb', p[1].join(','));
@@ -1980,14 +1990,14 @@ $$('[data-case]').forEach(card => {
     box.querySelectorAll('[data-accent]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.accent === name)));
   }
   box.querySelectorAll('[data-accent]').forEach(b => {
-    b.style.setProperty('--dot', hex((PALETTES[b.dataset.accent] || PALETTES.blue)[0]));
+    b.style.setProperty('--dot', hex((PALETTES[b.dataset.accent] || PALETTES.olive)[0]));
     b.addEventListener('click', () => {
       apply(b.dataset.accent);
       try { localStorage.setItem('accentName', b.dataset.accent); } catch(e) {}
     });
   });
-  let saved = 'blue';
-  try { saved = localStorage.getItem('accentName') || 'blue'; } catch(e) {}
+  let saved = 'olive';
+  try { saved = localStorage.getItem('accentName') || 'olive'; } catch(e) {}
   apply(saved);
 })();
 
