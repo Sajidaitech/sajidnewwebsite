@@ -19,7 +19,6 @@
    [JS-15]  SKILLS — Technical Arsenal tab switcher
    [JS-16]  EXPERIENCE — engagement breakdown cards
    [JS-17]  CONTACT FORM — Formspree submission
-   [JS-17b] CONTACT VISIBILITY — country-based, decided by the server (/api/contact)
    [JS-18]  COMMAND CONSOLE — Ctrl/⌘ + K
    [JS-19]  VIEWER GATE + DOCUMENT VIEWER — CV and certificates
    [JS-20]  QR DIGITAL BUSINESS CARD
@@ -609,79 +608,6 @@ $$('[data-case]').forEach(card => {
 
 
 /* ==================================================================
-   [JS-17b] CONTACT VISIBILITY — country-based, decided by the server
-   ================================================================== */
-
-/* ---------------------------------------------------------------
-   Email and phone are NOT stored in this file or in index.html.
-   The page asks /api/contact (see _worker.js), and the server looks
-   at the visitor's country:
-     • approved country → { mode:'full', email, phone, whatsapp, instagram }
-     • anywhere else    → { mode:'social', instagram }
-   Elements marked data-contact="email | phone | whatsapp | instagram"
-   start hidden and are only revealed (and given their link) from that
-   answer. LinkedIn is a public link and is always visible.
-   A button marked data-contact-only="social" is revealed only in the
-   social view (so the full view never shows two competing buttons).
-   If the request fails, times out or returns anything unexpected, the
-   page falls back to the "social" view, so private details are never
-   shown by mistake. Every URL is validated before it becomes an href.
-   Other modules wait on `contactReady` to use the same answer.
---------------------------------------------------------------- */
-const contactReady = (function contactVisibility(){
-  const FALLBACK = { mode:'social', instagram:'' };
-  // OPTIONAL public Instagram URL used only when the API gives none (e.g. the API is down).
-  // Instagram is a public profile link, not private data. Leave '' to show LinkedIn only in that case.
-  const INSTAGRAM_FALLBACK = '';
-
-  // Returns the normalised URL only if it is https:// and on the expected host, else ''.
-  const safeUrl = (u, hostRe) => {
-    try {
-      const x = new URL(String(u || '').trim());
-      return (x.protocol === 'https:' && !x.username && !x.password && hostRe.test(x.hostname)) ? x.href : '';
-    } catch (e) { return ''; }
-  };
-  const safeInstagram = u => safeUrl(u, /(^|\.)instagram\.com$/i);
-  const safeWhatsapp  = u => safeUrl(u, /^wa\.me$/i);
-  const safeEmail     = e => (typeof e === 'string' && /^[^\s@<>"'?&#]+@[^\s@<>"'?&#]+\.[^\s@<>"'?&#]+$/.test(e.trim())) ? e.trim() : '';
-  // keep only "+" and digits (what a tel: link needs); 6–15 digits or ''
-  const safePhone = p => { const t = String(p || '').replace(/[^\d+]/g, ''); return /^\+?\d{6,15}$/.test(t) ? t : ''; };
-
-  function show(el, href){
-    el.setAttribute('href', href);
-    el.hidden = false;
-    if (el.hasAttribute('data-reveal')) el.classList.add('is-visible'); // never leave a late-shown button invisible
-  }
-
-  function apply(d){
-    d = (d && typeof d === 'object') ? d : FALLBACK;
-    const email = d.mode === 'full' ? safeEmail(d.email) : '';
-    const full = !!email;
-    const phone = full ? safePhone(d.phone) : '';
-    const whatsapp = full ? safeWhatsapp(d.whatsapp) : '';
-    const instagram = safeInstagram(d.instagram) || safeInstagram(INSTAGRAM_FALLBACK);
-
-    $$('[data-contact="email"]').forEach(a => { if (full) show(a, 'mailto:' + email); });
-    $$('[data-contact="phone"]').forEach(a => { if (phone) show(a, 'tel:' + phone); });
-    $$('[data-contact="whatsapp"]').forEach(a => { if (whatsapp) show(a, whatsapp); });
-    $$('[data-contact="instagram"]').forEach(a => {
-      if (instagram && !(full && a.getAttribute('data-contact-only') === 'social')) show(a, instagram);
-    });
-    document.documentElement.setAttribute('data-contact-mode', full ? 'full' : 'social');
-    return full ? { mode:'full', email, phone, whatsapp, instagram } : { mode:'social', instagram };
-  }
-
-  // Abort a hung request so the page (and the QR card) never waits forever.
-  const ctl = (typeof AbortController === 'function') ? new AbortController() : null;
-  const timer = ctl ? setTimeout(() => ctl.abort(), 8000) : 0;
-  return fetch('/api/contact', { method:'GET', cache:'no-store', credentials:'same-origin', headers:{ 'Accept':'application/json' }, signal: ctl ? ctl.signal : undefined })
-    .then(r => r.ok ? r.json() : FALLBACK)   // non-JSON bodies (e.g. a 200 HTML fallback page) throw → caught below
-    .catch(() => FALLBACK)
-    .then(d => { clearTimeout(timer); return apply(d); });
-})();
-
-
-/* ==================================================================
    [JS-18]  COMMAND CONSOLE — Ctrl/⌘ + K
    ================================================================== */
 
@@ -700,8 +626,6 @@ const contactReady = (function contactVisibility(){
   const triggers = ['#cmdkOpen', '#cmdkTip'].map(s => $(s)).filter(Boolean);
   const html = document.documentElement;
   let items = [], shown = [], active = 0, isOpen = false, lastFocus = null, toastTimer = 0;
-  // contact links are filled in after /api/contact answers — rebuild the action list when that happens
-  contactReady.then(() => { items = []; });
 
   // ⌘ on Apple devices, Ctrl elsewhere
   const isMac = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent);
@@ -723,8 +647,6 @@ const contactReady = (function contactVisibility(){
     const byText = t => $$('.hero-actions a').find(a => a.textContent.trim().toLowerCase().startsWith(t));
     const view = byText('view'), dl = byText('download');
     const mail = $('a[href^="mailto:"]'), wa = $('a[href*="wa.me"]'), li = $('.side-rail a[href*="linkedin.com"]');
-    const tel = $('a[data-contact="phone"][href^="tel:"]');
-    const ig = $('a[data-contact="instagram"][href^="https://"]');
     if (view) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'View CV', href:view.href, external:true, keys:'resume pdf' });
     if (dl)   items.push({ group:'Actions', kind:'link', ico:'↓', hint:'Download', label:'Download CV', href:dl.href, download:true, keys:'resume pdf save' });
     if (mail) {
@@ -732,10 +654,8 @@ const contactReady = (function contactVisibility(){
       items.push({ group:'Actions', kind:'link', ico:'@', hint:'Opens your mail app', label:'Send an email', href:mail.href, keys:'contact mail' });
       items.push({ group:'Actions', kind:'copy', ico:'⧉', hint:addr, label:'Copy email address', value:addr, keys:'contact mail clipboard' });
     }
-    if (tel) items.push({ group:'Actions', kind:'link', ico:'☎', hint:'Opens your phone app', label:'Call', href:tel.href, keys:'phone call mobile telephone' });
     if (wa) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Message on WhatsApp', href:wa.href, external:true, keys:'chat phone' });
     if (li) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Open LinkedIn', href:li.href, external:true, keys:'profile network' });
-    if (ig) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Message on Instagram', href:ig.href, external:true, keys:'social dm chat profile' });
   }
 
   function score(it, q){
@@ -1121,8 +1041,8 @@ const contactReady = (function contactVisibility(){
 
 /* =================================================================
    QR DIGITAL BUSINESS CARD
-   Builds a vCard from the contact answer the server gave for this
-   visitor's country (see [JS-17b]) and renders it as a scannable QR. Tries two independent QR image
+   Builds a vCard from the contact details already on the page and
+   renders it as a scannable QR. Tries two independent QR image
    providers (in case one is down or blocked by an extension/
    network filter) before falling back to a plain text notice —
    the vCard download itself never depends on either provider,
@@ -1134,55 +1054,44 @@ const contactReady = (function contactVisibility(){
   const card = document.querySelector('.qr-card');
   if (!img || !dl || !card) return;
 
-  const clean = s => String(s).replace(/[\r\n]+/g, ' ').trim();
+  const vcard = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'N:Mehmood;Sajid;;;',
+    'FN:Sajid Mehmood',
+    'TITLE:IT Support Engineer',
+    'TEL;TYPE=CELL:+97466969598',
+    'EMAIL:sajiditeech@gmail.com',
+    'URL:https://sajidmk.com',
+    'ADR;TYPE=WORK:;;Doha;;;Qatar',
+    'END:VCARD'
+  ].join('\n');
+  const encoded = encodeURIComponent(vcard);
 
-  function render(contact){
-    // Approved country → full card. Everyone else → name, site, city and Instagram only.
-    const full = !!(contact && contact.mode === 'full' && contact.email);
-    const lines = [
-      'BEGIN:VCARD',
-      'VERSION:3.0',
-      'N:Mehmood;Sajid;;;',
-      'FN:Sajid Mehmood',
-      'TITLE:IT Support Engineer'
-    ];
-    if (full) {
-      if (contact.phone) lines.push('TEL;TYPE=CELL:' + clean(contact.phone));
-      lines.push('EMAIL:' + clean(contact.email));
+  // Always works, no network dependency at all.
+  dl.href = `data:text/vcard;charset=utf-8,${encoded}`;
+
+  const providers = [
+    `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data=${encoded}`,
+    `https://quickchart.io/qr?text=${encoded}&size=240&margin=2`
+  ];
+  let attempt = 0;
+
+  function tryNext(){
+    if (attempt >= providers.length) {
+      // Both providers failed (blocked network, offline, extension, etc.)
+      // — don't leave a broken-image icon, show a clear text fallback and
+      // keep the vCard download (which still works) front and centre.
+      card.classList.add('qr-failed');
+      img.remove();
+      return;
     }
-    lines.push('URL:https://sajidmk.com');
-    if (!full && contact && contact.instagram) lines.push('X-SOCIALPROFILE;TYPE=instagram:' + clean(contact.instagram));
-    lines.push('ADR;TYPE=WORK:;;Doha;;;Qatar', 'END:VCARD');
-    const vcard = lines.join('\n');
-    const encoded = encodeURIComponent(vcard);
-
-    // Always works, no network dependency at all.
-    dl.href = `data:text/vcard;charset=utf-8,${encoded}`;
-
-    const providers = [
-      `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data=${encoded}`,
-      `https://quickchart.io/qr?text=${encoded}&size=240&margin=2`
-    ];
-    let attempt = 0;
-
-    function tryNext(){
-      if (attempt >= providers.length) {
-        // Both providers failed (blocked network, offline, extension, etc.)
-        // — don't leave a broken-image icon, show a clear text fallback and
-        // keep the vCard download (which still works) front and centre.
-        card.classList.add('qr-failed');
-        img.remove();
-        return;
-      }
-      img.src = providers[attempt];
-      attempt++;
-    }
-
-    img.addEventListener('error', tryNext);
-    tryNext();
+    img.src = providers[attempt];
+    attempt++;
   }
 
-  contactReady.then(render);
+  img.addEventListener('error', tryNext);
+  tryNext();
 })();
 
 /* ==================================================================
