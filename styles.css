@@ -3921,3 +3921,53 @@ a.gv-row--link:hover{ border-color:rgba(var(--accent-rgb),.55); background:rgba(
   color:#111; background:#eee; border:1px solid #ccc; border-radius:999px;
 }
 .qr-zoom-close:hover{ background:#e2e2e2; }
+
+
+/* ==================================================================
+   [CSS-63]  MOBILE — one glass layer only (phones, <=640px)
+   ==================================================================
+   On a phone the page was glass inside glass inside glass: the section
+   panel, then the Contact panel with its own border/blur/liquid layer,
+   then the vault, QR card and cards inside that. Now the hero / section
+   panels are the ONE glass surface; everything nested in them becomes a
+   flat tile (thin border, soft tint, no blur, no sheen, no shadow).
+   The nav and the mobile drawer float over the page, so they keep
+   their own glass. Desktop is untouched.
+   ================================================================== */
+@media (max-width:640px){
+
+  /* every nested glass surface -> flat tile */
+  :is(.hero,.section) :is(.glass,.glass-clear){
+    -webkit-backdrop-filter:none; backdrop-filter:none;
+    background:linear-gradient(168deg, rgba(255,255,255,.07), rgba(255,255,255,.02) 70%), var(--veil-card);
+    border:1px solid var(--glass-border);
+    box-shadow:none;
+  }
+  :is(.hero,.section) :is(.glass,.glass-clear)::before,
+  :is(.hero,.section) :is(.glass,.glass-clear)::after{ display:none; }
+
+  /* the name tag sits on top of the portrait, so it keeps a firmer backing */
+  .hero .hero-photo-tag.glass-clear{ background:rgba(13,14,16,.55); }
+
+  /* Contact: drop the panel's own glass (border, blur, liquid pools, rim) and
+     let the section be the glass. Also hand the width back: the old side
+     padding stacked on the section's own gutter and squeezed everything. */
+  .section .contact-panel.glass{
+    background:none; border:0; box-shadow:none; border-radius:0; overflow:visible;
+    -webkit-backdrop-filter:none; backdrop-filter:none;
+  }
+  .contact-panel > .cp-liquid{ display:none; }
+  .contact-panel .contact-left{ padding:0 0 24px; }
+  .contact-panel .contact-right{ padding:28px 0 0; margin-top:4px; }
+  .contact-panel .contact-avail{ box-shadow:none; }
+
+  /* vault + QR card fill the column instead of shrink-wrapping their text */
+  .contact-left .geo-vault,
+  .contact-left .qr-card{ width:100%; max-width:none; }
+  .contact-left .contact-shortcuts{ margin-top:8px; }
+  .geo-vault{ padding:14px; }
+  /* keep the Instagram handle on one line next to its Open button */
+  .gv-val{ letter-spacing:0; font-size:14px; }
+  .gv-row--link .gv-val{ overflow-wrap:normal; white-space:nowrap; }
+  .gv-row--link .gv-btn--go{ padding:7px 11px; }
+}
