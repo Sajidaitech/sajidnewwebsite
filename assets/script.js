@@ -1,3 +1,40 @@
+/* ==================================================================
+   TABLE OF CONTENTS — script.js
+   Search this file for a tag like [JS-05] to jump to a section.
+   ==================================================================
+   [JS-01]  SCROLL DISPATCHER — one shared scroll listener for all features
+   [JS-02]  NAV — transparent bar that thickens after the hero
+   [JS-03]  NAV — measured height (CSS variable)
+   [JS-04]  GLASS — pointer-tracked highlight + cursor glow
+   [JS-05]  STAT COUNTERS — hero readout + About numbers
+   [JS-06]  EXPERIENCE — timeline progress line
+   [JS-07]  CONTACT — live Doha time
+   [JS-08]  HERO — scroll-scrubbed photo
+   [JS-09]  SECTION HEADERS — mirrored glitch effect
+   [JS-10]  SCROLL REVEAL — basic fade
+   [JS-11]  NAV — active link, mobile drawer, smooth scroll
+   [JS-12]  SCROLL PROGRESS BAR
+   [JS-13]  PROJECTS — case study accordion
+   [JS-14]  ANIMATION ENGINE — stagger, reveal, parallax, tilt
+   [JS-15]  SKILLS — Technical Arsenal tab switcher
+   [JS-16]  EXPERIENCE — engagement breakdown cards
+   [JS-17]  CONTACT FORM — Formspree submission
+   [JS-18]  COMMAND CONSOLE — Ctrl/⌘ + K
+   [JS-19]  VIEWER GATE + DOCUMENT VIEWER — CV and certificates
+   [JS-20]  QR DIGITAL BUSINESS CARD
+   [JS-21]  REFERENCE-CALL BUTTON
+   [JS-22]  LIVE FOCUS SLIDER — glass blur control
+   [JS-23]  TEXT COLOR TOGGLE — White / Black
+   [JS-24]  DIAGNOSTICS DEMO — DNS / ping simulation
+   [JS-25]  TICKET TRIAGE DEMO
+   [JS-26]  IT TOOLKIT — config, cards, details modal, download + hash check
+   [JS-30]  REGION-AWARE CONTACT — email/phone only for approved regions (edit Instagram handle + country list there)
+   [JS-27]  TOOLKIT — custom script requests
+   [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
+   [JS-29]  FILE ORGANIZER PREVIEW — toolkit modal, mirrors the .bat rules
+   Toolkit tips: edit tools in TOOLKIT_TOOLS (SHA-256, size, version live there); social links in TOOLKIT_CONFIG.
+   ================================================================== */
+
 const $  = (s, c=document) => c.querySelector(s);
 const $$ = (s, c=document) => [...c.querySelectorAll(s)];
 
@@ -5,6 +42,10 @@ const $$ = (s, c=document) => [...c.querySelectorAll(s)];
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hasHover = matchMedia('(hover:hover)').matches;
+
+/* ==================================================================
+   [JS-01]  SCROLL DISPATCHER — one shared scroll listener for all features
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Part 5 — shared rAF-batched scroll dispatcher.
@@ -21,6 +62,10 @@ window.addEventListener('scroll', () => {
   requestAnimationFrame(() => { scrollUpdaters.forEach(fn => fn()); scrollTicking = false; });
 }, { passive: true });
 
+/* ==================================================================
+   [JS-02]  NAV — transparent bar that thickens after the hero
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Transparent nav — gains a touch of body once the page has
    scrolled past the hero, so links stay legible over busy sections
@@ -34,6 +79,10 @@ window.addEventListener('scroll', () => {
     scrollUpdaters.push(setNavState);
   }
 }
+
+/* ==================================================================
+   [JS-03]  NAV — measured height (CSS variable)
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Real nav height, not a guess — .nav is position:fixed so nothing
@@ -58,6 +107,10 @@ window.addEventListener('scroll', () => {
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(setNavH);
   }
 }
+
+/* ==================================================================
+   [JS-04]  GLASS — pointer-tracked highlight + cursor glow
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Specular highlight on every glass panel — tracks the pointer via
@@ -86,6 +139,10 @@ if (hasHover) {
    Hero photo pointer-tilt now handled by the generic [data-tilt]
    system (Part 1 / Part 2 foundation) — see bottom of this file.
 --------------------------------------------------------------- */
+
+/* ==================================================================
+   [JS-05]  STAT COUNTERS — hero readout + About numbers
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Animated stat counters — the hero readout and the About section
@@ -121,6 +178,10 @@ const counterObserver = new IntersectionObserver(entries => {
 }, { threshold: .4 });
 $$('.status-item .val, .highlight-card .val').forEach(el => counterObserver.observe(el));
 
+/* ==================================================================
+   [JS-06]  EXPERIENCE — timeline progress line
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Timeline progress line — fills as you scroll through Experience,
    echoing an uptime meter rather than a generic scrollbar.
@@ -139,6 +200,10 @@ if (tlProgress && timelineEl && !reduceMotion) {
   updateTlProgress();
 }
 
+/* ==================================================================
+   [JS-07]  CONTACT — live Doha time
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Contact section — live Doha time readout
 --------------------------------------------------------------- */
@@ -152,6 +217,10 @@ if (dohaClock) {
   setInterval(tickClock, 1000);
 }
 
+/* ==================================================================
+   [JS-08]  HERO — scroll-scrubbed photo
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Scroll-scrubbed hero photo — as you scroll through the hero,
    the portrait turns (via a CSS var, composited with the existing
@@ -162,10 +231,10 @@ const heroSection = $('.hero');
 const heroPhoto = $('.hero-photo');
 const roleCycleEl = $('#heroRoleCycle');
 const roleCycle = [
-  'Infrastructure & Networking',
-  'Enterprise IT Support',
-  'CCNA Certified Engineer',
-  'Zero-Downtime Systems'
+  'IT Graduate · Doha',
+  'Networking Training',
+  'Windows Scripting',
+  'AI Technical Content Writing Intern (from Oct 2026)'
 ];
 let lastRoleIdx = 0;
 
@@ -198,6 +267,10 @@ if (heroSection && heroPhoto && !reduceMotion) {
   updateHeroScrub();
 }
 
+/* ==================================================================
+   [JS-09]  SECTION HEADERS — mirrored glitch effect
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Mirrored / reflected section headers with a one-time glitch
    flicker as each heading scrolls into view.
@@ -217,6 +290,10 @@ if (!reduceMotion) {
   $$('.section h2, .contact-panel h2').forEach(h2 => glitchObserver.observe(h2));
 }
 
+/* ==================================================================
+   [JS-10]  SCROLL REVEAL — basic fade
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Scroll reveal — single fade, no slide (kept restrained)
 --------------------------------------------------------------- */
@@ -229,6 +306,10 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { threshold: .15 });
 $$('.reveal').forEach(el => observer.observe(el));
+
+/* ==================================================================
+   [JS-11]  NAV — active link, mobile drawer, smooth scroll
+   ================================================================== */
 
 /* ---------------------------------------------------------------
    Nav: active link + mobile drawer + smooth scroll
@@ -277,6 +358,10 @@ document.addEventListener('keydown', e => {
 /* rotating a phone / resizing to desktop must not leave the menu open */
 matchMedia('(min-width:1180px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 
+/* ==================================================================
+   [JS-12]  SCROLL PROGRESS BAR
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Scroll progress bar
 --------------------------------------------------------------- */
@@ -289,6 +374,10 @@ function updateProgress(){
 scrollUpdaters.push(updateProgress);
 updateProgress();
 
+/* ==================================================================
+   [JS-13]  PROJECTS — case study accordion
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Case study accordion
 --------------------------------------------------------------- */
@@ -300,6 +389,10 @@ $$('[data-case]').forEach(card => {
     if (!wasOpen) card.classList.add('open');
   });
 });
+
+/* ==================================================================
+   [JS-14]  ANIMATION ENGINE — stagger, reveal, parallax, tilt
+   ================================================================== */
 
 /* =============================================================
    Spatial Animation Foundation — Part 1
@@ -384,6 +477,10 @@ $$('[data-case]').forEach(card => {
   }
 })();
 
+/* ==================================================================
+   [JS-15]  SKILLS — Technical Arsenal tab switcher
+   ================================================================== */
+
 /* =================================================================
    PART 4 — Technical Arsenal tab switcher
    Simple click-to-show tag cloud, no external deps, respects the
@@ -402,6 +499,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-16]  EXPERIENCE — engagement breakdown cards
+   ================================================================== */
+
 /* =================================================================
    PART 4b — Engagement breakdown cards (click-to-expand)
    Each .bd-card toggles its own .is-open state independently
@@ -417,6 +518,10 @@ $$('[data-case]').forEach(card => {
     });
   });
 })();
+
+/* ==================================================================
+   [JS-17]  CONTACT FORM — Formspree submission
+   ================================================================== */
 
 /* =================================================================
    CONTACT FORM — Formspree AJAX submission
@@ -503,6 +608,182 @@ $$('[data-case]').forEach(card => {
 })();
 
 
+/* ==================================================================
+   [JS-30]  REGION-AWARE CONTACT — email/phone only for approved regions
+   ================================================================== */
+
+/* =================================================================
+   REGION-AWARE CONTACT VAULT
+   Your email and phone are NOT written in index.html. They live here
+   as base64 and are only decoded and shown when the visitor's country
+   (looked up from their IP in the browser) is on the allow list.
+   Everyone else — and anyone whose region can't be verified — sees
+   Instagram only (fail closed).
+
+   EDIT HERE:
+     instagramHandle  your Instagram username (no @)
+     allow            two-letter country codes that may see email + phone
+   Local testing (only works on localhost / file://):
+     index.html?geo=PK   → pretend to be in Pakistan
+     index.html?geo=QA   → pretend to be in Qatar
+   Honest limit: this is a privacy filter, not a lock. A VPN set to an
+   allowed country will unlock it, and the encoded values are readable
+   by someone who digs through this file.
+================================================================= */
+(function regionContact(){
+  const CONFIG = {
+    instagramHandle: 'imsajidmehmood',
+    allow: [
+      'QA','AE','SA','KW','BH','OM',            /* Gulf (GCC) */
+      'JO','EG','TR',                           /* nearby */
+      'US','CA',                                /* North America */
+      'GB','IE','DE','FR','NL','BE','CH','AT','IT','ES','SE','NO','DK'  /* Europe */
+    ],
+    e: 'c2FqaWRpdGVlY2hAZ21haWwuY29t',
+    p: 'Kzk3NDY2OTY5NTk4'
+  };
+
+  const IG_OK = CONFIG.instagramHandle !== 'YOUR_INSTAGRAM_HANDLE' && /^[A-Za-z0-9._]{1,30}$/.test(CONFIG.instagramHandle);
+  const IG_URL = IG_OK ? `https://www.instagram.com/${CONFIG.instagramHandle}/` : '';
+
+  const vault = document.getElementById('geoVault');
+  const els = {
+    title: document.getElementById('gvTitle'),
+    sub:   document.getElementById('gvSub'),
+    pill:  document.getElementById('gvPill'),
+    ig:    document.getElementById('gvIgHandle')
+  };
+
+  /* ---------- country lookup: three free providers, first answer wins ---------- */
+  const PROVIDERS = [
+    { url:'https://free.freeipapi.com/api/json',      pick:d => d && d.countryCode },
+    { url:'https://api.country.is/',                  pick:d => d && d.country },
+    { url:'https://get.geojs.io/v1/ip/country.json',  pick:d => d && d.country }
+  ];
+  function fetchCode(prov){
+    const ctrl = ('AbortController' in window) ? new AbortController() : null;
+    const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 3500);
+    return fetch(prov.url, { signal: ctrl ? ctrl.signal : undefined, cache:'no-store' })
+      .then(r => { if (!r.ok) throw new Error('bad status'); return r.json(); })
+      .then(d => {
+        const c = String(prov.pick(d) || '').toUpperCase();
+        if (!/^[A-Z]{2}$/.test(c)) throw new Error('no code');
+        return c;
+      })
+      .finally(() => clearTimeout(timer));
+  }
+  function lookup(){
+    return PROVIDERS.reduce((p, prov) => p.catch(() => fetchCode(prov)), Promise.reject(new Error('start')));
+  }
+
+  const isLocal = location.protocol === 'file:' || ['localhost','127.0.0.1','[::1]',''].includes(location.hostname);
+  const forced = isLocal ? String(new URLSearchParams(location.search).get('geo') || '').toUpperCase() : '';
+  let cached = '';
+  try { cached = sessionStorage.getItem('sm_geo') || ''; } catch (e) {}
+
+  let codeP;
+  if (/^[A-Z]{2}$/.test(forced)) codeP = Promise.resolve(forced);
+  else if (/^[A-Z]{2}$/.test(cached)) codeP = Promise.resolve(cached);
+  else codeP = lookup().then(c => { try { sessionStorage.setItem('sm_geo', c); } catch (e) {} return c; });
+
+  const minScan = new Promise(r => setTimeout(r, (reduceMotion || cached || forced) ? 0 : 700));
+
+  /* ---------- helpers ---------- */
+  const nameOf = code => { try { return new Intl.DisplayNames(['en'], { type:'region' }).of(code) || code; } catch (e) { return code; } };
+  const prettyPhone = v => v.replace(/^(\+\d{3})(\d{4})(\d{4})$/, '$1 $2 $3');
+  const maskEmail = v => {
+    const [l, d] = v.split('@'); const dot = d.lastIndexOf('.');
+    return l[0] + '•'.repeat(Math.max(l.length - 1, 3)) + '@' + d[0] + '•'.repeat(Math.max(dot - 1, 3)) + d.slice(dot);
+  };
+  const maskPhone = v => prettyPhone(v).replace(/^(\+\d{3}) .*/, '$1 •••• ••••');
+  function copyText(t){
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+    return new Promise((res, rej) => {
+      const ta = document.createElement('textarea');
+      ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? res() : rej(new Error('copy failed')); } catch (err) { rej(err); }
+      ta.remove();
+    });
+  }
+
+  function setHead(state, title, sub, pill){
+    if (!vault) return;
+    vault.dataset.state = state;
+    vault.setAttribute('aria-busy', 'false');
+    els.title.textContent = title;
+    els.sub.textContent = sub;
+    els.pill.textContent = pill;
+  }
+
+  function wireRow(kind, shown, masked, value, href, openLabel){
+    const row = document.querySelector(`[data-gv-row="${kind}"]`);
+    if (!row) return;
+    const val = row.querySelector('.gv-val');
+    const rev = row.querySelector('[data-gv-reveal]');
+    const cp  = row.querySelector('[data-gv-copy]');
+    const go  = row.querySelector('[data-gv-open]');
+    val.textContent = masked;
+    row.hidden = false;
+    rev.addEventListener('click', () => {
+      val.textContent = shown;
+      row.classList.add('is-revealed');
+      rev.hidden = true; cp.hidden = false; go.hidden = false;
+      go.href = href; go.textContent = openLabel;
+    }, { once:true });
+    cp.addEventListener('click', () => {
+      copyText(value).then(() => {
+        cp.textContent = 'Copied';
+        setTimeout(() => { cp.textContent = 'Copy'; }, 1600);
+      }).catch(() => { cp.textContent = 'Press Ctrl+C'; });
+    });
+  }
+
+  /* ---------- apply the result ---------- */
+  function finish(code){
+    const full = !!code && CONFIG.allow.includes(code);
+    const mode = full ? 'full' : 'social';
+    const email = full ? atob(CONFIG.e) : '';
+    const phone = full ? atob(CONFIG.p) : '';
+    const place = code ? nameOf(code) : '';
+
+    // Instagram is open to everyone (when a handle is configured)
+    if (IG_OK) {
+      document.querySelectorAll('[data-geo-contact="instagram"]').forEach(a => { a.href = IG_URL; a.hidden = false; });
+      if (els.ig) els.ig.textContent = '@' + CONFIG.instagramHandle;
+    }
+
+    if (full) {
+      document.querySelectorAll('[data-geo-contact="email"]').forEach(a => { a.href = 'mailto:' + email; a.hidden = false; });
+      document.querySelectorAll('[data-geo-contact="whatsapp"]').forEach(a => { a.href = 'https://wa.me/' + phone.replace(/\D/g, ''); a.hidden = false; });
+      setHead('full', 'Region verified · ' + place, 'Direct contact is open to you. Details stay hidden until you reveal them.', 'Open');
+      wireRow('email', email, maskEmail(email), email, 'mailto:' + email, 'Email');
+      wireRow('phone', prettyPhone(phone), maskPhone(phone), phone, 'https://wa.me/' + phone.replace(/\D/g, ''), 'WhatsApp');
+    } else if (code) {
+      setHead('social', IG_OK ? 'Instagram-first from ' + place : 'Contact from ' + place,
+        IG_OK ? 'Email and phone are shared in select regions only. Message me on Instagram and I\u2019ll reply there.'
+              : 'Email and phone are shared in select regions only. Use the message form and I\u2019ll reply.', 'DM me');
+    } else {
+      setHead('unknown', 'Couldn\u2019t verify your region',
+        IG_OK ? 'Instagram is always open. Direct details stay hidden until a region check passes.'
+              : 'Direct details stay hidden until a region check passes. The message form always works.', 'Limited');
+    }
+
+    window.SMContact = {
+      ready: true, mode, code: code || '',
+      details: () => full ? { email, phone } : null,
+      instagram: IG_URL
+    };
+    document.dispatchEvent(new CustomEvent('sm:geo', { detail:{ mode, code: code || '' } }));
+  }
+
+  Promise.all([codeP.catch(() => null), minScan]).then(r => finish(r[0]));
+})();
+
+/* ==================================================================
+   [JS-18]  COMMAND CONSOLE — Ctrl/⌘ + K
+   ================================================================== */
+
 /* ---------------------------------------------------------------
    Command Console — press Ctrl/⌘ + K (or "/") anywhere.
    A glass palette to jump to any section or run a recruiter action
@@ -518,6 +799,7 @@ $$('[data-case]').forEach(card => {
   const triggers = ['#cmdkOpen', '#cmdkTip'].map(s => $(s)).filter(Boolean);
   const html = document.documentElement;
   let items = [], shown = [], active = 0, isOpen = false, lastFocus = null, toastTimer = 0;
+  document.addEventListener('sm:geo', () => { items = []; });
 
   // ⌘ on Apple devices, Ctrl elsewhere
   const isMac = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent);
@@ -538,7 +820,8 @@ $$('[data-case]').forEach(card => {
     }));
     const byText = t => $$('.hero-actions a').find(a => a.textContent.trim().toLowerCase().startsWith(t));
     const view = byText('view'), dl = byText('download');
-    const mail = $('a[href^="mailto:"]'), wa = $('a[href*="wa.me"]'), li = $('.side-rail a[href*="linkedin.com"]');
+    const mail = $('a[data-geo-contact="email"][href^="mailto:"]'), wa = $('a[data-geo-contact="whatsapp"][href*="wa.me"]'), li = $('.side-rail a[href*="linkedin.com"]');
+    const ig = $('.side-rail a[data-geo-contact="instagram"][href^="https://www.instagram.com/"]');
     if (view) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'View CV', href:view.href, external:true, keys:'resume pdf' });
     if (dl)   items.push({ group:'Actions', kind:'link', ico:'↓', hint:'Download', label:'Download CV', href:dl.href, download:true, keys:'resume pdf save' });
     if (mail) {
@@ -548,6 +831,7 @@ $$('[data-case]').forEach(card => {
     }
     if (wa) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Message on WhatsApp', href:wa.href, external:true, keys:'chat phone' });
     if (li) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Open LinkedIn', href:li.href, external:true, keys:'profile network' });
+    if (ig) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Open Instagram', href:ig.href, external:true, keys:'dm social message insta' });
   }
 
   function score(it, q){
@@ -691,6 +975,10 @@ $$('[data-case]').forEach(card => {
     }
   });
 })();
+
+/* ==================================================================
+   [JS-19]  VIEWER GATE + DOCUMENT VIEWER — CV and certificates
+   ================================================================== */
 
 /* =================================================================
    VIEWER GATE + IN-SITE DOCUMENT VIEWER
@@ -923,6 +1211,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-20]  QR DIGITAL BUSINESS CARD
+   ================================================================== */
+
 /* =================================================================
    QR DIGITAL BUSINESS CARD
    Builds a vCard from the contact details already on the page and
@@ -938,45 +1230,164 @@ $$('[data-case]').forEach(card => {
   const card = document.querySelector('.qr-card');
   if (!img || !dl || !card) return;
 
-  const vcard = [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    'N:Mehmood;Sajid;;;',
-    'FN:Sajid Mehmood',
-    'TITLE:IT Support Engineer',
-    'TEL;TYPE=CELL:+97466969598',
-    'EMAIL:sajiditeech@gmail.com',
-    'URL:https://sajidmk.com',
-    'ADR;TYPE=WORK:;;Doha;;;Qatar',
-    'END:VCARD'
-  ].join('\n');
-  const encoded = encodeURIComponent(vcard);
+  const SITE = 'https://sajidmk.com';
+  const X_URL = 'https://x.com/im_sajidmehmood';
+  const PHOTO_SRC = 'assets/photo.jpg';
 
-  // Always works, no network dependency at all.
-  dl.href = `data:text/vcard;charset=utf-8,${encoded}`;
+  /* vCard rules: CRLF line endings and lines folded at 75 characters.
+     Folding matters for the photo, which is one very long base64 line. */
+  function foldLine(line){
+    const out = [line.slice(0, 75)];
+    for (let i = 75; i < line.length; i += 74) out.push(' ' + line.slice(i, i + 74));
+    return out.join('\r\n');
+  }
+  const toVcf = lines => lines.map(foldLine).join('\r\n') + '\r\n';
 
-  const providers = [
-    `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data=${encoded}`,
-    `https://quickchart.io/qr?text=${encoded}&size=240&margin=2`
-  ];
-  let attempt = 0;
-
-  function tryNext(){
-    if (attempt >= providers.length) {
-      // Both providers failed (blocked network, offline, extension, etc.)
-      // — don't leave a broken-image icon, show a clear text fallback and
-      // keep the vCard download (which still works) front and centre.
-      card.classList.add('qr-failed');
-      img.remove();
-      return;
-    }
-    img.src = providers[attempt];
-    attempt++;
+  /* Shrinks your site photo to a small square JPEG so it fits inside the
+     .vcf file. (A QR code is far too small to carry a photo; the file can.) */
+  function loadPhotoBase64(){
+    return new Promise(resolve => {
+      const im = new Image();
+      im.onload = () => {
+        try {
+          const w = im.naturalWidth, h = im.naturalHeight, s = Math.min(w, h);
+          const sx = (w - s) / 2, sy = (h - s) * 0.1;      // keeps the face area for portrait photos
+          const c = document.createElement('canvas');
+          c.width = c.height = 256;
+          c.getContext('2d').drawImage(im, sx, sy, s, s, 0, 0, 256, 256);
+          resolve((c.toDataURL('image/jpeg', 0.85).split(',')[1]) || '');
+        } catch (e) { resolve(''); }
+      };
+      im.onerror = () => resolve('');
+      im.src = PHOTO_SRC;
+    });
   }
 
-  img.addEventListener('error', tryNext);
-  tryNext();
+  /* The QR / vCard carry email + phone, so they are built only for approved
+     regions (see [JS-30]). Everyone else gets name + website + Instagram. */
+  card.hidden = true;
+
+  /* Two versions on purpose:
+     - QR text: kept SHORT, because fewer characters = bigger, easier-to-scan squares.
+     - .vcf file: the full contact card (title, address, social links).      */
+  function vcardTexts(){
+    const c = window.SMContact || {};
+    const d = c.details ? c.details() : null;
+    const qr = ['BEGIN:VCARD', 'VERSION:3.0', 'FN:Sajid Mehmood'];
+    if (d) qr.push('TEL;TYPE=CELL:' + d.phone, 'EMAIL:' + d.email);
+    qr.push('URL:' + SITE);
+    if (!d && c.instagram) qr.push('URL:' + c.instagram);
+    qr.push('END:VCARD');
+
+    const file = ['BEGIN:VCARD', 'VERSION:3.0', 'N:Mehmood;Sajid;;;', 'FN:Sajid Mehmood', 'TITLE:IT Support Engineer'];
+    if (d) file.push('TEL;TYPE=CELL:' + d.phone, 'EMAIL:' + d.email);
+    file.push('URL:' + SITE);
+    if (c.instagram) file.push('URL;TYPE=Instagram:' + c.instagram);
+    if (d) file.push('URL;TYPE=X:' + X_URL);
+    file.push('ADR;TYPE=WORK:;;Doha;;;Qatar', 'END:VCARD');
+    return { qr: qr.join('\n'), file };
+  }
+
+  /* Drawn in the browser by qrcode.min.js — no third-party service needed. */
+  function localQr(text){
+    if (typeof qrcode !== 'function') return '';
+    try {
+      const q = qrcode(0, 'M');
+      q.addData(text);
+      q.make();
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(q.createSvgTag({ cellSize:4, margin:4, scalable:true }));
+    } catch (e) { return ''; }
+  }
+
+  /* ---- tap / click to enlarge (a bigger code scans far more reliably) ---- */
+  let zoomEl = null;
+  function closeZoom(){ if (zoomEl) zoomEl.hidden = true; }
+  function openZoom(){
+    if (!img.src) return;
+    if (!zoomEl) {
+      zoomEl = document.createElement('div');
+      zoomEl.className = 'qr-zoom';
+      zoomEl.hidden = true;
+      zoomEl.innerHTML = '<div class="qr-zoom-scrim"></div><div class="qr-zoom-panel" role="dialog" aria-modal="true" aria-label="Contact QR code"><img class="qr-zoom-img" alt="QR code — scan to save Sajid\u2019s contact"><p class="qr-zoom-cap">Point your phone camera at the code</p><button type="button" class="qr-zoom-close">Close</button></div>';
+      document.body.appendChild(zoomEl);
+      zoomEl.addEventListener('click', e => { if (e.target.closest('.qr-zoom-scrim, .qr-zoom-close')) closeZoom(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom(); });
+    }
+    zoomEl.querySelector('.qr-zoom-img').src = img.src;
+    zoomEl.hidden = false;
+    zoomEl.querySelector('.qr-zoom-close').focus();
+  }
+
+  function build(){
+    const t = vcardTexts();
+
+    // Contact file for the download button. Blob links open correctly on iPhone
+    // (Add Contact); a data: link is the fallback. The photo is added once it has loaded.
+    let blobUrl = '';
+    function setVcf(lines){
+      const text = toVcf(lines);
+      try {
+        const next = URL.createObjectURL(new Blob([text], { type:'text/vcard;charset=utf-8' }));
+        if (blobUrl) URL.revokeObjectURL(blobUrl);
+        blobUrl = next;
+        dl.href = next;
+      } catch (e) {
+        dl.href = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(text);
+      }
+    }
+    setVcf(t.file);
+    loadPhotoBase64().then(b64 => {
+      if (!b64) return;
+      const withPhoto = t.file.slice();
+      withPhoto.splice(withPhoto.length - 1, 0, 'PHOTO;ENCODING=b;TYPE=JPEG:' + b64);   // before END:VCARD
+      setVcf(withPhoto);
+      dl.textContent = 'Or download vCard with photo \u2193';
+    });
+
+    const encoded = encodeURIComponent(t.qr);
+    const local = localQr(t.qr);
+    const providers = [
+      local,
+      `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=6&ecc=M&data=${encoded}`,
+      `https://quickchart.io/qr?text=${encoded}&size=300&margin=2&ecLevel=M`
+    ].filter(Boolean);
+    let attempt = 0;
+
+    function tryNext(){
+      if (attempt >= providers.length) {
+        // Local drawing and both online services failed — don't leave a
+        // broken-image icon; keep the vCard download front and centre.
+        card.classList.add('qr-failed');
+        img.remove();
+        return;
+      }
+      img.src = providers[attempt];
+      attempt++;
+    }
+
+    img.addEventListener('error', tryNext);
+    img.setAttribute('role', 'button');
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('title', 'Tap to enlarge');
+    img.addEventListener('click', openZoom);
+    img.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openZoom(); } });
+
+    const hint = document.createElement('span');
+    hint.className = 'qr-hint';
+    hint.textContent = 'Tap the code to enlarge';
+    dl.insertAdjacentElement('afterend', hint);
+
+    card.hidden = false;
+    tryNext();
+  }
+
+  if (window.SMContact && window.SMContact.ready) build();
+  else document.addEventListener('sm:geo', build, { once:true });
 })();
+
+/* ==================================================================
+   [JS-21]  REFERENCE-CALL BUTTON
+   ================================================================== */
 
 /* =================================================================
    REFERENCE-CALL CTA
@@ -1004,6 +1415,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-22]  LIVE FOCUS SLIDER — glass blur control
+   ================================================================== */
+
 /* =================================================================
    LIVE FOCUS SLIDER — blurs every glass panel's BACKGROUND only
    (hero, recruiter bar, every .section, footer panel), via
@@ -1014,6 +1429,10 @@ $$('[data-case]').forEach(card => {
                straight through.
    Right(100)= fully Blurred, backdrop-filter:blur(100px), normal
                tinted glass background.
+   The same position also drives --glass-amt (0 = Clear … 1 = Tinted)
+   on <html>. styles.css scales every card's tint and blur (.glass,
+   .glass-clear, nav, drawer, role cards) by that token, so the cards
+   inside a panel follow the slider instead of staying at full tint.
    The chosen value is saved to localStorage and restored on the
    next visit, so a reload picks up right where the user left it.
    Text color on blurred panels is a separate, user-controlled
@@ -1048,6 +1467,11 @@ $$('[data-case]').forEach(card => {
       p.style.background = isClear ? 'transparent' : '';
     });
 
+    // Keep the CSS Clear→Tinted token in step with the slider. Without this
+    // line --glass-amt never leaves its stylesheet default, so cards inside
+    // a "Clear" panel would still render with their Tinted look.
+    document.documentElement.style.setProperty('--glass-amt', String(+(clamped / 100).toFixed(3)));
+
     slider.value = clamped;
     slider.style.setProperty('--focus-fill', clamped + '%');
     if (readout) readout.textContent = clamped + 'px';
@@ -1066,6 +1490,10 @@ $$('[data-case]').forEach(card => {
     apply(parseFloat(slider.value), true);
   });
 })();
+
+/* ==================================================================
+   [JS-23]  TEXT COLOR TOGGLE — White / Black
+   ================================================================== */
 
 /* =================================================================
    TEXT-COLOR (INK) TOGGLE — a manual White/Black switch for text on
@@ -1100,6 +1528,10 @@ $$('[data-case]').forEach(card => {
     apply(next, true);
   });
 })();
+
+/* ==================================================================
+   [JS-24]  DIAGNOSTICS DEMO — DNS / ping simulation
+   ================================================================== */
 
 /* =================================================================
    INTERACTIVE DIAGNOSTICS DEMO
@@ -1204,6 +1636,10 @@ $$('[data-case]').forEach(card => {
   });
 })();
 
+/* ==================================================================
+   [JS-25]  TICKET TRIAGE DEMO
+   ================================================================== */
+
 /* =================================================================
    LIVE TICKET TRIAGE DEMO
    A rule-based classifier mirroring real service-desk triage:
@@ -1302,6 +1738,10 @@ $$('[data-case]').forEach(card => {
 })();
 
 
+/* ==================================================================
+   [JS-26]  IT TOOLKIT — config, cards, details modal, download + hash check
+   ================================================================== */
+
 /* =================================================================
    SAJID IT TOOLKIT
    ONE place to edit: TOOLKIT_CONFIG (social links) and TOOLKIT_TOOLS
@@ -1366,34 +1806,80 @@ $$('[data-case]').forEach(card => {
       id:'file-organizer', status:'available', category:'Productivity', icon:'folder',
       name:'Automatic File Organizer',
       desc:'Automatically organize files into appropriate folders based on their file types.',
-      long:'Moves every file in the folder where the script is placed into a subfolder named after its file extension.',
-      version:'v1.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11',
-      admin:false, size:'139 bytes',
-      sha256:'ab5578f3df5dd819df1c9466077e0db60841f8d02b35c9931c2141a50045984b',
+      long:'Moves every file in the folder where the script is placed into a category folder (Videos, Photos, Documents, Txt Files, Music, Zip, Apps). Anything else goes into Others.',
+      version:'v1.1.0', updated:'2 October 2026', platform:'Windows 10 / Windows 11',
+      admin:false, size:'880 bytes',
+      sha256:'2def8dc13b8a1ae0f5d4bb7df3ac925141d1ff4981c32302b79a9ac0112dc7dc',
       file:'assets/toolkit/automatic-file-organizer.bat',
       runNote:'Copy the file into the folder you want to organize (for example a test folder), then run it there. It moves every file in its folder and cannot be undone.',
       extras:[],
       does:[
         'Looks at every file in the folder the script is run from.',
-        'Creates a subfolder for each file extension (for example “pdf” or “jpg”).',
-        'Moves each file into its matching subfolder.'
+        'Creates category folders as needed: Videos, Photos, Documents, Txt Files, Music, Zip, Apps and Others.',
+        'Moves each file into the folder that matches its type, skipping unfinished downloads (.crdownload, .part, .tmp).'
       ],
       requires:['Windows 10 or Windows 11','No administrator rights needed'],
-      safety:['Copy the script into the folder you want to organize; do not run it from a system folder.','There is no confirmation prompt and no undo. Back up the folder first.','The script moves itself too, because it is also a file in that folder.']
+      safety:['Copy the script into the folder you want to organize; do not run it from a system folder.','There is no confirmation prompt and no undo. Back up the folder first.','The script skips itself and will not overwrite a file that already exists in a destination folder.']
     },
     {
-      id:'it-quick-tools', status:'soon', category:'IT Support', icon:'terminal',
+      id:'pc-performance-optimizer', status:'available', category:'Windows', icon:'gauge',
+      name:'Windows & PC Performance Optimizer',
+      desc:'Tune Windows 11 for speed and responsiveness, with a restore point created first.',
+      long:'Creates a restore point, switches to the Ultimate Performance power plan, turns on Game Mode and GPU scheduling, trims visual effects, resets the network stack, checks system files and clears temporary files.',
+      version:'v1.0.0', updated:'2 October 2026', platform:'Windows 11',
+      admin:true, size:'5462 bytes',
+      sha256:'01c7437ec88b2ba471b2098791ff4cc5e6febd3dbd807e6c3362b79a89bfc349',
+      file:'assets/toolkit/windows-pc-performance-optimizer.bat',
+      runNote:'Save your work and close other programs first. The tool asks for administrator rights and offers to restart the PC when it finishes.',
+      extras:[],
+      does:[
+        'Asks for administrator rights and relaunches itself as administrator if needed.',
+        'Creates a System Restore Point before changing anything.',
+        'Adds the Ultimate Performance power plan and makes it active.',
+        'Turns on Windows Game Mode and Hardware-Accelerated GPU Scheduling.',
+        'Reduces visual effects (faster menus, no window animations).',
+        'Flushes the DNS cache and resets Winsock and the IP stack (netsh).',
+        'Runs “DISM /CheckHealth” and “sfc /scannow” to check Windows files.',
+        'Deletes the contents of your user Temp folder and C:\\Windows\\Temp.',
+        'Sets processor scheduling to favour foreground programs and removes the desktop startup delay.'
+      ],
+      requires:['Windows 11','Administrator rights'],
+      safety:['Save your work first: a restart is needed to apply every change.','The network reset can clear custom network settings, so VPNs or static IPs may need to be set up again.','The Ultimate Performance plan uses more power, which can shorten laptop battery life.','A restore point may be skipped if System Protection is off or one was already made in the last 24 hours.','DISM and SFC can take several minutes. Files removed from Temp folders are not recoverable.']
+    },
+    {
+      id:'it-quick-tools', status:'available', category:'IT Support', icon:'terminal',
       name:'Windows IT Quick Tools',
-      desc:'A collection of useful Windows commands and utilities for everyday IT support.',
-      version:'v0.0.0', updated:'30 September 2026', platform:'Windows 10 / Windows 11'
+      desc:'Menu-driven disk health checks and quick Windows troubleshooting for everyday IT support.',
+      long:'A menu of read-only checks: physical disk health, volumes and free space, an online file-system scan, Windows component and system-file checks, quick network tests and key service status. Repairs only run when you choose them.',
+      version:'v1.0.0', updated:'2 October 2026', platform:'Windows 11',
+      admin:true, size:'9092 bytes',
+      sha256:'111f98fa11c1bb8e495aae9ecef757847d1c76c70f91bfc65401a816c56827db',
+      file:'assets/toolkit/windows-it-quick-tools.bat',
+      runNote:'Run it, then pick a number from the menu. Nothing is changed unless you choose the repair option and confirm it.',
+      extras:[],
+      does:[
+        'Asks for administrator rights and relaunches itself as administrator if needed.',
+        'Shows physical disk health, type, status and reliability counters (temperature, power-on hours, errors, wear).',
+        'Lists volumes, file systems, free space and disk partition information.',
+        'Runs “chkdsk C: /scan” (online scan only, no /f repair) after you confirm.',
+        'Runs “DISM /CheckHealth” and “sfc /verifyonly” to check Windows files without repairing them.',
+        'Offers “sfc /scannow” to repair system files, only after you confirm.',
+        'Runs quick network tests: IP configuration, DNS cache, nslookup and pings.',
+        'Shows the status of key services (Windows Update, BITS, DHCP, DNS Client, Event Log and others).',
+        'Option 9 runs a complete non-destructive diagnostic in one go.'
+      ],
+      requires:['Windows 11','Administrator rights'],
+      safety:['Almost every option is read-only. Only the SFC repair (option 6) changes files, and it asks first.','CHKDSK and SFC can take several minutes; the complete diagnostic (option 9) takes longest.','The DNS cache view in the network test pauses for a key press, so press Space to continue.','Disk reliability counters depend on the drive and driver, and may show as unavailable.']
     }
   ];
 
   const CATS = ['All','Windows','Cleanup','Productivity','Networking','IT Support'];
   const ICON = {
+    gauge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1116 0"/><path d="M12 17l4-5"/><circle cx="12" cy="17" r="1"/></svg>',
     update:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12A8 8 0 0 1 18.3 7.1"/><path d="M18.5 3v4.5H14M5.5 21v-4.5H10"/></svg>',
     broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 3l-6.5 6.5"/><path d="M11 8l5 5-3.5 3.5c-1.8 1.8-4.6 1.9-6.5.3L4 15l1-1c.8-.8 2-.8 2.8 0L11 8z"/><path d="M8 17l-1.5 4M11 18l-.5 3M5 15l-2 4"/></svg>',
     folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M8 13h8"/></svg>',
+    request:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 9v6M9 12h6"/></svg>',
     terminal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9l3 3-3 3M13 15h4"/></svg>'
   };
 
@@ -1422,7 +1908,7 @@ $$('[data-case]').forEach(card => {
         ${t.status === 'available'
           ? `<button type="button" class="tk-btn tk-primary" data-open="${esc(t.id)}" aria-label="View tool: ${esc(t.name)}">View Tool</button>`
           : `<button type="button" class="tk-btn" disabled aria-disabled="true">Coming soon</button>`}
-      </article>`).join('');
+      </article>`).join('') + requestCard();
     if (empty) empty.hidden = list.length > 0;
   }
 
@@ -1548,18 +2034,26 @@ $$('[data-case]').forEach(card => {
       <p class="tk-honor" id="tkCopyStatus" role="status" aria-live="polite"></p>`;
   }
 
-  function open(id, trigger){
-    const t = TOOLKIT_TOOLS.find(x => x.id === id);
-    if (!t || t.status !== 'available') return;
+  function show(html, trigger){
     clearTimeout(closing);
-    cur = t; done.yt = done.ig = false; lastFocus = trigger || document.activeElement;
-    body.innerHTML = detailHTML(t);
+    lastFocus = trigger || document.activeElement;
+    body.innerHTML = html;
+    if (cur && cur.id === 'file-organizer') {
+      body.insertAdjacentHTML('beforeend', organizerPreviewHTML());
+      organizerPreviewRender(body);
+    }
     modal.classList.toggle('tk-ink', $('#toolkit').classList.contains('blur-ink'));   // follow the site's Aa text-colour switch
     modal.hidden = false;
     document.documentElement.classList.add('tk-open');
     panel.scrollTop = 0;
     requestAnimationFrame(() => modal.classList.add('is-open'));
     panel.focus();
+  }
+  function open(id, trigger){
+    const t = TOOLKIT_TOOLS.find(x => x.id === id);
+    if (!t || t.status !== 'available') return;
+    cur = t; done.yt = done.ig = false;
+    show(detailHTML(t), trigger);
   }
   function close(){
     if (modal.hidden) return;
@@ -1662,10 +2156,181 @@ $$('[data-case]').forEach(card => {
     e.stopPropagation();
     if (e.key === 'Escape') { e.preventDefault(); close(); return; }
     if (e.key !== 'Tab') return;
-    const f = $$('a[href],button:not([disabled]),pre[tabindex]', panel).filter(x => !x.closest('[hidden]') && x.offsetParent !== null);
+    const f = $$('a[href],button:not([disabled]),input:not([type=hidden]),textarea,pre[tabindex]', panel).filter(x => !x.closest('[hidden]') && x.offsetParent !== null);
     if (!f.length) return;
     const first = f[0], last = f[f.length - 1];
     if (e.shiftKey && (document.activeElement === first || document.activeElement === panel)) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
+
+  /* ==================================================================
+     [JS-27]  TOOLKIT — custom script requests
+     ================================================================== */
+
+  /* =================================================================
+     CUSTOM SCRIPT REQUESTS
+     A visitor describes a .bat they need + leaves an email. It lands in
+     your inbox via Formspree (subject "BAT request BAT-XXXX"). You build
+     the script, add it to TOOLKIT_TOOLS, upload the file, then reply with
+     a direct link:  https://www.sajidmk.com/?tool=<tool-id>#toolkit
+  ================================================================= */
+  const REQUEST_ENDPOINT = 'https://formspree.io/f/mbglyrwl';   // same Formspree form as the contact section
+  const KINDS = ['Cleanup','Network','Backup','Install / Update','Other'];
+  let reqId = '', reqKind = 'Other';
+
+  function requestCard(){
+    return `<article class="tk-card tk-req" role="listitem">
+      <div class="tk-ico">${ICON.request}</div>
+      <h3>Need a custom BAT?<span class="tk-cursor" aria-hidden="true">_</span></h3>
+      <p>Describe the task and leave your email. I’ll build it, publish it here, and email you when it’s ready.</p>
+      <ul class="tk-meta"><li>Free</li><li>Made to order</li></ul>
+      <button type="button" class="tk-btn tk-primary" data-request>Request a script</button>
+    </article>`;
+  }
+  function requestHTML(){
+    reqId = 'BAT-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    reqKind = 'Other';
+    return `<header class="tk-mh"><div class="tk-ico">${ICON.request}</div>
+        <div><h3 id="tkmTitle">Request a custom script</h3><p class="tk-mv"><span class="tk-chip">${reqId}</span><span class="tk-chip">Free · made to order</span></p></div></header>
+      <p class="tk-md">Tell me what you want automated. I’ll write the .bat file, publish it in this Toolkit with viewable source code, and email you when it’s live.</p>
+      <ol class="tk-track" aria-label="How it works"><li class="on">Send request</li><li>I build it</li><li>Emailed to you</li></ol>
+      <form class="tk-rq" id="tkReq" novalidate>
+        <div class="tk-chips" role="group" aria-label="Type of script">${KINDS.map(k => `<button type="button" class="tk-fchip" data-kind="${esc(k)}" aria-pressed="${k === 'Other'}">${esc(k)}</button>`).join('')}</div>
+        <label class="tk-lab">Your email<input class="tk-in" type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <label class="tk-lab">What should the script do?<textarea class="tk-in" name="message" rows="4" required maxlength="1000" placeholder="e.g. Back up my Documents folder to a USB drive every time I run it"></textarea></label>
+        <input type="text" name="_gotcha" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <pre class="tk-rq-pre" aria-hidden="true"><code id="rqPrev"></code></pre>
+        <div class="tk-row"><button type="submit" class="tk-btn tk-primary" id="rqSend">Send request</button></div>
+        <p class="tk-honor" id="rqStatus" role="status" aria-live="polite"></p>
+      </form>
+      <p class="tk-warn" role="note"><strong>Please don’t include</strong> passwords, license keys or private company data in your request.</p>`;
+  }
+  function rqPreview(){
+    const f = $('#tkReq'), out = $('#rqPrev'); if (!f || !out) return;
+    const task = f.message.value.trim().replace(/\s+/g, ' ').slice(0, 56) || '…';
+    out.textContent = `@echo off\n:: request  ${reqId}  [${reqKind}]\n:: for      ${f.email.value.trim() || '…'}\n:: task     ${task}\n:: status   queued`;
+  }
+
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('[data-request]'); if (!b) return;
+    cur = null;
+    show(requestHTML(), b);
+    rqPreview();
+  });
+  modal.addEventListener('click', e => {
+    const k = e.target.closest('[data-kind]'); if (!k) return;
+    reqKind = k.dataset.kind;
+    $$('[data-kind]', modal).forEach(x => x.setAttribute('aria-pressed', String(x === k)));
+    rqPreview();
+  });
+  modal.addEventListener('input', rqPreview);
+  modal.addEventListener('submit', async e => {
+    const f = e.target.closest('#tkReq'); if (!f) return;
+    e.preventDefault();
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const btn = $('#rqSend'), st = $('#rqStatus'), mail = f.email.value.trim();
+    btn.disabled = true; btn.textContent = 'Sending…'; st.textContent = '';
+    const fd = new FormData(f);
+    fd.append('request_id', reqId);
+    fd.append('script_type', reqKind);
+    fd.append('_subject', `BAT request ${reqId} — ${reqKind}`);
+    try {
+      const r = await fetch(REQUEST_ENDPOINT, { method:'POST', body:fd, headers:{ Accept:'application/json' } });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      f.outerHTML = `<div class="tk-dl" tabindex="-1" id="rqDone"><p class="tk-ok">✓ Request ${esc(reqId)} received</p>
+        <p>I’ll build your script, publish it in the Toolkit, and email <strong>${esc(mail)}</strong> as soon as it’s live. Keep the request ID handy if you want to follow up.</p>
+        <div class="tk-row"><button type="button" class="tk-btn" data-tk-close>Close</button></div></div>`;
+      const first = $('.tk-track li:nth-child(2)', modal); if (first) first.classList.add('on');
+      $('#rqDone').focus();
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'Try again';
+      st.textContent = 'Could not send your request. Check your connection and try again.';
+    }
+  });
+
+  /* Direct link to a tool — use it in the "your script is ready" email: /?tool=<tool-id>#toolkit */
+  const want = new URLSearchParams(location.search).get('tool');
+  if (want && TOOLKIT_TOOLS.some(t => t.id === want && t.status === 'available')) {
+    setTimeout(() => { $('#toolkit').scrollIntoView(); open(want); }, 700);
+  }
 })();
+
+/* ==================================================================
+   [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
+   ================================================================== */
+
+(function accentSwitcher(){
+  const box = document.getElementById('accentPicker');
+  if (!box) return;
+  /* Edit colours here: [main, deep, light] as R,G,B */
+  const PALETTES = {
+    olive:  [[92,107,60],   [70,82,44],   [226,231,210]],
+    blue:   [[91,174,245],  [47,134,214], [207,230,251]],
+    violet: [[167,139,250], [124,92,214], [226,217,253]],
+    amber:  [[245,185,66],  [214,142,28], [253,235,198]],
+    rose:   [[244,114,152], [214,70,115], [252,210,224]]
+  };
+  const hex = a => '#' + a.map(v => v.toString(16).padStart(2,'0')).join('');
+  const root = document.documentElement;
+  function apply(name){
+    const p = PALETTES[name] || PALETTES.olive;
+    const set = (k, v) => root.style.setProperty(k, v);
+    set('--accent', hex(p[0]));        set('--accent-rgb', p[0].join(','));
+    set('--accent-deep', hex(p[1]));   set('--accent-deep-rgb', p[1].join(','));
+    set('--accent-light', hex(p[2]));  set('--accent-light-rgb', p[2].join(','));
+    box.querySelectorAll('[data-accent]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.accent === name)));
+  }
+  box.querySelectorAll('[data-accent]').forEach(b => {
+    b.style.setProperty('--dot', hex((PALETTES[b.dataset.accent] || PALETTES.olive)[0]));
+    b.addEventListener('click', () => {
+      apply(b.dataset.accent);
+      try { localStorage.setItem('accentName', b.dataset.accent); } catch(e) {}
+    });
+  });
+  let saved = 'olive';
+  try { saved = localStorage.getItem('accentName') || 'olive'; } catch(e) {}
+  apply(saved);
+})();
+
+/* ==================================================================
+   [JS-29]  FILE ORGANIZER PREVIEW — mirrors the rules in automatic-file-organizer.bat
+   ================================================================== */
+
+/* Keep these rules in sync with the .bat. If you add an extension there, add it here too. */
+const ORGANIZER_RULES = {
+  'Videos':'mp4 mkv avi mov wmv flv webm 3gp', 'Photos':'jpg jpeg png gif bmp webp heic svg',
+  'Documents':'pdf doc docx xls xlsx csv ppt pptx', 'Txt Files':'txt',
+  'Music':'mp3 wav aac flac m4a ogg', 'Zip':'zip rar 7z tar gz', 'Apps':'exe msi apk'
+};
+const ORGANIZER_SKIP = ['crdownload','part','tmp'];   /* unfinished downloads stay put */
+const ORGANIZER_SELF = 'automatic-file-organizer.bat';
+function organizerTarget(name){
+  const n = name.trim().toLowerCase();
+  if (n === ORGANIZER_SELF) return null;
+  const ext = n.includes('.') ? n.split('.').pop() : '';
+  if (ORGANIZER_SKIP.includes(ext)) return null;
+  for (const [folder, list] of Object.entries(ORGANIZER_RULES)) if (list.split(' ').includes(ext)) return folder;
+  return 'Others';
+}
+function organizerPreviewHTML(){
+  return '<section class="tk-preview"><h4>Try it before you download</h4>'
+    + '<p class="tk-hint">Type or paste file names (comma or new line). Nothing is uploaded; this only shows where each file would go.</p>'
+    + '<textarea data-prev-input aria-label="File names" spellcheck="false">cv.pdf, holiday.JPG, song.mp3, setup.exe, notes.txt, backup.zip, movie.mkv, file.crdownload, data.xyz</textarea>'
+    + '<ul class="tk-prev-list" data-prev-out aria-live="polite"></ul></section>';
+}
+function organizerPreviewRender(root){
+  const input = root.querySelector('[data-prev-input]'), out = root.querySelector('[data-prev-out]');
+  if (!input || !out) return;
+  out.textContent = '';
+  input.value.split(/[,\n]+/).map(s => s.trim()).filter(Boolean).slice(0, 60).forEach(name => {
+    const to = organizerTarget(name), li = document.createElement('li');
+    const a = document.createElement('span'), b = document.createElement('span');
+    a.textContent = name; b.textContent = to ? '→ ' + to : 'stays here'; b.className = to ? 'to' : 'stay';
+    li.append(a, b); out.append(li);
+  });
+}
+
+/* live update while typing in the preview box */
+document.addEventListener('input', e => {
+  if (e.target.matches && e.target.matches('[data-prev-input]')) organizerPreviewRender(e.target.closest('.tk-preview'));
+});

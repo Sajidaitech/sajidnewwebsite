@@ -2553,8 +2553,9 @@ footer{ padding:20px var(--edge) 60px; position:relative; z-index:2; }
     radial-gradient(120% 60% at 50% -14%, rgba(255,255,255,.22), transparent 60%),   /* meniscus */
     radial-gradient(85% 60% at 104% 112%, rgba(0,0,0,.38), transparent 70%),         /* pooled shade */
     linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(12,14,16,.30) 52%, rgba(12,14,16,.44) 100%);
-  -webkit-backdrop-filter:blur(26px) saturate(1.5) brightness(.9);
-          backdrop-filter:blur(26px) saturate(1.5) brightness(.9);
+  /* follows the Clear <-> Blurred slider: no blur at 0px */
+  -webkit-backdrop-filter:blur(calc(26px * var(--glass-amt))) saturate(calc(1 + .5 * var(--glass-amt))) brightness(calc(1 - .1 * var(--glass-amt)));
+          backdrop-filter:blur(calc(26px * var(--glass-amt))) saturate(calc(1 + .5 * var(--glass-amt))) brightness(calc(1 - .1 * var(--glass-amt)));
   box-shadow:
     inset 1.5px 1.5px 0 rgba(255,255,255,.42),
     inset -1px -1px 0 rgba(0,0,0,.36),
@@ -3782,3 +3783,141 @@ html.tk-open{ overflow:hidden; }
 /* Scroll-parallax stays switched off, as it was (it caused overlaps).
    Delete this one rule to bring the data-depth parallax back. */
 [data-depth]{ transform:none !important; translate:none !important; }
+
+
+/* ==================================================================
+   [CSS-57]  REGION-AWARE CONTACT VAULT
+   Radar head + masked reveal rows. States set by script.js via
+   data-state: checking | full | social | unknown
+   ================================================================== */
+[data-geo-contact][hidden],
+.geo-vault [hidden],
+.qr-card[hidden]{ display:none !important; }
+
+.geo-vault{
+  position:relative; display:grid; gap:12px;
+  max-width:540px; margin:6px 0 4px; padding:16px 18px 14px;
+  border-radius:22px;
+}
+.gv-head{ display:flex; align-items:center; gap:14px; }
+.gv-head-text{ min-width:0; flex:1; }
+.gv-title{ font-size:15.5px; font-weight:600; color:var(--text); line-height:1.3; }
+.gv-sub{ font-size:12.5px; color:var(--text-dim); line-height:1.5; margin-top:2px; }
+
+.gv-radar{ position:relative; width:46px; height:46px; flex:none; border-radius:50%; }
+.gv-radar i{ position:absolute; border-radius:50%; border:1px solid rgba(var(--accent-rgb),.5); }
+.gv-radar i:nth-child(1){ inset:0; }
+.gv-radar i:nth-child(2){ inset:9px; opacity:.7; }
+.gv-radar i:nth-child(3){ inset:18px; border-color:transparent; background:var(--accent); box-shadow:0 0 0 4px rgba(var(--accent-rgb),.16); transition:background .4s ease, box-shadow .4s ease; }
+.gv-radar::after{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  background:conic-gradient(from 0deg, rgba(var(--accent-rgb),.55), transparent 30%);
+  animation:gvSweep 1.4s linear infinite;
+}
+.geo-vault[data-state="checking"] .gv-radar i:nth-child(1){ animation:gvPing 1.6s ease-out infinite; }
+.geo-vault:not([data-state="checking"]) .gv-radar::after{ display:none; }
+.geo-vault[data-state="social"] .gv-radar i,
+.geo-vault[data-state="unknown"] .gv-radar i{ border-color:rgba(143,168,189,.5); }
+.geo-vault[data-state="social"] .gv-radar i:nth-child(3),
+.geo-vault[data-state="unknown"] .gv-radar i:nth-child(3){ background:var(--amber); box-shadow:0 0 0 4px var(--amber-dim); border-color:transparent; }
+@keyframes gvSweep{ to{ transform:rotate(360deg); } }
+@keyframes gvPing{ 0%{ transform:scale(.7); opacity:.9; } 100%{ transform:scale(1.18); opacity:0; } }
+
+.gv-pill{
+  flex:none; margin-left:auto; padding:5px 11px; border-radius:999px;
+  font-family:var(--ff-mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--accent); background:rgba(var(--accent-rgb),.12); border:1px solid rgba(var(--accent-rgb),.45);
+}
+.geo-vault[data-state="social"] .gv-pill,
+.geo-vault[data-state="unknown"] .gv-pill{ color:var(--amber); background:var(--amber-dim); border-color:rgba(143,168,189,.45); }
+
+.gv-rows{ display:grid; gap:8px; }
+.gv-row{
+  display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:15px;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10);
+  color:var(--text); text-decoration:none;
+  transition:border-color .25s ease, background .25s ease;
+}
+.gv-row.is-revealed{ border-color:rgba(var(--accent-rgb),.45); background:rgba(var(--accent-rgb),.07); }
+a.gv-row--link:hover{ border-color:rgba(var(--accent-rgb),.55); background:rgba(var(--accent-rgb),.09); }
+.gv-ico{ width:34px; height:34px; flex:none; display:grid; place-items:center; border-radius:11px; color:var(--accent); background:rgba(var(--accent-rgb),.14); }
+.gv-ico svg{ width:18px; height:18px; display:block; }
+.gv-body{ display:grid; gap:1px; min-width:0; flex:1; }
+.gv-lbl{ font-family:var(--ff-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); }
+.gv-val{ font-size:14.5px; letter-spacing:.04em; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; color:var(--text-dim); }
+.gv-row.is-revealed .gv-val{ color:var(--text); letter-spacing:.01em; animation:gvUnblur .45s ease both; }
+@keyframes gvUnblur{ from{ filter:blur(6px); opacity:.25; } to{ filter:blur(0); opacity:1; } }
+
+.gv-acts{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; }
+.gv-btn{
+  display:inline-flex; align-items:center; justify-content:center; min-height:34px; padding:7px 13px;
+  font:inherit; font-size:12.5px; font-weight:600; line-height:1; text-decoration:none; cursor:pointer;
+  color:var(--text); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.22); border-radius:999px;
+  transition:background .2s ease, border-color .2s ease, color .2s ease;
+}
+.gv-btn:hover{ background:rgba(var(--accent-rgb),.16); border-color:rgba(var(--accent-rgb),.55); color:var(--accent-light); }
+.gv-btn--go{ background:rgba(var(--accent-rgb),.18); border-color:rgba(var(--accent-rgb),.5); }
+.gv-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+.gv-note{ margin:0; display:none; font-size:12.5px; color:var(--text-dim); }
+.geo-vault[data-state="social"] .gv-note,
+.geo-vault[data-state="unknown"] .gv-note{ display:block; }
+.gv-note a{ color:var(--accent); text-decoration:none; font-weight:600; }
+.gv-note a:hover{ text-decoration:underline; }
+.gv-foot{ margin:0; font-size:11.5px; line-height:1.5; color:var(--text-faint); }
+
+@media (max-width:520px){
+  .geo-vault{ padding:14px; }
+  .gv-row{ flex-wrap:wrap; }
+  .gv-acts{ width:100%; justify-content:flex-start; }
+  .gv-pill{ display:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .gv-radar::after, .gv-radar i, .gv-row.is-revealed .gv-val{ animation:none !important; }
+}
+
+
+/* ==================================================================
+   [CSS-58]  NO GRAIN — removes the white speckle/dot texture everywhere
+   (global film grain, glass-button noise, contact-panel noise), so the
+   surfaces stay clean even when the blur slider is at 0px.
+   Delete this block to bring the grain back.
+   ================================================================== */
+:root{ --lg-noise:linear-gradient(transparent, transparent); }
+.bg-grain{ display:none !important; }
+.cp-liquid::before{ display:none !important; }
+
+/* vault: brighter accent tones so icons, radar and the status pill stay readable on dark glass */
+.gv-ico{ color:var(--accent-light); background:rgba(var(--accent-rgb),.22); }
+.gv-pill{ color:var(--accent-light); background:rgba(var(--accent-rgb),.2); border-color:rgba(var(--accent-rgb),.6); }
+.gv-radar i{ border-color:rgba(var(--accent-light-rgb),.6); }
+.gv-radar i:nth-child(3){ background:var(--accent-light); box-shadow:0 0 0 4px rgba(var(--accent-rgb),.28); }
+.geo-vault[data-state="social"] .gv-radar i:nth-child(3),
+.geo-vault[data-state="unknown"] .gv-radar i:nth-child(3){ background:var(--amber); }
+.geo-vault[data-state="social"] .gv-pill,
+.geo-vault[data-state="unknown"] .gv-pill{ color:#D5E0EA; }
+
+
+/* ==================================================================
+   [CSS-59]  QR CARD — bigger, scannable code + tap-to-enlarge
+   ================================================================== */
+.qr-card{ gap:16px; }
+.qr-img{ width:112px; height:112px; padding:6px; border-radius:12px; cursor:zoom-in; object-fit:contain; }
+.qr-img:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+.qr-hint{ display:block; margin-top:4px; font-size:11.5px; color:var(--text-faint); }
+
+.qr-zoom{ position:fixed; inset:0; z-index:400; display:grid; place-items:center; padding:20px; }
+.qr-zoom[hidden]{ display:none !important; }
+.qr-zoom-scrim{ position:absolute; inset:0; background:rgba(0,0,0,.72); }
+.qr-zoom-panel{
+  position:relative; display:grid; justify-items:center; gap:12px;
+  padding:18px 18px 16px; border-radius:22px; background:#fff; color:#111;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.7);
+}
+.qr-zoom-img{ width:min(300px, 72vw); height:auto; display:block; }
+.qr-zoom-cap{ margin:0; font-size:13px; color:#333; }
+.qr-zoom-close{
+  font:inherit; font-size:13px; font-weight:600; padding:8px 18px; min-height:38px; cursor:pointer;
+  color:#111; background:#eee; border:1px solid #ccc; border-radius:999px;
+}
+.qr-zoom-close:hover{ background:#e2e2e2; }

@@ -28,6 +28,7 @@
    [JS-24]  DIAGNOSTICS DEMO — DNS / ping simulation
    [JS-25]  TICKET TRIAGE DEMO
    [JS-26]  IT TOOLKIT — config, cards, details modal, download + hash check
+   [JS-30]  REGION-AWARE CONTACT — email/phone only for approved regions (edit Instagram handle + country list there)
    [JS-27]  TOOLKIT — custom script requests
    [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
    [JS-29]  FILE ORGANIZER PREVIEW — toolkit modal, mirrors the .bat rules
@@ -608,6 +609,178 @@ $$('[data-case]').forEach(card => {
 
 
 /* ==================================================================
+   [JS-30]  REGION-AWARE CONTACT — email/phone only for approved regions
+   ================================================================== */
+
+/* =================================================================
+   REGION-AWARE CONTACT VAULT
+   Your email and phone are NOT written in index.html. They live here
+   as base64 and are only decoded and shown when the visitor's country
+   (looked up from their IP in the browser) is on the allow list.
+   Everyone else — and anyone whose region can't be verified — sees
+   Instagram only (fail closed).
+
+   EDIT HERE:
+     instagramHandle  your Instagram username (no @)
+     allow            two-letter country codes that may see email + phone
+   Local testing (only works on localhost / file://):
+     index.html?geo=PK   → pretend to be in Pakistan
+     index.html?geo=QA   → pretend to be in Qatar
+   Honest limit: this is a privacy filter, not a lock. A VPN set to an
+   allowed country will unlock it, and the encoded values are readable
+   by someone who digs through this file.
+================================================================= */
+(function regionContact(){
+  const CONFIG = {
+    instagramHandle: 'imsajidmehmood',
+    allow: [
+      'QA','AE','SA','KW','BH','OM',            /* Gulf (GCC) */
+      'JO','EG','TR',                           /* nearby */
+      'US','CA',                                /* North America */
+      'GB','IE','DE','FR','NL','BE','CH','AT','IT','ES','SE','NO','DK'  /* Europe */
+    ],
+    e: 'c2FqaWRpdGVlY2hAZ21haWwuY29t',
+    p: 'Kzk3NDY2OTY5NTk4'
+  };
+
+  const IG_OK = CONFIG.instagramHandle !== 'YOUR_INSTAGRAM_HANDLE' && /^[A-Za-z0-9._]{1,30}$/.test(CONFIG.instagramHandle);
+  const IG_URL = IG_OK ? `https://www.instagram.com/${CONFIG.instagramHandle}/` : '';
+
+  const vault = document.getElementById('geoVault');
+  const els = {
+    title: document.getElementById('gvTitle'),
+    sub:   document.getElementById('gvSub'),
+    pill:  document.getElementById('gvPill'),
+    ig:    document.getElementById('gvIgHandle')
+  };
+
+  /* ---------- country lookup: three free providers, first answer wins ---------- */
+  const PROVIDERS = [
+    { url:'https://free.freeipapi.com/api/json',      pick:d => d && d.countryCode },
+    { url:'https://api.country.is/',                  pick:d => d && d.country },
+    { url:'https://get.geojs.io/v1/ip/country.json',  pick:d => d && d.country }
+  ];
+  function fetchCode(prov){
+    const ctrl = ('AbortController' in window) ? new AbortController() : null;
+    const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 3500);
+    return fetch(prov.url, { signal: ctrl ? ctrl.signal : undefined, cache:'no-store' })
+      .then(r => { if (!r.ok) throw new Error('bad status'); return r.json(); })
+      .then(d => {
+        const c = String(prov.pick(d) || '').toUpperCase();
+        if (!/^[A-Z]{2}$/.test(c)) throw new Error('no code');
+        return c;
+      })
+      .finally(() => clearTimeout(timer));
+  }
+  function lookup(){
+    return PROVIDERS.reduce((p, prov) => p.catch(() => fetchCode(prov)), Promise.reject(new Error('start')));
+  }
+
+  const isLocal = location.protocol === 'file:' || ['localhost','127.0.0.1','[::1]',''].includes(location.hostname);
+  const forced = isLocal ? String(new URLSearchParams(location.search).get('geo') || '').toUpperCase() : '';
+  let cached = '';
+  try { cached = sessionStorage.getItem('sm_geo') || ''; } catch (e) {}
+
+  let codeP;
+  if (/^[A-Z]{2}$/.test(forced)) codeP = Promise.resolve(forced);
+  else if (/^[A-Z]{2}$/.test(cached)) codeP = Promise.resolve(cached);
+  else codeP = lookup().then(c => { try { sessionStorage.setItem('sm_geo', c); } catch (e) {} return c; });
+
+  const minScan = new Promise(r => setTimeout(r, (reduceMotion || cached || forced) ? 0 : 700));
+
+  /* ---------- helpers ---------- */
+  const nameOf = code => { try { return new Intl.DisplayNames(['en'], { type:'region' }).of(code) || code; } catch (e) { return code; } };
+  const prettyPhone = v => v.replace(/^(\+\d{3})(\d{4})(\d{4})$/, '$1 $2 $3');
+  const maskEmail = v => {
+    const [l, d] = v.split('@'); const dot = d.lastIndexOf('.');
+    return l[0] + '•'.repeat(Math.max(l.length - 1, 3)) + '@' + d[0] + '•'.repeat(Math.max(dot - 1, 3)) + d.slice(dot);
+  };
+  const maskPhone = v => prettyPhone(v).replace(/^(\+\d{3}) .*/, '$1 •••• ••••');
+  function copyText(t){
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+    return new Promise((res, rej) => {
+      const ta = document.createElement('textarea');
+      ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? res() : rej(new Error('copy failed')); } catch (err) { rej(err); }
+      ta.remove();
+    });
+  }
+
+  function setHead(state, title, sub, pill){
+    if (!vault) return;
+    vault.dataset.state = state;
+    vault.setAttribute('aria-busy', 'false');
+    els.title.textContent = title;
+    els.sub.textContent = sub;
+    els.pill.textContent = pill;
+  }
+
+  function wireRow(kind, shown, masked, value, href, openLabel){
+    const row = document.querySelector(`[data-gv-row="${kind}"]`);
+    if (!row) return;
+    const val = row.querySelector('.gv-val');
+    const rev = row.querySelector('[data-gv-reveal]');
+    const cp  = row.querySelector('[data-gv-copy]');
+    const go  = row.querySelector('[data-gv-open]');
+    val.textContent = masked;
+    row.hidden = false;
+    rev.addEventListener('click', () => {
+      val.textContent = shown;
+      row.classList.add('is-revealed');
+      rev.hidden = true; cp.hidden = false; go.hidden = false;
+      go.href = href; go.textContent = openLabel;
+    }, { once:true });
+    cp.addEventListener('click', () => {
+      copyText(value).then(() => {
+        cp.textContent = 'Copied';
+        setTimeout(() => { cp.textContent = 'Copy'; }, 1600);
+      }).catch(() => { cp.textContent = 'Press Ctrl+C'; });
+    });
+  }
+
+  /* ---------- apply the result ---------- */
+  function finish(code){
+    const full = !!code && CONFIG.allow.includes(code);
+    const mode = full ? 'full' : 'social';
+    const email = full ? atob(CONFIG.e) : '';
+    const phone = full ? atob(CONFIG.p) : '';
+    const place = code ? nameOf(code) : '';
+
+    // Instagram is open to everyone (when a handle is configured)
+    if (IG_OK) {
+      document.querySelectorAll('[data-geo-contact="instagram"]').forEach(a => { a.href = IG_URL; a.hidden = false; });
+      if (els.ig) els.ig.textContent = '@' + CONFIG.instagramHandle;
+    }
+
+    if (full) {
+      document.querySelectorAll('[data-geo-contact="email"]').forEach(a => { a.href = 'mailto:' + email; a.hidden = false; });
+      document.querySelectorAll('[data-geo-contact="whatsapp"]').forEach(a => { a.href = 'https://wa.me/' + phone.replace(/\D/g, ''); a.hidden = false; });
+      setHead('full', 'Region verified · ' + place, 'Direct contact is open to you. Details stay hidden until you reveal them.', 'Open');
+      wireRow('email', email, maskEmail(email), email, 'mailto:' + email, 'Email');
+      wireRow('phone', prettyPhone(phone), maskPhone(phone), phone, 'https://wa.me/' + phone.replace(/\D/g, ''), 'WhatsApp');
+    } else if (code) {
+      setHead('social', IG_OK ? 'Instagram-first from ' + place : 'Contact from ' + place,
+        IG_OK ? 'Email and phone are shared in select regions only. Message me on Instagram and I\u2019ll reply there.'
+              : 'Email and phone are shared in select regions only. Use the message form and I\u2019ll reply.', 'DM me');
+    } else {
+      setHead('unknown', 'Couldn\u2019t verify your region',
+        IG_OK ? 'Instagram is always open. Direct details stay hidden until a region check passes.'
+              : 'Direct details stay hidden until a region check passes. The message form always works.', 'Limited');
+    }
+
+    window.SMContact = {
+      ready: true, mode, code: code || '',
+      details: () => full ? { email, phone } : null,
+      instagram: IG_URL
+    };
+    document.dispatchEvent(new CustomEvent('sm:geo', { detail:{ mode, code: code || '' } }));
+  }
+
+  Promise.all([codeP.catch(() => null), minScan]).then(r => finish(r[0]));
+})();
+
+/* ==================================================================
    [JS-18]  COMMAND CONSOLE — Ctrl/⌘ + K
    ================================================================== */
 
@@ -626,6 +799,7 @@ $$('[data-case]').forEach(card => {
   const triggers = ['#cmdkOpen', '#cmdkTip'].map(s => $(s)).filter(Boolean);
   const html = document.documentElement;
   let items = [], shown = [], active = 0, isOpen = false, lastFocus = null, toastTimer = 0;
+  document.addEventListener('sm:geo', () => { items = []; });
 
   // ⌘ on Apple devices, Ctrl elsewhere
   const isMac = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent);
@@ -646,7 +820,8 @@ $$('[data-case]').forEach(card => {
     }));
     const byText = t => $$('.hero-actions a').find(a => a.textContent.trim().toLowerCase().startsWith(t));
     const view = byText('view'), dl = byText('download');
-    const mail = $('a[href^="mailto:"]'), wa = $('a[href*="wa.me"]'), li = $('.side-rail a[href*="linkedin.com"]');
+    const mail = $('a[data-geo-contact="email"][href^="mailto:"]'), wa = $('a[data-geo-contact="whatsapp"][href*="wa.me"]'), li = $('.side-rail a[href*="linkedin.com"]');
+    const ig = $('.side-rail a[data-geo-contact="instagram"][href^="https://www.instagram.com/"]');
     if (view) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'View CV', href:view.href, external:true, keys:'resume pdf' });
     if (dl)   items.push({ group:'Actions', kind:'link', ico:'↓', hint:'Download', label:'Download CV', href:dl.href, download:true, keys:'resume pdf save' });
     if (mail) {
@@ -656,6 +831,7 @@ $$('[data-case]').forEach(card => {
     }
     if (wa) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Message on WhatsApp', href:wa.href, external:true, keys:'chat phone' });
     if (li) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Open LinkedIn', href:li.href, external:true, keys:'profile network' });
+    if (ig) items.push({ group:'Actions', kind:'link', ico:'↗', hint:'Opens in new tab', label:'Open Instagram', href:ig.href, external:true, keys:'dm social message insta' });
   }
 
   function score(it, q){
@@ -1054,44 +1230,109 @@ $$('[data-case]').forEach(card => {
   const card = document.querySelector('.qr-card');
   if (!img || !dl || !card) return;
 
-  const vcard = [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    'N:Mehmood;Sajid;;;',
-    'FN:Sajid Mehmood',
-    'TITLE:IT Support Engineer',
-    'TEL;TYPE=CELL:+97466969598',
-    'EMAIL:sajiditeech@gmail.com',
-    'URL:https://sajidmk.com',
-    'ADR;TYPE=WORK:;;Doha;;;Qatar',
-    'END:VCARD'
-  ].join('\n');
-  const encoded = encodeURIComponent(vcard);
+  const SITE = 'https://sajidmk.com';
+  const X_URL = 'https://x.com/im_sajidmehmood';
 
-  // Always works, no network dependency at all.
-  dl.href = `data:text/vcard;charset=utf-8,${encoded}`;
+  /* The QR / vCard carry email + phone, so they are built only for approved
+     regions (see [JS-30]). Everyone else gets name + website + Instagram. */
+  card.hidden = true;
 
-  const providers = [
-    `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data=${encoded}`,
-    `https://quickchart.io/qr?text=${encoded}&size=240&margin=2`
-  ];
-  let attempt = 0;
+  /* Two versions on purpose:
+     - QR text: kept SHORT, because fewer characters = bigger, easier-to-scan squares.
+     - .vcf file: the full contact card (title, address, social links).      */
+  function vcardTexts(){
+    const c = window.SMContact || {};
+    const d = c.details ? c.details() : null;
+    const qr = ['BEGIN:VCARD', 'VERSION:3.0', 'FN:Sajid Mehmood'];
+    if (d) qr.push('TEL;TYPE=CELL:' + d.phone, 'EMAIL:' + d.email);
+    qr.push('URL:' + SITE);
+    if (!d && c.instagram) qr.push('URL:' + c.instagram);
+    qr.push('END:VCARD');
 
-  function tryNext(){
-    if (attempt >= providers.length) {
-      // Both providers failed (blocked network, offline, extension, etc.)
-      // — don't leave a broken-image icon, show a clear text fallback and
-      // keep the vCard download (which still works) front and centre.
-      card.classList.add('qr-failed');
-      img.remove();
-      return;
-    }
-    img.src = providers[attempt];
-    attempt++;
+    const file = ['BEGIN:VCARD', 'VERSION:3.0', 'N:Mehmood;Sajid;;;', 'FN:Sajid Mehmood', 'TITLE:IT Support Engineer'];
+    if (d) file.push('TEL;TYPE=CELL:' + d.phone, 'EMAIL:' + d.email);
+    file.push('URL:' + SITE);
+    if (c.instagram) file.push('URL;TYPE=Instagram:' + c.instagram);
+    if (d) file.push('URL;TYPE=X:' + X_URL);
+    file.push('ADR;TYPE=WORK:;;Doha;;;Qatar', 'END:VCARD');
+    return { qr: qr.join('\n'), file: file.join('\n') };
   }
 
-  img.addEventListener('error', tryNext);
-  tryNext();
+  /* Drawn in the browser by qrcode.min.js — no third-party service needed. */
+  function localQr(text){
+    if (typeof qrcode !== 'function') return '';
+    try {
+      const q = qrcode(0, 'M');
+      q.addData(text);
+      q.make();
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(q.createSvgTag({ cellSize:4, margin:4, scalable:true }));
+    } catch (e) { return ''; }
+  }
+
+  /* ---- tap / click to enlarge (a bigger code scans far more reliably) ---- */
+  let zoomEl = null;
+  function closeZoom(){ if (zoomEl) zoomEl.hidden = true; }
+  function openZoom(){
+    if (!img.src) return;
+    if (!zoomEl) {
+      zoomEl = document.createElement('div');
+      zoomEl.className = 'qr-zoom';
+      zoomEl.hidden = true;
+      zoomEl.innerHTML = '<div class="qr-zoom-scrim"></div><div class="qr-zoom-panel" role="dialog" aria-modal="true" aria-label="Contact QR code"><img class="qr-zoom-img" alt="QR code — scan to save Sajid\u2019s contact"><p class="qr-zoom-cap">Point your phone camera at the code</p><button type="button" class="qr-zoom-close">Close</button></div>';
+      document.body.appendChild(zoomEl);
+      zoomEl.addEventListener('click', e => { if (e.target.closest('.qr-zoom-scrim, .qr-zoom-close')) closeZoom(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom(); });
+    }
+    zoomEl.querySelector('.qr-zoom-img').src = img.src;
+    zoomEl.hidden = false;
+    zoomEl.querySelector('.qr-zoom-close').focus();
+  }
+
+  function build(){
+    const t = vcardTexts();
+
+    // Always works, no network dependency at all.
+    dl.href = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(t.file);
+
+    const encoded = encodeURIComponent(t.qr);
+    const local = localQr(t.qr);
+    const providers = [
+      local,
+      `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=6&ecc=M&data=${encoded}`,
+      `https://quickchart.io/qr?text=${encoded}&size=300&margin=2&ecLevel=M`
+    ].filter(Boolean);
+    let attempt = 0;
+
+    function tryNext(){
+      if (attempt >= providers.length) {
+        // Local drawing and both online services failed — don't leave a
+        // broken-image icon; keep the vCard download front and centre.
+        card.classList.add('qr-failed');
+        img.remove();
+        return;
+      }
+      img.src = providers[attempt];
+      attempt++;
+    }
+
+    img.addEventListener('error', tryNext);
+    img.setAttribute('role', 'button');
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('title', 'Tap to enlarge');
+    img.addEventListener('click', openZoom);
+    img.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openZoom(); } });
+
+    const hint = document.createElement('span');
+    hint.className = 'qr-hint';
+    hint.textContent = 'Tap the code to enlarge';
+    dl.insertAdjacentElement('afterend', hint);
+
+    card.hidden = false;
+    tryNext();
+  }
+
+  if (window.SMContact && window.SMContact.ready) build();
+  else document.addEventListener('sm:geo', build, { once:true });
 })();
 
 /* ==================================================================
