@@ -1,3 +1,6 @@
+/* failsafe flag: lets CSS reveal content if this file is slow or blocked */
+document.documentElement.classList.add('js-ready');
+
 /* ==================================================================
    TABLE OF CONTENTS — script.js
    Search this file for a tag like [JS-05] to jump to a section.
@@ -1596,33 +1599,7 @@ $$('[data-case]').forEach(card => {
    old automatic "flip past 20px" rule: the user decides, and the
    choice is remembered across visits (localStorage).
 ================================================================= */
-(function inkToggle(){
-  const btn = document.getElementById('inkToggle');
-  const panels = document.querySelectorAll('.hero, .recruiter-bar, .section, .footer-panel');
-  if (!btn || !panels.length) return;
-
-  const STORAGE_KEY = 'focusInkMode';
-
-  function apply(mode, persist){
-    const isBlack = mode === 'black';
-    panels.forEach(p => p.classList.toggle('blur-ink', isBlack));
-    btn.setAttribute('aria-pressed', String(isBlack));
-    btn.textContent = isBlack ? 'Aa · Black text' : 'Aa · White text';
-
-    if (persist) {
-      try { localStorage.setItem(STORAGE_KEY, mode); } catch (e) { /* storage unavailable — ignore */ }
-    }
-  }
-
-  let saved = 'white';
-  try { saved = localStorage.getItem(STORAGE_KEY) || 'white'; } catch (e) { /* storage unavailable — ignore */ }
-  apply(saved, false);
-
-  btn.addEventListener('click', () => {
-    const next = btn.getAttribute('aria-pressed') === 'true' ? 'white' : 'black';
-    apply(next, true);
-  });
-})();
+/* (Aa white/black text button removed — White and Black are now colour dots, see [JS-28]) */
 
 /* ==================================================================
    [JS-24]  DIAGNOSTICS DEMO — DNS / ping simulation
@@ -2351,39 +2328,70 @@ $$('[data-case]').forEach(card => {
 })();
 
 /* ==================================================================
-   [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
+   [JS-28]  ACCENT SWITCHER — lime / indigo / ruby / champagne + dark themes (remembered)
    ================================================================== */
 
 (function accentSwitcher(){
   const box = document.getElementById('accentPicker');
   if (!box) return;
-  /* Edit colours here: [main, deep, light] as R,G,B */
-  const PALETTES = {
-    olive:  [[92,107,60],   [70,82,44],   [226,231,210]],
-    blue:   [[91,174,245],  [47,134,214], [207,230,251]],
-    violet: [[167,139,250], [124,92,214], [226,217,253]],
-    amber:  [[245,185,66],  [214,142,28], [253,235,198]],
-    rose:   [[244,114,152], [214,70,115], [252,210,224]]
+  /* Edit colours here. Each theme: accent [main, deep, light] + text colour, all as R,G,B.
+     "ink" = 'black' also turns on black text on every glass panel. */
+  const THEMES = {
+    lime:      { a:[[198,255,61],  [143,212,0],   [238,255,184]], t:[224,255,140] },
+    indigo:    { a:[[108,123,255], [63,79,224],   [217,222,255]], t:[185,195,255] },
+    ruby:      { a:[[255,77,109],  [217,30,67],   [255,194,206]], t:[255,160,180] },
+    champagne: { a:[[232,213,163], [201,168,92],  [247,237,208]], t:[245,232,190] },
+    /* Dark themes: the swatch (dot) is the dark colour; panels are tinted with surface [r,g,b,alpha];
+       the accent used for highlights/text stays a light silver so it is readable on dark glass. */
+    charcoal: { a:[[198,206,216], [128,140,154], [232,237,243]], t:[236,240,245], dot:'#36454F', surface:[44,54,62,.72] },
+    graphite: { a:[[178,184,192], [108,114,122], [226,229,233]], t:[233,235,238], dot:'#5B6068', surface:[56,60,67,.70] },
+    onyx:     { a:[[228,228,232], [150,150,156], [246,246,248]], t:[246,246,248], dot:'#0A0A0B', surface:[5,5,7,.80] },
+    white:  { a:[[255,255,255], [225,225,225], [255,255,255]], t:[255,255,255] },
+    black:  { a:[[240,240,240], [200,200,200], [255,255,255]], t:[0,0,0], ink:'black' }
   };
   const hex = a => '#' + a.map(v => v.toString(16).padStart(2,'0')).join('');
   const root = document.documentElement;
+  const panels = document.querySelectorAll('.hero, .recruiter-bar, .section, .footer-panel');
   function apply(name){
-    const p = PALETTES[name] || PALETTES.olive;
+    if (!THEMES[name]) name = 'white';
+    const th = THEMES[name], p = th.a, t = th.t.join(',');
+    const black = th.ink === 'black';
     const set = (k, v) => root.style.setProperty(k, v);
     set('--accent', hex(p[0]));        set('--accent-rgb', p[0].join(','));
     set('--accent-deep', hex(p[1]));   set('--accent-deep-rgb', p[1].join(','));
     set('--accent-light', hex(p[2]));  set('--accent-light-rgb', p[2].join(','));
+    /* text across the whole site */
+    set('--text-rgb', t);
+    set('--text', 'rgb(' + t + ')');
+    set('--text-dim', 'rgba(' + t + ',' + (black ? .82 : .88) + ')');
+    set('--text-faint', 'rgba(' + t + ',' + (black ? .68 : .74) + ')');
+    /* glass edges pick up the colour (white theme keeps the original neutral edge) */
+    if (name === 'white') { set('--glass-border', 'rgba(255,255,255,.18)'); set('--glass-border-bright', 'rgba(255,255,255,.55)'); }
+    else if (black)       { set('--glass-border', 'rgba(0,0,0,.28)');       set('--glass-border-bright', 'rgba(0,0,0,.6)'); }
+    else                  { set('--glass-border', 'rgba(' + p[0].join(',') + ',.34)'); set('--glass-border-bright', 'rgba(' + p[0].join(',') + ',.7)'); }
+    set('--on-accent', black ? '#000' : '#06182B');
+    /* dark-surface themes tint every glass panel (CSS: html[data-dark] ...); other themes clear it */
+    if (th.surface) {
+      set('--surface-rgb', th.surface.slice(0,3).join(',')); set('--surface-a', String(th.surface[3]));
+      root.dataset.dark = '1';
+    } else {
+      root.style.removeProperty('--surface-rgb'); root.style.removeProperty('--surface-a');
+      delete root.dataset.dark;
+    }
+    root.dataset.theme = name;
+    panels.forEach(el => el.classList.toggle('blur-ink', black));
     box.querySelectorAll('[data-accent]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.accent === name)));
   }
   box.querySelectorAll('[data-accent]').forEach(b => {
-    b.style.setProperty('--dot', hex((PALETTES[b.dataset.accent] || PALETTES.olive)[0]));
+    const th = THEMES[b.dataset.accent] || THEMES.white;
+    b.style.setProperty('--dot', b.dataset.accent === 'black' ? '#000' : (th.dot || hex(th.a[0])));
     b.addEventListener('click', () => {
       apply(b.dataset.accent);
       try { localStorage.setItem('accentName', b.dataset.accent); } catch(e) {}
     });
   });
-  let saved = 'olive';
-  try { saved = localStorage.getItem('accentName') || 'olive'; } catch(e) {}
+  let saved = 'white';
+  try { saved = localStorage.getItem('accentName') || 'white'; } catch(e) {}
   apply(saved);
 })();
 
@@ -2429,3 +2437,125 @@ function organizerPreviewRender(root){
 document.addEventListener('input', e => {
   if (e.target.matches && e.target.matches('[data-prev-input]')) organizerPreviewRender(e.target.closest('.tk-preview'));
 });
+
+
+/* ============ [JS-48] SIDE RAIL v2 — the thread fills as the page scrolls ============ */
+(function () {
+  const dock = document.querySelector('.side-rail-dock');
+  if (!dock) return;
+  let queued = false;
+  const update = () => {
+    queued = false;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    dock.style.setProperty('--rail-p', p.toFixed(4));
+  };
+  window.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+
+/* ============ [JS-49] BOLD TEXT TOGGLE — normal / bold, remembered ============ */
+(function boldToggle(){
+  const btn = document.getElementById('boldToggle');
+  if (!btn) return;
+  const KEY = 'textWeightMode';
+  function apply(bold, persist){
+    document.documentElement.classList.toggle('text-bold', bold);
+    btn.setAttribute('aria-pressed', String(bold));
+    btn.innerHTML = '<b>B</b><span class="fx-bold-txt">' + (bold ? 'Bold' : 'Normal') + '</span>';
+    if (persist) { try { localStorage.setItem(KEY, bold ? 'bold' : 'normal'); } catch (e) {} }
+  }
+  let saved = 'normal';
+  try { saved = localStorage.getItem(KEY) || 'normal'; } catch (e) {}
+  apply(saved === 'bold', false);
+  btn.addEventListener('click', () => apply(btn.getAttribute('aria-pressed') !== 'true', true));
+})();
+
+
+/* ============ [JS-50] DISPLAY DOCK — right-edge capsule: unfold, live lens, sliding colour ring, bloom ============ */
+(function displayDock(){
+  const dock = document.getElementById('focusSlider');
+  const handle = document.getElementById('fxHandle');
+  const panel = document.getElementById('fxPanel');
+  const closeBtn = document.getElementById('fxClose');
+  const range = document.getElementById('heroFocusRange');
+  const readout = document.getElementById('focusSliderReadout');
+  const picker = document.getElementById('accentPicker');
+  const bloom = dock && dock.querySelector('.fx-bloom');
+  if (!dock || !handle || !panel || !range) return;
+
+  const hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  let pinned = false, dragging = false, openT = 0, closeT = 0;
+  const isOpen = () => dock.dataset.open === 'true';
+
+  function setOpen(on){
+    clearTimeout(openT); clearTimeout(closeT);
+    dock.dataset.open = String(on);
+    handle.setAttribute('aria-expanded', String(on));
+    handle.setAttribute('aria-label', on ? 'Close display controls' : 'Open display controls');
+    if (!on) pinned = false;
+  }
+  const scheduleClose = (ms) => {
+    clearTimeout(closeT);
+    closeT = setTimeout(() => { if (!pinned && !dragging) setOpen(false); }, ms);
+  };
+
+  /* open on hover (mouse only), stay open while dragging, close shortly after the pointer leaves */
+  dock.addEventListener('pointerenter', e => {
+    if (e.pointerType !== 'mouse' || !hoverCapable) return;
+    clearTimeout(closeT);
+    if (!isOpen()) openT = setTimeout(() => setOpen(true), 90);
+  });
+  dock.addEventListener('pointerleave', e => {
+    if (e.pointerType !== 'mouse') return;
+    clearTimeout(openT);
+    if (isOpen() && !pinned && !dragging) scheduleClose(650);
+  });
+
+  /* click / tap / keyboard */
+  handle.addEventListener('click', e => {
+    if (isOpen() && (pinned || !hoverCapable)) { setOpen(false); return; }
+    setOpen(true); pinned = true;
+    if (e.detail === 0) range.focus({ preventScroll: true });   /* keyboard: land on the slider */
+  });
+  closeBtn && closeBtn.addEventListener('click', () => { setOpen(false); handle.focus({ preventScroll: true }); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && isOpen()) { setOpen(false); handle.focus({ preventScroll: true }); }
+  });
+  document.addEventListener('pointerdown', e => { if (isOpen() && !dock.contains(e.target)) setOpen(false); });
+
+  /* dragging the slider keeps the panel open even if the pointer wanders off it */
+  range.addEventListener('pointerdown', () => { dragging = true; clearTimeout(closeT); });
+  const endDrag = () => { if (!dragging) return; dragging = false; if (!pinned && !dock.matches(':hover')) scheduleClose(900); };
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
+
+  /* live lens: orb + meter follow the blur; readout ticks */
+  const syncLens = () => dock.style.setProperty('--lens', ((parseFloat(range.value) || 0) / 100).toFixed(3));
+  range.addEventListener('input', () => {
+    syncLens();
+    if (readout) { readout.classList.remove('tick'); void readout.offsetWidth; readout.classList.add('tick'); }
+  });
+  syncLens();                                           /* the saved blur was already restored by the focus-slider module above */
+
+  /* colour dots: ring slides to the chosen dot, bloom ripples out of it */
+  if (picker) {
+    const dots = Array.from(picker.querySelectorAll('.accent-dot'));
+    const syncRing = () => {
+      const i = dots.findIndex(b => b.getAttribute('aria-pressed') === 'true');
+      picker.style.setProperty('--sel', String(Math.max(0, i)));
+    };
+    syncRing();
+    new MutationObserver(syncRing).observe(picker, { attributes: true, attributeFilter: ['aria-pressed'], subtree: true });
+    picker.addEventListener('click', e => {
+      const b = e.target.closest('.accent-dot');
+      if (!b || !bloom) return;
+      const pr = panel.getBoundingClientRect(), br = b.getBoundingClientRect();
+      bloom.style.setProperty('--bx', (br.left + br.width / 2 - pr.left) + 'px');
+      bloom.style.setProperty('--by', (br.top + br.height / 2 - pr.top) + 'px');
+      bloom.classList.remove('go'); void bloom.offsetWidth; bloom.classList.add('go');
+    });
+  }
+})();

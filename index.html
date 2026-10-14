@@ -26,12 +26,15 @@
 <meta name="twitter:image" content="https://www.sajidmk.com/assets/photo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" href="assets/bg-landscape.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="assets/photo.jpg" as="image" fetchpriority="high">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://www.sajidmk.com/#person","name":"Sajid Mehmood","jobTitle":"IT Graduate","url":"https://www.sajidmk.com/","image":"https://www.sajidmk.com/assets/photo.jpg","description":"IT graduate in Doha, Qatar with a BSc in Information Technology from Middlesex University Dubai, networking and Azure training, and a portfolio of Windows scripting tools.","address":{"@type":"PostalAddress","addressLocality":"Doha","addressCountry":"QA"},"knowsAbout":["Computer networking","Windows batch scripting","Information technology"],"alumniOf":{"@type":"CollegeOrUniversity","name":"Middlesex University Dubai"},"sameAs":["https://www.linkedin.com/in/imsajid-mehmood-1b3954333/"]},{"@type":"WebSite","@id":"https://www.sajidmk.com/#website","url":"https://www.sajidmk.com/","name":"Sajid Mehmood","publisher":{"@id":"https://www.sajidmk.com/#person"}},{"@type":"WebPage","@id":"https://www.sajidmk.com/#webpage","url":"https://www.sajidmk.com/","name":"Sajid Mehmood — IT Graduate | Doha, Qatar","isPartOf":{"@id":"https://www.sajidmk.com/#website"},"about":{"@id":"https://www.sajidmk.com/#person"},"description":"IT graduate in Doha, Qatar. BSc Information Technology (Middlesex University Dubai), networking and Azure training, and Windows scripting tools."}]}
 </script>
-<link rel="stylesheet" href="styles.css?v=20261015">
+<link rel="stylesheet" href="styles.css?v=20261020">
 </head>
 <body>
 <!--
@@ -115,26 +118,39 @@
   <a href="#contact" class="nav-cta mob-cta">Let's talk</a>
 </div>
 
-<!-- ============ [HTML-03] LIVE FOCUS SLIDER — drag to blur the hero panel (+ accent colour dots) ============ -->
-<div class="focus-slider" id="focusSlider">
-  <div class="focus-slider-inner">
-    <div class="focus-slider-label focus-slider-label--left">
-      <span class="focus-icon focus-icon--sharp" aria-hidden="true"></span>
-      <span class="focus-slider-label-text">Clear</span>
+<!-- ============ [HTML-03] DISPLAY DOCK — right-edge control capsule (blur · accent · bold) ============ -->
+<aside class="fx-dock" id="focusSlider" data-open="false" aria-label="Display controls">
+  <button type="button" class="fx-handle" id="fxHandle" aria-expanded="false" aria-controls="fxPanel" aria-label="Open display controls" title="Display controls">
+    <span class="fx-lens" aria-hidden="true"><i></i></span>
+    <span class="fx-handle-text" aria-hidden="true">Display</span>
+  </button>
+
+  <div class="fx-panel" id="fxPanel" role="group" aria-label="Display controls">
+    <span class="fx-bloom" aria-hidden="true"></span>
+
+    <div class="fx-head fx-in" style="--k:0">
+      <span class="fx-readout" id="focusSliderReadout">0px</span>
+      <button type="button" class="fx-close" id="fxClose" aria-label="Close display controls">&times;</button>
     </div>
-    <div class="focus-slider-track-wrap">
-      <input type="range" id="heroFocusRange" class="focus-slider-input" min="0" max="100" value="0" step="1"
-             aria-label="Blur the hero section — 0 is fully Clear, 100 is fully Blurred (100px)">
-      <span class="focus-slider-readout" id="focusSliderReadout">0px</span>
+
+    <div class="fx-body">
+      <div class="fx-focus fx-in" style="--k:1">
+        <span class="fx-cap" aria-hidden="true"><b>Clear</b><b>Blurred</b></span>
+        <div class="fx-track">
+          <input type="range" id="heroFocusRange" class="fx-range" min="0" max="100" value="0" step="1"
+                 aria-label="Blur the hero section — 0 is fully Clear, 100 is fully Blurred (100px)" aria-orientation="vertical">
+        </div>
+      </div>
+
+      <div class="fx-side">
+        <div class="fx-dots-wrap fx-in" style="--k:2">
+          <div class="accent-picker fx-dots" id="accentPicker" role="group" aria-label="Accent colour"><button type="button" class="accent-dot" data-accent="lime" aria-pressed="false" aria-label="Electric lime accent" title="Electric Lime"></button><button type="button" class="accent-dot" data-accent="indigo" aria-pressed="false" aria-label="Indigo accent" title="Indigo Pulse"></button><button type="button" class="accent-dot" data-accent="ruby" aria-pressed="false" aria-label="Ruby accent" title="Ruby"></button><button type="button" class="accent-dot" data-accent="champagne" aria-pressed="false" aria-label="Champagne accent" title="Champagne"></button><button type="button" class="accent-dot" data-accent="charcoal" aria-pressed="false" aria-label="Charcoal gray theme" title="Charcoal"></button><button type="button" class="accent-dot" data-accent="graphite" aria-pressed="false" aria-label="Graphite gray theme" title="Graphite"></button><button type="button" class="accent-dot" data-accent="onyx" aria-pressed="false" aria-label="Onyx black theme" title="Onyx black"></button><button type="button" class="accent-dot" data-accent="white" aria-pressed="true" aria-label="White theme" title="White"></button><button type="button" class="accent-dot" data-accent="black" aria-pressed="false" aria-label="Black text theme" title="Black"></button></div>
+        </div>
+        <button type="button" class="focus-bold-toggle fx-bold fx-in" id="boldToggle" style="--k:3" aria-pressed="false" title="Switch between normal and bold text"><b>B</b><span class="fx-bold-txt">Normal</span></button>
+      </div>
     </div>
-    <div class="focus-slider-label focus-slider-label--right">
-      <span class="focus-slider-label-text">Blurred</span>
-      <span class="focus-icon focus-icon--soft" aria-hidden="true"></span>
-    </div>
-    <button type="button" class="focus-ink-toggle" id="inkToggle" aria-pressed="false" title="Toggle text color on blurred panels">Aa · White text</button>
-    <div class="accent-picker" id="accentPicker" role="group" aria-label="Accent colour"><button type="button" class="accent-dot" data-accent="olive" aria-pressed="true" aria-label="Olive accent" title="Olive"></button><button type="button" class="accent-dot" data-accent="blue" aria-pressed="false" aria-label="Blue accent" title="Blue"></button><button type="button" class="accent-dot" data-accent="violet" aria-pressed="false" aria-label="Violet accent" title="Violet"></button><button type="button" class="accent-dot" data-accent="amber" aria-pressed="false" aria-label="Amber accent" title="Amber"></button><button type="button" class="accent-dot" data-accent="rose" aria-pressed="false" aria-label="Rose accent" title="Rose"></button></div>
   </div>
-</div>
+</aside>
 
 <main id="home">
 
@@ -271,32 +287,32 @@
       <h2>Enterprise traits that matter when infrastructure can't fail.</h2>
       <div class="trait-list">
         <div class="trait-row glass reveal">
-          <div class="trait-icon"><img class="icon3d" alt="🛡️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Shield/3D/shield_3d.png" onerror="this.outerHTML='🛡️'"></div>
+          <div class="trait-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🛡️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Shield/3D/shield_3d.png" onerror="this.outerHTML='🛡️'"></div>
           <div><div class="trait-title">Mission-critical experience</div><div class="trait-desc">Led a live 4-day cyber incident response during FIFA 2022 — isolation, remediation, zero data loss.</div></div>
           <div class="trait-tag">Zero data loss</div>
         </div>
         <div class="trait-row glass reveal">
-          <div class="trait-icon"><img class="icon3d" alt="✈️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Airplane/3D/airplane_3d.png" onerror="this.outerHTML='✈️'"></div>
+          <div class="trait-icon"><img loading="lazy" decoding="async" class="icon3d" alt="✈️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Airplane/3D/airplane_3d.png" onerror="this.outerHTML='✈️'"></div>
           <div><div class="trait-title">Enterprise infrastructure</div><div class="trait-desc">Deployed and maintained high-availability systems across aviation, multi-site healthcare and UAE government — zero tolerance for downtime.</div></div>
           <div class="trait-tag">99.9% uptime</div>
         </div>
         <div class="trait-row glass reveal">
-          <div class="trait-icon"><img class="icon3d" alt="⚙️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" onerror="this.outerHTML='⚙️'"></div>
+          <div class="trait-icon"><img loading="lazy" decoding="async" class="icon3d" alt="⚙️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" onerror="this.outerHTML='⚙️'"></div>
           <div><div class="trait-title">Troubleshooting & operations</div><div class="trait-desc">Structured ITIL-aligned incident handling across hardware, OS, network and application layers.</div></div>
           <div class="trait-tag">40% faster resolution</div>
         </div>
         <div class="trait-row glass reveal">
-          <div class="trait-icon"><img class="icon3d" alt="🏗️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Building%20construction/3D/building_construction_3d.png" onerror="this.outerHTML='🏗️'"></div>
+          <div class="trait-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🏗️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Building%20construction/3D/building_construction_3d.png" onerror="this.outerHTML='🏗️'"></div>
           <div><div class="trait-title">Ownership mindset</div><div class="trait-desc">Executed a solo emergency UPS recovery at a live airport site — full accountability, no hand-holding.</div></div>
           <div class="trait-tag">Independent delivery</div>
         </div>
         <div class="trait-row glass reveal">
-          <div class="trait-icon"><img class="icon3d" alt="🤝" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Handshake/3D/handshake_3d.png" onerror="this.outerHTML='🤝'"></div>
+          <div class="trait-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🤝" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Handshake/3D/handshake_3d.png" onerror="this.outerHTML='🤝'"></div>
           <div><div class="trait-title">Stakeholder support</div><div class="trait-desc">Supported executives, medical staff and government officials across 500+ users at enterprise-grade care level.</div></div>
           <div class="trait-tag">500+ users</div>
         </div>
         <div class="trait-row glass reveal">
-          <div class="trait-icon"><img class="icon3d" alt="🔐" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Locked%20with%20key/3D/locked_with_key_3d.png" onerror="this.outerHTML='🔐'"></div>
+          <div class="trait-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🔐" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Locked%20with%20key/3D/locked_with_key_3d.png" onerror="this.outerHTML='🔐'"></div>
           <div><div class="trait-title">Security posture</div><div class="trait-desc">CCNA-certified with live endpoint security, patch management and threat isolation experience.</div></div>
           <div class="trait-tag">Embedded by default</div>
         </div>
@@ -404,7 +420,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Hospital/3D/hospital_3d.png" alt="" onerror="this.parentElement.textContent='🏥'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Hospital/3D/hospital_3d.png" alt="" onerror="this.parentElement.textContent='🏥'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">MMCH — primary site</div>
                     <div class="bd-card-tag">Al-Rayyan · 120–140 tickets/day</div>
@@ -416,7 +432,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Package/3D/package_3d.png" alt="" onerror="this.parentElement.textContent='📦'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Package/3D/package_3d.png" alt="" onerror="this.parentElement.textContent='📦'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">KMC — Korean Medical Center</div>
                     <div class="bd-card-tag">Lusail · Deployments &amp; inventory</div>
@@ -428,7 +444,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Magnifying%20glass%20tilted%20right/3D/magnifying_glass_tilted_right_3d.png" alt="" onerror="this.parentElement.textContent='🔍'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Magnifying%20glass%20tilted%20right/3D/magnifying_glass_tilted_right_3d.png" alt="" onerror="this.parentElement.textContent='🔍'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">TVH — The View Hospital</div>
                     <div class="bd-card-tag">Full serial number audit</div>
@@ -440,7 +456,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Office%20building/3D/office_building_3d.png" alt="" onerror="this.parentElement.textContent='🏢'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Office%20building/3D/office_building_3d.png" alt="" onerror="this.parentElement.textContent='🏢'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">Head office coordination</div>
                     <div class="bd-card-tag">PIH Elegancia Tower 18</div>
@@ -452,7 +468,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Wrench/3D/wrench_3d.png" alt="" onerror="this.parentElement.textContent='🔧'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Wrench/3D/wrench_3d.png" alt="" onerror="this.parentElement.textContent='🔧'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">Preventive maintenance</div>
                     <div class="bd-card-tag">Compliance-aligned patching</div>
@@ -468,8 +484,8 @@
             <cite>— IT Project Manager, Military Medical City Hospital</cite>
           </div>
           <div class="cert-actions" data-reveal="up" data-sp="6">
-            <a href="https://drive.google.com/file/d/161PTtyekepRwmq8FS3T45V5R6VXDTSya/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Experience Letter</a>
-            <a href="https://drive.google.com/uc?export=download&id=161PTtyekepRwmq8FS3T45V5R6VXDTSya" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/161PTtyekepRwmq8FS3T45V5R6VXDTSya/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Experience Letter</a>
+            <a href="https://drive.google.com/uc?export=download&id=161PTtyekepRwmq8FS3T45V5R6VXDTSya" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
 
@@ -514,8 +530,8 @@
                 <li>Coordinated with UBTJV project management on system continuity and site safety compliance</li>
               </ul>
               <div class="cert-actions">
-                <a href="https://drive.google.com/file/d/1e6qP1l1uAWGbfgaWT-PoCHeu5PA3BZeI/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View HIA Experience Certificate</a>
-                <a href="https://drive.google.com/uc?export=download&id=1e6qP1l1uAWGbfgaWT-PoCHeu5PA3BZeI" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+                <a href="https://drive.google.com/file/d/1e6qP1l1uAWGbfgaWT-PoCHeu5PA3BZeI/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View HIA Experience Certificate</a>
+                <a href="https://drive.google.com/uc?export=download&id=1e6qP1l1uAWGbfgaWT-PoCHeu5PA3BZeI" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
               </div>
             </div>
           </div>
@@ -532,7 +548,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Ticket/3D/ticket_3d.png" alt="" onerror="this.parentElement.textContent='🎫'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Ticket/3D/ticket_3d.png" alt="" onerror="this.parentElement.textContent='🎫'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">Enterprise ticketing &amp; ITSM</div>
                     <div class="bd-card-tag">120–140 tickets/day</div>
@@ -544,7 +560,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Briefcase/3D/briefcase_3d.png" alt="" onerror="this.parentElement.textContent='💼'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Briefcase/3D/briefcase_3d.png" alt="" onerror="this.parentElement.textContent='💼'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">Executive-level support</div>
                     <div class="bd-card-tag">C-suite priority</div>
@@ -556,7 +572,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Rotating%20light/3D/rotating_light_3d.png" alt="" onerror="this.parentElement.textContent='🚨'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Rotating%20light/3D/rotating_light_3d.png" alt="" onerror="this.parentElement.textContent='🚨'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">Incident escalation</div>
                     <div class="bd-card-tag">50–60 critical / peak</div>
@@ -568,7 +584,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Airplane/3D/airplane_3d.png" alt="" onerror="this.parentElement.textContent='✈️'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Airplane/3D/airplane_3d.png" alt="" onerror="this.parentElement.textContent='✈️'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">HIA expansion lead</div>
                     <div class="bd-card-tag">2 phases · Safety Award</div>
@@ -580,7 +596,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Globe%20with%20meridians/3D/globe_with_meridians_3d.png" alt="" onerror="this.parentElement.textContent='🌐'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Globe%20with%20meridians/3D/globe_with_meridians_3d.png" alt="" onerror="this.parentElement.textContent='🌐'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">Cross-subsidiary coverage</div>
                     <div class="bd-card-tag">4 subsidiaries</div>
@@ -592,7 +608,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Shopping%20cart/3D/shopping_cart_3d.png" alt="" onerror="this.parentElement.textContent='🛒'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Shopping%20cart/3D/shopping_cart_3d.png" alt="" onerror="this.parentElement.textContent='🛒'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">POS deployment — Aura Group</div>
                     <div class="bd-card-tag">Al Maha Island</div>
@@ -604,7 +620,7 @@
 
               <button type="button" class="bd-card" data-reveal="up" aria-expanded="false">
                 <div class="bd-card-top">
-                  <div class="bd-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Desktop%20computer/3D/desktop_computer_3d.png" alt="" onerror="this.parentElement.textContent='🖥️'"></div>
+                  <div class="bd-icon"><img loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Desktop%20computer/3D/desktop_computer_3d.png" alt="" onerror="this.parentElement.textContent='🖥️'"></div>
                   <div class="bd-card-titlewrap">
                     <div class="bd-card-title">UCC Saudi Arabia</div>
                     <div class="bd-card-tag">25 workstations</div>
@@ -620,8 +636,8 @@
             <cite>— IT Manager, Star Link – Power International Holding</cite>
           </div>
           <div class="cert-actions" data-reveal="up" data-sp="6">
-            <a href="https://drive.google.com/file/d/16Sm6njPJ4bA2mw7NlzwJW1Xa1I_Dpdnd/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Experience Letter</a>
-            <a href="https://drive.google.com/uc?export=download&id=16Sm6njPJ4bA2mw7NlzwJW1Xa1I_Dpdnd" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/16Sm6njPJ4bA2mw7NlzwJW1Xa1I_Dpdnd/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Experience Letter</a>
+            <a href="https://drive.google.com/uc?export=download&id=16Sm6njPJ4bA2mw7NlzwJW1Xa1I_Dpdnd" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
 
@@ -1059,9 +1075,9 @@
             <cite>— Mukarram Ahmed, Adjunct Faculty, Computer Engineering & Informatics, Middlesex University Dubai</cite>
           </div>
           <div class="cert-actions">
-            <a href="https://drive.google.com/file/d/17IYNcUbLLQfEJS0_4VtscE6xejH7p4XB/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="https://drive.google.com/uc?export=download&id=17IYNcUbLLQfEJS0_4VtscE6xejH7p4XB" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
-            <a href="https://drive.google.com/file/d/1N8q3F1iHs38fhDz8FI1teS1ZOXaQ6CYP/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Faculty Letter</a>
+            <a href="https://drive.google.com/file/d/17IYNcUbLLQfEJS0_4VtscE6xejH7p4XB/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="https://drive.google.com/uc?export=download&id=17IYNcUbLLQfEJS0_4VtscE6xejH7p4XB" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/1N8q3F1iHs38fhDz8FI1teS1ZOXaQ6CYP/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Faculty Letter</a>
           </div>
         </div>
         <div class="edu-card glass" data-reveal="depth">
@@ -1072,9 +1088,9 @@
             <cite>— Ashish Kumar Jha & Suresh Babu U, Aptech Qatar Computer Education</cite>
           </div>
           <div class="cert-actions">
-            <a href="https://drive.google.com/file/d/1J_d7bN2xAYlI33Uzp5YQPZ3kt8fFHamy/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="https://drive.google.com/uc?export=download&id=1J_d7bN2xAYlI33Uzp5YQPZ3kt8fFHamy" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
-            <a href="https://drive.google.com/file/d/1_xIdGWW2zvsfsGrag6hmhK33SiQsQBVa/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Letter</a>
+            <a href="https://drive.google.com/file/d/1J_d7bN2xAYlI33Uzp5YQPZ3kt8fFHamy/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="https://drive.google.com/uc?export=download&id=1J_d7bN2xAYlI33Uzp5YQPZ3kt8fFHamy" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/1_xIdGWW2zvsfsGrag6hmhK33SiQsQBVa/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Letter</a>
           </div>
         </div>
         <div class="edu-card glass" data-reveal="depth">
@@ -1099,81 +1115,81 @@
       <h2>Certificates &amp; training.</h2>
       <div class="cert-grid" data-stagger>
         <div class="cert-card glass" data-reveal="depth">
-          <div class="cert-top"><div class="cert-icon"><img class="icon3d" alt="📡" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Satellite%20antenna/3D/satellite_antenna_3d.png" onerror="this.outerHTML='📡'"></div><span class="cert-badge verified">Training</span></div>
+          <div class="cert-top"><div class="cert-icon"><img loading="lazy" decoding="async" class="icon3d" alt="📡" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Satellite%20antenna/3D/satellite_antenna_3d.png" onerror="this.outerHTML='📡'"></div><span class="cert-badge verified">Training</span></div>
           <div class="cert-title">CCNA Enterprise (course)</div>
           <div class="cert-issuer">Corvit Systems Peshawar</div>
           <div class="cert-category">Networking</div>
           <div class="cert-date">Aug – Nov 2025</div>
           <p class="cert-desc">Enterprise networking — routing, switching, VLANs and IP services, aligned with Cisco's CCNA 200-301 syllabus.</p>
           <div class="cert-actions">
-            <a href="https://drive.google.com/file/d/1jAvy9K836PHVtbM7t62TPv0kXfJ5r7kD/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="https://drive.google.com/uc?export=download&id=1jAvy9K836PHVtbM7t62TPv0kXfJ5r7kD" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/1jAvy9K836PHVtbM7t62TPv0kXfJ5r7kD/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="https://drive.google.com/uc?export=download&id=1jAvy9K836PHVtbM7t62TPv0kXfJ5r7kD" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
         <div class="cert-card glass" data-reveal="depth">
-          <div class="cert-top"><div class="cert-icon"><img class="icon3d" alt="☁️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Cloud/3D/cloud_3d.png" onerror="this.outerHTML='☁️'"></div><span class="cert-badge verified">Training</span></div>
+          <div class="cert-top"><div class="cert-icon"><img loading="lazy" decoding="async" class="icon3d" alt="☁️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Cloud/3D/cloud_3d.png" onerror="this.outerHTML='☁️'"></div><span class="cert-badge verified">Training</span></div>
           <div class="cert-title">Azure Administrator (AZ-104) — course</div>
           <div class="cert-issuer">Corvit Systems</div>
           <div class="cert-category">Cloud & Infrastructure</div>
           <div class="cert-date">Jun – Aug 2026</div>
           <p class="cert-desc">Microsoft Azure administration training — identity, storage, compute and networking, aligned with the AZ-104 syllabus.</p>
           <div class="cert-actions">
-            <a href="assets/AZURE.jpg" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="assets/AZURE.jpg" download class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="assets/AZURE.jpg" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="assets/AZURE.jpg" download class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
         <div class="cert-card glass" hidden data-pending="confirm" data-reveal="depth">
-          <div class="cert-top"><div class="cert-icon"><img class="icon3d" alt="⚙️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" onerror="this.outerHTML='⚙️'"></div></div>
+          <div class="cert-top"><div class="cert-icon"><img loading="lazy" decoding="async" class="icon3d" alt="⚙️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" onerror="this.outerHTML='⚙️'"></div></div>
           <div class="cert-title">ITIL 4 Foundation</div>
           <div class="cert-issuer">Axelos / PeopleCert</div>
           <div class="cert-category">ITSM / Process</div>
           <p class="cert-desc">ITIL-aligned incident, change and problem management — basic hands-on experience gained during the HIA project.</p>
         </div>
         <div class="cert-card glass" data-reveal="depth">
-          <div class="cert-top"><div class="cert-icon"><img class="icon3d" alt="🎓" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Graduation%20cap/3D/graduation_cap_3d.png" onerror="this.outerHTML='🎓'"></div><span class="cert-badge award">Distinction</span></div>
+          <div class="cert-top"><div class="cert-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🎓" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Graduation%20cap/3D/graduation_cap_3d.png" onerror="this.outerHTML='🎓'"></div><span class="cert-badge award">Distinction</span></div>
           <div class="cert-title">Advanced Diploma — ACCP</div>
           <div class="cert-issuer">Aptech Qatar</div>
           <div class="cert-category">Software Engineering</div>
           <div class="cert-date">Nov 2020 – Nov 2023</div>
           <p class="cert-desc">Software engineering programme covering networking, databases, development and enterprise infrastructure — completed with overall distinction.</p>
           <div class="cert-actions">
-            <a href="https://drive.google.com/file/d/1lOtZX9l8Gd1d_H60vcFm4SQUgHyQ5UAx/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="https://drive.google.com/uc?export=download&id=1lOtZX9l8Gd1d_H60vcFm4SQUgHyQ5UAx" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/1lOtZX9l8Gd1d_H60vcFm4SQUgHyQ5UAx/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="https://drive.google.com/uc?export=download&id=1lOtZX9l8Gd1d_H60vcFm4SQUgHyQ5UAx" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
         <div class="cert-card glass" data-reveal="depth">
-          <div class="cert-top"><div class="cert-icon"><img class="icon3d" alt="📦" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Package/3D/package_3d.png" onerror="this.outerHTML='📦'"></div><span class="cert-badge verified">Verified</span></div>
+          <div class="cert-top"><div class="cert-icon"><img loading="lazy" decoding="async" class="icon3d" alt="📦" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Package/3D/package_3d.png" onerror="this.outerHTML='📦'"></div><span class="cert-badge verified">Verified</span></div>
           <div class="cert-title">Odoo ERP Training</div>
           <div class="cert-issuer">Odoo &times; Middlesex University Dubai</div>
           <div class="cert-category">ERP / Professional Training</div>
           <div class="cert-date">2024</div>
           <p class="cert-desc">One-day Odoo ERP workshop — managing products, vendors and customer relationships for business growth.</p>
           <div class="cert-actions">
-            <a href="https://drive.google.com/file/d/1o6rcKtNQfHl7pH0Hyj0UqEkvFrloo18l/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="https://drive.google.com/uc?export=download&id=1o6rcKtNQfHl7pH0Hyj0UqEkvFrloo18l" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/1o6rcKtNQfHl7pH0Hyj0UqEkvFrloo18l/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="https://drive.google.com/uc?export=download&id=1o6rcKtNQfHl7pH0Hyj0UqEkvFrloo18l" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
         <div class="cert-card glass" data-reveal="depth">
-          <div class="cert-top"><div class="cert-icon"><img class="icon3d" alt="🏅" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sports%20medal/3D/sports_medal_3d.png" onerror="this.outerHTML='🏅'"></div><span class="cert-badge verified">Certificate</span></div>
+          <div class="cert-top"><div class="cert-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🏅" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sports%20medal/3D/sports_medal_3d.png" onerror="this.outerHTML='🏅'"></div><span class="cert-badge verified">Certificate</span></div>
           <div class="cert-title">Professional Certificate</div>
           <div class="cert-issuer">TechWiz4</div>
           <div class="cert-category">Professional Development</div>
           <p class="cert-desc">Professional certificate documentation from TechWiz4.</p>
           <div class="cert-actions">
-            <a href="https://drive.google.com/file/d/12sPuwNrd2uWZfszUXMKbOVUFOGgzD0Uo/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="https://drive.google.com/uc?export=download&id=12sPuwNrd2uWZfszUXMKbOVUFOGgzD0Uo" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/12sPuwNrd2uWZfszUXMKbOVUFOGgzD0Uo/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="https://drive.google.com/uc?export=download&id=12sPuwNrd2uWZfszUXMKbOVUFOGgzD0Uo" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
         <div class="cert-card glass" data-reveal="depth">
-          <div class="cert-top"><div class="cert-icon"><img class="icon3d" alt="🤝" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Handshake/3D/handshake_3d.png" onerror="this.outerHTML='🤝'"></div><span class="cert-badge verified">Volunteer</span></div>
+          <div class="cert-top"><div class="cert-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🤝" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Handshake/3D/handshake_3d.png" onerror="this.outerHTML='🤝'"></div><span class="cert-badge verified">Volunteer</span></div>
           <div class="cert-title">MDX Career Fair Certificate</div>
           <div class="cert-issuer">Middlesex University Dubai</div>
           <div class="cert-category">Volunteering</div>
           <div class="cert-date">2025</div>
           <p class="cert-desc">Recognised for volunteering support at the Middlesex University Dubai Career Fair.</p>
           <div class="cert-actions">
-            <a href="https://drive.google.com/file/d/1xMiN9VHdOAJg4D7CowQnaCYCyejLmay8/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
-            <a href="https://drive.google.com/uc?export=download&id=1xMiN9VHdOAJg4D7CowQnaCYCyejLmay8" class="cert-btn"><img class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
+            <a href="https://drive.google.com/file/d/1xMiN9VHdOAJg4D7CowQnaCYCyejLmay8/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="cert-btn primary"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Eye/3D/eye_3d.png" onerror="this.outerHTML='👁️'"> View Certificate</a>
+            <a href="https://drive.google.com/uc?export=download&id=1xMiN9VHdOAJg4D7CowQnaCYCyejLmay8" class="cert-btn"><img loading="lazy" decoding="async" class="icon3d-sm" alt="" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Down%20arrow/3D/down_arrow_3d.png" onerror="this.outerHTML='⬇️'"> Download</a>
           </div>
         </div>
       </div>
@@ -1187,19 +1203,19 @@
       <h2>Recognised in the field.</h2>
       <div class="award-grid">
         <div class="award-card glass reveal">
-          <div class="award-icon"><img class="icon3d" alt="🏆" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Trophy/3D/trophy_3d.png" onerror="this.outerHTML='🏆'"></div>
+          <div class="award-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🏆" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Trophy/3D/trophy_3d.png" onerror="this.outerHTML='🏆'"></div>
           <div class="award-title">Safety Excellence Award</div>
           <div class="award-org">Hamad International Airport</div>
           <p class="award-desc">Formally recognised by project management for exceptional dedication, safety compliance and technical performance during the HIA Expansion Project.</p>
         </div>
         <div class="award-card glass reveal">
-          <div class="award-icon"><img class="icon3d" alt="🛡️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Shield/3D/shield_3d.png" onerror="this.outerHTML='🛡️'"></div>
+          <div class="award-icon"><img loading="lazy" decoding="async" class="icon3d" alt="🛡️" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Shield/3D/shield_3d.png" onerror="this.outerHTML='🛡️'"></div>
           <div class="award-title">FIFA 2022 Cyber Attack Response</div>
           <div class="award-org">Power International Holding</div>
           <p class="award-desc">Led a 4-day incident response to an active cyber attack on PIH servers during the 2022 FIFA World Cup — zero permanent data loss.</p>
         </div>
         <div class="award-card glass reveal">
-          <div class="award-icon"><img class="icon3d" alt="⚡" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/High%20voltage/3D/high_voltage_3d.png" onerror="this.outerHTML='⚡'"></div>
+          <div class="award-icon"><img loading="lazy" decoding="async" class="icon3d" alt="⚡" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/High%20voltage/3D/high_voltage_3d.png" onerror="this.outerHTML='⚡'"></div>
           <div class="award-title">Emergency UPS Replacement</div>
           <div class="award-org">Hamad International Airport</div>
           <p class="award-desc">Sourced and deployed a replacement UPS solo after a 10kVA unit failed — preventing any infrastructure downtime.</p>
@@ -1428,6 +1444,6 @@
 </div>
 
 <script src="qrcode.min.js" defer></script>
-<script src="script.js?v=20261014" defer></script>
+<script src="script.js?v=20261020" defer></script>
 </body>
 </html>
