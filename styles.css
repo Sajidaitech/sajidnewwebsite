@@ -3998,3 +3998,8 @@ a.gv-row--link:hover{ border-color:rgba(var(--accent-rgb),.55); background:rgba(
 @media (min-width:720px){ .visitor-chip .vc-diff:not([hidden]){ display:inline; } }
 @media (max-width:430px){ .visitor-chip{ font-size:11px; } }
 @media (prefers-reduced-motion: reduce){ .visitor-chip{ transition:none; transform:none; } }
+
+/* [CSS-VC] spacing fix — the older `.contact-left .contact-shortcuts{margin-top:-4px}` rule cancelled the
+   vault's 4px bottom margin, so the icon buttons touched the panel. One explicit gap, same as above the QR card. */
+.contact-left .geo-vault{ margin-bottom:18px; }
+.contact-left .contact-shortcuts{ margin-top:0; }
