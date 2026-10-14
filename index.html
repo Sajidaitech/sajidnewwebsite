@@ -31,7 +31,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://www.sajidmk.com/#person","name":"Sajid Mehmood","jobTitle":"IT Graduate","url":"https://www.sajidmk.com/","image":"https://www.sajidmk.com/assets/photo.jpg","description":"IT graduate in Doha, Qatar with a BSc in Information Technology from Middlesex University Dubai, networking and Azure training, and a portfolio of Windows scripting tools.","address":{"@type":"PostalAddress","addressLocality":"Doha","addressCountry":"QA"},"knowsAbout":["Computer networking","Windows batch scripting","Information technology"],"alumniOf":{"@type":"CollegeOrUniversity","name":"Middlesex University Dubai"},"sameAs":["https://www.linkedin.com/in/imsajid-mehmood-1b3954333/"]},{"@type":"WebSite","@id":"https://www.sajidmk.com/#website","url":"https://www.sajidmk.com/","name":"Sajid Mehmood","publisher":{"@id":"https://www.sajidmk.com/#person"}},{"@type":"WebPage","@id":"https://www.sajidmk.com/#webpage","url":"https://www.sajidmk.com/","name":"Sajid Mehmood — IT Graduate | Doha, Qatar","isPartOf":{"@id":"https://www.sajidmk.com/#website"},"about":{"@id":"https://www.sajidmk.com/#person"},"description":"IT graduate in Doha, Qatar. BSc Information Technology (Middlesex University Dubai), networking and Azure training, and Windows scripting tools."}]}
 </script>
-<link rel="stylesheet" href="styles.css?v=20261013">
+<link rel="stylesheet" href="styles.css?v=20261014">
 </head>
 <body>
 <!--
@@ -142,7 +142,17 @@
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <div class="status-chip glass-clear glass-tight" data-reveal="depth" data-sp="1"><span class="ping"></span> Available — Doha, Qatar (GMT+3)</div>
+        <div class="chip-row">
+          <div class="status-chip glass-clear glass-tight" data-reveal="depth" data-sp="1"><span class="ping"></span> Available — Doha, Qatar (GMT+3)</div>
+          <!-- Visitor's OWN place, local time and weather — filled in by script.js [JS-31]; stays hidden until it has something true to show -->
+          <div class="status-chip visitor-chip glass-clear glass-tight" id="visitorChip" role="group" aria-label="Your local time and weather" hidden>
+            <svg class="vc-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+            <span class="vc-place" id="vcPlace"></span>
+            <span class="vc-time" id="vcTime"></span>
+            <span class="vc-wx" id="vcWx" hidden><span class="vc-wx-ico" aria-hidden="true"></span><span class="vc-wx-temp"></span><span class="sr-only vc-wx-label"></span></span>
+            <span class="vc-diff" id="vcDiff" hidden></span>
+          </div>
+        </div>
         <h1 data-reveal="up" data-sp="2">
           <span class="sr-only">Sajid Mehmood — IT graduate in Doha, Qatar. </span>
           <span>Sajid</span>
@@ -1285,7 +1295,7 @@
               </a>
               </div>
               <p class="gv-note">Prefer something else? <a href="#contactForm">Send a message with the form →</a></p>
-              <p class="gv-foot">Your country is read from your IP by a free lookup service in your browser. Nothing is saved.</p>
+              <p class="gv-foot">Your country and approximate city (for the local time and weather at the top) are read from your IP by free lookup services in your browser. Nothing is stored on my server.</p>
               <noscript><p class="gv-note" style="display:block">Enable JavaScript to see how to reach me, or use the message form.</p></noscript>
             </div>
 
@@ -1297,7 +1307,7 @@
               <a class="contact-pill contact-pill-icon" data-geo-contact="instagram" href="#contact" target="_blank" rel="noopener noreferrer" hidden aria-label="Sajid on Instagram" title="Instagram"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="#E4405F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".7" fill="#E4405F" stroke="none"/></svg></a>
             </div>
 
-            <div class="qr-card glass-clear" data-reveal="up" data-sp="6">
+            <div class="qr-card glass-clear" data-reveal="up" data-sp="6" hidden>
               <img class="qr-img" id="qrImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="QR code — scan to save Sajid's contact details" width="112" height="112" loading="lazy">
               <div class="qr-text">
                 <div class="qr-title">Scan to save my contact</div>
@@ -1418,6 +1428,6 @@
 </div>
 
 <script src="qrcode.min.js" defer></script>
-<script src="script.js?v=20261013" defer></script>
+<script src="script.js?v=20261014" defer></script>
 </body>
 </html>

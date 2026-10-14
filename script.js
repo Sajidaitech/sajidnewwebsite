@@ -29,6 +29,7 @@
    [JS-25]  TICKET TRIAGE DEMO
    [JS-26]  IT TOOLKIT — config, cards, details modal, download + hash check
    [JS-30]  REGION-AWARE CONTACT — email/phone only for approved regions (edit Instagram handle + country list there)
+   [JS-31]  VISITOR LOCAL STRIP — visitor's own place, time and weather in the hero (needs [JS-30])
    [JS-27]  TOOLKIT — custom script requests
    [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
    [JS-29]  FILE ORGANIZER PREVIEW — toolkit modal, mirrors the .bat rules
@@ -626,6 +627,9 @@ $$('[data-case]').forEach(card => {
    Local testing (only works on localhost / file://):
      index.html?geo=PK   → pretend to be in Pakistan
      index.html?geo=QA   → pretend to be in Qatar
+     index.html?geo=PK&city=Lahore&lat=31.52&lon=74.36   → also fake the city + weather
+   QR code: shown ONLY when the region is approved (same list as email/phone).
+   Every other result — including "couldn't verify" — hides the QR card.
    Honest limit: this is a privacy filter, not a lock. A VPN set to an
    allowed country will unlock it, and the encoded values are readable
    by someone who digs through this file.
@@ -654,37 +658,50 @@ $$('[data-case]').forEach(card => {
     ig:    document.getElementById('gvIgHandle')
   };
 
-  /* ---------- country lookup: three free providers, first answer wins ---------- */
+  /* a usable coordinate, or null */
+  const num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : null; };
+
+  /* ---------- country + city lookup: three free providers, first answer wins ----------
+     The first two also return the city and its coordinates (used by the local
+     time/weather strip, [JS-31]). The last is country-only: the safety net. */
   const PROVIDERS = [
-    { url:'https://free.freeipapi.com/api/json',      pick:d => d && d.countryCode },
-    { url:'https://api.country.is/',                  pick:d => d && d.country },
-    { url:'https://get.geojs.io/v1/ip/country.json',  pick:d => d && d.country }
+    { url:'https://free.freeipapi.com/api/json',  pick:d => d && { code:d.countryCode,  city:d.cityName, lat:d.latitude, lon:d.longitude } },
+    { url:'https://get.geojs.io/v1/ip/geo.json',  pick:d => d && { code:d.country_code, city:d.city,     lat:d.latitude, lon:d.longitude } },
+    { url:'https://api.country.is/',              pick:d => d && { code:d.country } }
   ];
-  function fetchCode(prov){
+  function fetchGeo(prov){
     const ctrl = ('AbortController' in window) ? new AbortController() : null;
     const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 3500);
     return fetch(prov.url, { signal: ctrl ? ctrl.signal : undefined, cache:'no-store' })
       .then(r => { if (!r.ok) throw new Error('bad status'); return r.json(); })
       .then(d => {
-        const c = String(prov.pick(d) || '').toUpperCase();
-        if (!/^[A-Z]{2}$/.test(c)) throw new Error('no code');
-        return c;
+        const g = prov.pick(d) || {};
+        const code = String(g.code || '').toUpperCase();
+        if (!/^[A-Z]{2}$/.test(code)) throw new Error('no code');
+        return { code, city:String(g.city || '').trim().slice(0, 60), lat:num(g.lat), lon:num(g.lon) };
       })
       .finally(() => clearTimeout(timer));
   }
   function lookup(){
-    return PROVIDERS.reduce((p, prov) => p.catch(() => fetchCode(prov)), Promise.reject(new Error('start')));
+    return PROVIDERS.reduce((p, prov) => p.catch(() => fetchGeo(prov)), Promise.reject(new Error('start')));
   }
 
   const isLocal = location.protocol === 'file:' || ['localhost','127.0.0.1','[::1]',''].includes(location.hostname);
-  const forced = isLocal ? String(new URLSearchParams(location.search).get('geo') || '').toUpperCase() : '';
-  let cached = '';
-  try { cached = sessionStorage.getItem('sm_geo') || ''; } catch (e) {}
+  const qs = isLocal ? new URLSearchParams(location.search) : null;
+  const forcedCode = qs ? String(qs.get('geo') || '').toUpperCase() : '';
+  const forced = /^[A-Z]{2}$/.test(forcedCode)
+    ? { code:forcedCode, city:String(qs.get('city') || '').slice(0, 60), lat:num(qs.get('lat')), lon:num(qs.get('lon')) }
+    : null;
+  let cached = null;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem('sm_geo2') || 'null');
+    if (saved && /^[A-Z]{2}$/.test(saved.code)) cached = saved;
+  } catch (e) {}
 
-  let codeP;
-  if (/^[A-Z]{2}$/.test(forced)) codeP = Promise.resolve(forced);
-  else if (/^[A-Z]{2}$/.test(cached)) codeP = Promise.resolve(cached);
-  else codeP = lookup().then(c => { try { sessionStorage.setItem('sm_geo', c); } catch (e) {} return c; });
+  let geoP;
+  if (forced) geoP = Promise.resolve(forced);
+  else if (cached) geoP = Promise.resolve(cached);
+  else geoP = lookup().then(g => { try { sessionStorage.setItem('sm_geo2', JSON.stringify(g)); } catch (e) {} return g; });
 
   const minScan = new Promise(r => setTimeout(r, (reduceMotion || cached || forced) ? 0 : 700));
 
@@ -740,7 +757,8 @@ $$('[data-case]').forEach(card => {
   }
 
   /* ---------- apply the result ---------- */
-  function finish(code){
+  function finish(geo){
+    const code = geo ? geo.code : '';
     const full = !!code && CONFIG.allow.includes(code);
     const mode = full ? 'full' : 'social';
     const email = full ? atob(CONFIG.e) : '';
@@ -771,13 +789,137 @@ $$('[data-case]').forEach(card => {
 
     window.SMContact = {
       ready: true, mode, code: code || '',
+      place: geo || null,   // { code, city, lat, lon } from the IP lookup, or null — used by [JS-31]
       details: () => full ? { email, phone } : null,
       instagram: IG_URL
     };
-    document.dispatchEvent(new CustomEvent('sm:geo', { detail:{ mode, code: code || '' } }));
+    document.dispatchEvent(new CustomEvent('sm:geo', { detail:{ mode, code: code || '', place: geo || null } }));
   }
 
-  Promise.all([codeP.catch(() => null), minScan]).then(r => finish(r[0]));
+  Promise.all([geoP.catch(() => null), minScan]).then(r => finish(r[0]));
+})();
+
+/* ==================================================================
+   [JS-31]  VISITOR LOCAL STRIP — visitor's own place, time and weather (hero)
+   ================================================================== */
+
+/* =================================================================
+   Shows the VISITOR's place, local time and weather in the hero,
+   beside (not instead of) the "Available — Doha, Qatar" chip — that
+   chip says where Sajid is based and has to stay true for everyone.
+   - Time: the visitor's own device clock + timezone. No network, always
+     right, and shown even if every lookup fails.
+   - Place: the same IP lookup as [JS-30] (city + country).
+   - Weather: Open-Meteo (free, no key), using the city's coordinates
+     rounded to ~11 km. Any failure simply hides the weather.
+   EDIT HERE:  SHOW_CITY = false  → country only (an IP can place a
+   visitor in a neighbouring city, so country is the safer label).
+================================================================= */
+(function visitorLocal(){
+  const SHOW_CITY = true;
+  const chip = document.getElementById('visitorChip');
+  if (!chip) return;
+  const elPlace = $('#vcPlace'), elTime = $('#vcTime'), elWx = $('#vcWx'), elDiff = $('#vcDiff');
+
+  let tz = '';
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+  let timeFmt = null;
+  try { timeFmt = new Intl.DateTimeFormat(undefined, { hour:'2-digit', minute:'2-digit', second:'2-digit' }); } catch (e) {}
+  const clock = () => { const d = new Date(); return timeFmt ? timeFmt.format(d) : d.toLocaleTimeString(); };
+  const regionName = code => { try { return new Intl.DisplayNames(['en'], { type:'region' }).of(code) || ''; } catch (e) { return ''; } };
+
+  /* "Asia/Karachi" → "Karachi" — only used when the IP lookup gave us nothing */
+  const tzCity = () => { const c = (tz.split('/').pop() || '').replace(/_/g, ' '); return /^(UTC|GMT|Etc)$/i.test(c) ? '' : c; };
+
+  function placeLabel(geo){
+    const country = geo && geo.code ? regionName(geo.code) : '';
+    const city = SHOW_CITY && geo ? geo.city : '';
+    if (city && country && city.toLowerCase() !== country.toLowerCase()) return city + ', ' + country;
+    return city || country || tzCity();
+  }
+
+  /* Qatar is UTC+3 all year (no daylight saving). */
+  function diffText(){
+    const d = -new Date().getTimezoneOffset() - 180;   // minutes the visitor is ahead of Doha
+    if (d === 0) return 'Same time as Doha';
+    const m = Math.abs(d), h = Math.floor(m / 60), r = m % 60;
+    const span = (h ? h + 'h' : '') + (r ? (h ? ' ' : '') + r + 'm' : '');
+    return 'Doha is ' + span + (d > 0 ? ' behind' : ' ahead');
+  }
+
+  /* Open-Meteo WMO weather codes → short label + emoji */
+  function describe(code, day){
+    if (code === 0) return day ? ['Clear', '\u2600\uFE0F'] : ['Clear', '\uD83C\uDF19'];
+    if (code === 1) return day ? ['Mostly clear', '\uD83C\uDF24\uFE0F'] : ['Mostly clear', '\uD83C\uDF19'];
+    if (code === 2) return day ? ['Partly cloudy', '\u26C5'] : ['Partly cloudy', '\u2601\uFE0F'];
+    if (code === 3) return ['Overcast', '\u2601\uFE0F'];
+    if (code === 45 || code === 48) return ['Fog', '\uD83C\uDF2B\uFE0F'];
+    if (code >= 51 && code <= 57) return ['Drizzle', '\uD83C\uDF26\uFE0F'];
+    if (code >= 61 && code <= 67) return ['Rain', '\uD83C\uDF27\uFE0F'];
+    if (code >= 71 && code <= 77) return ['Snow', '\u2744\uFE0F'];
+    if (code >= 80 && code <= 82) return ['Showers', '\uD83C\uDF26\uFE0F'];
+    if (code === 85 || code === 86) return ['Snow showers', '\uD83C\uDF28\uFE0F'];
+    if (code >= 95) return ['Thunderstorm', '\u26C8\uFE0F'];
+    return ['Weather', '\uD83C\uDF21\uFE0F'];
+  }
+
+  const WX_TTL = 15 * 60 * 1000;
+  function loadWeather(lat, lon, fahrenheit){
+    const la = lat.toFixed(1), lo = lon.toFixed(1);          // 0.1° ≈ 11 km: city-level, not street-level
+    const key = [la, lo, fahrenheit ? 'F' : 'C'].join(',');
+    try {
+      const c = JSON.parse(sessionStorage.getItem('sm_wx') || 'null');
+      if (c && c.k === key && Date.now() - c.t < WX_TTL) return Promise.resolve(c.v);
+    } catch (e) {}
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + la + '&longitude=' + lo +
+      '&current=temperature_2m,weather_code,is_day&timezone=auto' + (fahrenheit ? '&temperature_unit=fahrenheit' : '');
+    const ctrl = ('AbortController' in window) ? new AbortController() : null;
+    const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 4500);
+    return fetch(url, { signal: ctrl ? ctrl.signal : undefined })
+      .then(r => { if (!r.ok) throw new Error('bad status'); return r.json(); })
+      .then(d => {
+        const c = d && d.current;
+        if (!c || !Number.isFinite(c.temperature_2m)) throw new Error('no data');
+        const v = { temp: Math.round(c.temperature_2m), code: c.weather_code, day: c.is_day !== 0 };
+        try { sessionStorage.setItem('sm_wx', JSON.stringify({ k:key, t:Date.now(), v })); } catch (e) {}
+        return v;
+      })
+      .finally(() => clearTimeout(timer));
+  }
+
+  function showWeather(w, place, unit){
+    const d = describe(w.code, w.day);
+    $('.vc-wx-ico', elWx).textContent = d[1];
+    $('.vc-wx-temp', elWx).textContent = w.temp + '\u00B0' + unit;
+    $('.vc-wx-label', elWx).textContent = d[0] + (place ? ' in ' + place : '');
+    elWx.title = d[0];
+    elWx.hidden = false;
+  }
+
+  function start(){
+    const c = window.SMContact || {};
+    const geo = c.place || null;
+    const place = placeLabel(geo);
+
+    if (place) elPlace.textContent = place; else elPlace.hidden = true;
+    elTime.textContent = clock();
+    setInterval(() => { elTime.textContent = clock(); }, 1000);
+    elDiff.textContent = diffText();
+    elDiff.hidden = false;
+    chip.title = 'Your local time' + (geo && geo.lat != null ? ' and weather' : '') + ' \u2014 worked out in your browser';
+    chip.hidden = false;
+    requestAnimationFrame(() => chip.classList.add('is-in'));
+
+    if (geo && Number.isFinite(geo.lat) && Number.isFinite(geo.lon)) {
+      const f = ['US','BS','BZ','KY','PW','LR'].includes(geo.code);
+      loadWeather(geo.lat, geo.lon, f)
+        .then(w => showWeather(w, place, f ? 'F' : 'C'))
+        .catch(() => { /* weather is optional — no error text */ });
+    }
+  }
+
+  if (window.SMContact && window.SMContact.ready) start();
+  else document.addEventListener('sm:geo', start, { once:true });
 })();
 
 /* ==================================================================
@@ -1233,8 +1375,9 @@ $$('[data-case]').forEach(card => {
   const SITE = 'https://sajidmk.com';
   const X_URL = 'https://x.com/im_sajidmehmood';
 
-  /* The QR / vCard carry email + phone, so they are built only for approved
-     regions (see [JS-30]). Everyone else gets name + website + Instagram. */
+  /* The QR / vCard carry email + phone, so they exist only for approved
+     regions (see [JS-30]). Everywhere else the whole card stays hidden —
+     no QR, no vCard link — i.e. exactly the regions where email/phone are hidden. */
   card.hidden = true;
 
   /* Two versions on purpose:
@@ -1289,6 +1432,8 @@ $$('[data-case]').forEach(card => {
   }
 
   function build(){
+    const c = window.SMContact || {};
+    if (c.mode !== 'full') { card.hidden = true; return; }   // fail closed: unknown or unapproved region = no QR
     const t = vcardTexts();
 
     // Always works, no network dependency at all.

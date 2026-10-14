@@ -3971,3 +3971,30 @@ a.gv-row--link:hover{ border-color:rgba(var(--accent-rgb),.55); background:rgba(
   .gv-row--link .gv-val{ overflow-wrap:normal; white-space:nowrap; }
   .gv-row--link .gv-btn--go{ padding:7px 11px; }
 }
+
+/* ==================================================================
+   [CSS-VC]  VISITOR LOCAL STRIP — the visitor's own place, time and weather
+   Sits beside the "Available — Doha" chip in the hero (see script.js [JS-31]).
+   ================================================================== */
+.chip-row{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:24px; }
+.chip-row .status-chip{ margin-bottom:0; }
+
+.visitor-chip{
+  flex-wrap:wrap; row-gap:2px; column-gap:9px; max-width:100%;
+  border-radius:18px; color:var(--text-dim);
+  opacity:0; transform:translateY(4px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+.visitor-chip.is-in{ opacity:1; transform:none; }
+.visitor-chip .vc-pin{ width:13px; height:13px; flex:none; color:var(--accent); }
+.visitor-chip .vc-time{ color:var(--text); font-variant-numeric:tabular-nums; }
+.visitor-chip .vc-wx{ display:inline-flex; align-items:center; gap:5px; }
+.visitor-chip .vc-wx-ico{ font-size:14px; line-height:1; }
+.visitor-chip .vc-time::before,
+.visitor-chip .vc-wx::before,
+.visitor-chip .vc-diff::before{ content:'\00B7'; margin-right:9px; color:var(--text-faint); }
+/* the time-difference note is a desktop extra; phones keep the chip short */
+.visitor-chip .vc-diff{ display:none; color:var(--text-faint); }
+@media (min-width:720px){ .visitor-chip .vc-diff:not([hidden]){ display:inline; } }
+@media (max-width:430px){ .visitor-chip{ font-size:11px; } }
+@media (prefers-reduced-motion: reduce){ .visitor-chip{ transition:none; transform:none; } }
