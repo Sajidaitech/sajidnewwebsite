@@ -36,6 +36,10 @@ document.documentElement.classList.add('js-ready');
    [JS-27]  TOOLKIT — custom script requests
    [JS-28]  ACCENT SWITCHER — blue / violet / amber / rose (remembered)
    [JS-29]  FILE ORGANIZER PREVIEW — toolkit modal, mirrors the .bat rules
+   [JS-52]  CERTIFICATE HASH VERIFICATION — Verified pill + SHA-256 modal (edit CERT_HASHES there)
+   [JS-53]  TERMINAL EMULATOR — the whole site from a shell
+   [JS-54]  SKILLS RADAR — pure-SVG "orbit gauge" (concentric segmented rings) in #skills
+   [JS-55]  SECTION HEADINGS — continuous section numbering, word split, scroll-in trigger
    Toolkit tips: edit tools in TOOLKIT_TOOLS (SHA-256, size, version live there); social links in TOOLKIT_CONFIG.
    ================================================================== */
 
@@ -1562,7 +1566,7 @@ $$('[data-case]').forEach(card => {
       p.style.webkitBackdropFilter = bf;
       // At 0, drop the panel's own tinted background too, for full transparency —
       // otherwise let the CSS default (tinted glass) take back over.
-      p.style.background = isClear ? 'transparent' : '';
+      p.style.background = 'transparent';   /* glass is always fully transparent ([CSS-70]); the slider only sets blur */
     });
 
     // Keep the CSS Clear→Tinted token in step with the slider. Without this
@@ -2328,7 +2332,7 @@ $$('[data-case]').forEach(card => {
 })();
 
 /* ==================================================================
-   [JS-28]  ACCENT SWITCHER — lime / indigo / ruby / champagne + dark themes (remembered)
+   [JS-28]  ACCENT SWITCHER — accent colours only (no text colour, no glass tint); starts neutral, terminal `theme` command
    ================================================================== */
 
 (function accentSwitcher(){
@@ -2341,11 +2345,17 @@ $$('[data-case]').forEach(card => {
     indigo:    { a:[[108,123,255], [63,79,224],   [217,222,255]], t:[185,195,255] },
     ruby:      { a:[[255,77,109],  [217,30,67],   [255,194,206]], t:[255,160,180] },
     champagne: { a:[[232,213,163], [201,168,92],  [247,237,208]], t:[245,232,190] },
-    /* Dark themes: the swatch (dot) is the dark colour; panels are tinted with surface [r,g,b,alpha];
-       the accent used for highlights/text stays a light silver so it is readable on dark glass. */
-    charcoal: { a:[[198,206,216], [128,140,154], [232,237,243]], t:[236,240,245], dot:'#36454F', surface:[44,54,62,.72] },
-    graphite: { a:[[178,184,192], [108,114,122], [226,229,233]], t:[233,235,238], dot:'#5B6068', surface:[56,60,67,.70] },
-    onyx:     { a:[[228,228,232], [150,150,156], [246,246,248]], t:[246,246,248], dot:'#0A0A0B', surface:[5,5,7,.80] },
+    /* Dark glass themes: the swatch (dot) is the deep colour; panels are tinted with surface [r,g,b,alpha];
+       the accent stays a lighter tone of the same hue so highlights and text read clearly on dark glass. */
+    sapphire:  { a:[[91,174,245],  [47,134,214],  [207,230,251]], t:[224,240,255], dot:'#0A1930', surface:[10,25,48,.72] },
+    amethyst:  { a:[[167,139,250], [124,58,237],  [221,214,254]], t:[240,235,255], dot:'#1A1033', surface:[26,16,51,.74] },
+    oxblood:   { a:[[248,113,113], [185,28,28],   [254,202,202]], t:[255,235,235], dot:'#2A0A0E', surface:[42,10,14,.76] },
+    forest:    { a:[[52,211,153],  [5,150,105],   [167,243,208]], t:[224,245,235], dot:'#0A1A12', surface:[10,26,18,.74] },
+    bronze:    { a:[[251,191,36],  [180,83,9],    [253,230,138]], t:[255,245,225], dot:'#1F130A', surface:[31,19,10,.74] },
+    slate:     { a:[[148,163,184], [71,85,105],   [226,232,240]], t:[232,238,245], dot:'#1B232E', surface:[27,35,46,.72] },
+    plum:      { a:[[232,121,249], [162,28,175],  [245,208,254]], t:[250,230,255], dot:'#2B0A2E', surface:[43,10,46,.74] },
+    teal:      { a:[[45,212,191],  [13,148,136],  [153,246,228]], t:[224,250,245], dot:'#042F2E', surface:[4,47,46,.74] },
+    cobalt:    { a:[[96,165,250],  [37,99,235],   [191,219,254]], t:[230,240,255], dot:'#0A1A3A', surface:[10,26,58,.72] },
     white:  { a:[[255,255,255], [225,225,225], [255,255,255]], t:[255,255,255] },
     black:  { a:[[240,240,240], [200,200,200], [255,255,255]], t:[0,0,0], ink:'black' }
   };
@@ -2360,24 +2370,15 @@ $$('[data-case]').forEach(card => {
     set('--accent', hex(p[0]));        set('--accent-rgb', p[0].join(','));
     set('--accent-deep', hex(p[1]));   set('--accent-deep-rgb', p[1].join(','));
     set('--accent-light', hex(p[2]));  set('--accent-light-rgb', p[2].join(','));
-    /* text across the whole site */
-    set('--text-rgb', t);
-    set('--text', 'rgb(' + t + ')');
-    set('--text-dim', 'rgba(' + t + ',' + (black ? .82 : .88) + ')');
-    set('--text-faint', 'rgba(' + t + ',' + (black ? .68 : .74) + ')');
+    /* text colour is NOT set here any more: the dock's dots own it ([JS-50] applyTextColour) */
     /* glass edges pick up the colour (white theme keeps the original neutral edge) */
     if (name === 'white') { set('--glass-border', 'rgba(255,255,255,.18)'); set('--glass-border-bright', 'rgba(255,255,255,.55)'); }
     else if (black)       { set('--glass-border', 'rgba(0,0,0,.28)');       set('--glass-border-bright', 'rgba(0,0,0,.6)'); }
     else                  { set('--glass-border', 'rgba(' + p[0].join(',') + ',.34)'); set('--glass-border-bright', 'rgba(' + p[0].join(',') + ',.7)'); }
     set('--on-accent', black ? '#000' : '#06182B');
-    /* dark-surface themes tint every glass panel (CSS: html[data-dark] ...); other themes clear it */
-    if (th.surface) {
-      set('--surface-rgb', th.surface.slice(0,3).join(',')); set('--surface-a', String(th.surface[3]));
-      root.dataset.dark = '1';
-    } else {
-      root.style.removeProperty('--surface-rgb'); root.style.removeProperty('--surface-a');
-      delete root.dataset.dark;
-    }
+    /* glass is fully transparent: themes never tint panels ([CSS-70]) */
+    root.style.removeProperty('--surface-rgb'); root.style.removeProperty('--surface-a');
+    delete root.dataset.dark;
     root.dataset.theme = name;
     panels.forEach(el => el.classList.toggle('blur-ink', black));
     box.querySelectorAll('[data-accent]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.accent === name)));
@@ -2390,9 +2391,11 @@ $$('[data-case]').forEach(card => {
       try { localStorage.setItem('accentName', b.dataset.accent); } catch(e) {}
     });
   });
-  let saved = 'white';
-  try { saved = localStorage.getItem('accentName') || 'white'; } catch(e) {}
-  apply(saved);
+  /* The site always starts neutral (white accent). A previously saved colour theme is ignored and cleared so
+     nothing on the page turns purple/blue by itself; the terminal's `theme` command still works for the session. */
+  try { localStorage.removeItem('accentName'); } catch(e) {}
+  apply('white');
+  window.sajidApplyTheme = apply;   /* used by the terminal's `theme` command ([JS-53]) */
 })();
 
 /* ==================================================================
@@ -2474,7 +2477,7 @@ document.addEventListener('input', e => {
 })();
 
 
-/* ============ [JS-50] DISPLAY DOCK — right-edge capsule: unfold, live lens, sliding colour ring, bloom ============ */
+/* ============ [JS-50] DISPLAY DOCK — right-edge capsule: unfold, live lens, text-colour ring, bloom ============ */
 (function displayDock(){
   const dock = document.getElementById('focusSlider');
   const handle = document.getElementById('fxHandle');
@@ -2482,7 +2485,6 @@ document.addEventListener('input', e => {
   const closeBtn = document.getElementById('fxClose');
   const range = document.getElementById('heroFocusRange');
   const readout = document.getElementById('focusSliderReadout');
-  const picker = document.getElementById('accentPicker');
   const bloom = dock && dock.querySelector('.fx-bloom');
   if (!dock || !handle || !panel || !range) return;
 
@@ -2537,25 +2539,819 @@ document.addEventListener('input', e => {
   range.addEventListener('input', () => {
     syncLens();
     if (readout) { readout.classList.remove('tick'); void readout.offsetWidth; readout.classList.add('tick'); }
+    updatePreviewChip();
   });
   syncLens();                                           /* the saved blur was already restored by the focus-slider module above */
 
-  /* colour dots: ring slides to the chosen dot, bloom ripples out of it */
+  /* ---- live preview chip: blur mirrors the real slider ---- */
+  const previewLabel = document.getElementById('fxPreviewLabel');
+
+  function updatePreviewChip(){
+    const v = parseFloat(range.value) || 0;
+    /* the chip's own blur is scaled to 8px max so the 52×36 thumbnail
+       still shows a visible, un-destroyed crop — not the full 100px */
+    dock.style.setProperty('--fx-chip-blur', (v / 100 * 8).toFixed(2) + 'px');
+    if (previewLabel) {
+      let state, text;
+      if (v <= 5)       { state = 'crystal'; text = 'Crystal'; }
+      else if (v <= 30) { state = 'soft';    text = 'Soft'; }
+      else if (v <= 70) { state = 'blurred'; text = 'Blurred'; }
+      else              { state = 'frosted'; text = 'Frosted'; }
+      if (previewLabel.textContent !== text) previewLabel.textContent = text;
+      if (dock.dataset.fxState !== state) dock.dataset.fxState = state;
+    }
+  }
+  updatePreviewChip();
+
+  /* text-colour dots: ring slides to the chosen dot, bloom ripples out of it.
+     The dots set the text colour of the WHOLE site (--text* on <html>) — nothing else: no glass, no accent. */
+  const picker = document.getElementById('textColourPicker');
   if (picker) {
-    const dots = Array.from(picker.querySelectorAll('.accent-dot'));
+    const dots = Array.from(picker.querySelectorAll('.text-colour-dot'));
+    const STORAGE_KEY = 'sajid_dock_text_colour';
+    const VALID = ['white', 'black', 'sapphire', 'amethyst', 'amber', 'mint'];
+
     const syncRing = () => {
       const i = dots.findIndex(b => b.getAttribute('aria-pressed') === 'true');
       picker.style.setProperty('--sel', String(Math.max(0, i)));
     };
-    syncRing();
-    new MutationObserver(syncRing).observe(picker, { attributes: true, attributeFilter: ['aria-pressed'], subtree: true });
+    /* name -> [r,g,b] and the alpha steps of --text-dim / --text-faint */
+    const RGB = { white:[255,255,255], black:[0,0,0], sapphire:[127,184,240], amethyst:[196,165,245], amber:[245,194,107], mint:[143,229,192] };
+    const rootEl = document.documentElement;
+    function applyTextColour(name, persist){
+      if (!VALID.includes(name)) name = 'white';
+      const c = RGB[name].join(','), dark = name === 'black';
+      /* ONE set of variables on <html>: every piece of text on the site (and the dock) reads them */
+      rootEl.style.setProperty('--text-rgb', c);
+      rootEl.style.setProperty('--text', 'rgb(' + c + ')');
+      rootEl.style.setProperty('--text-dim', 'rgba(' + c + ',' + (dark ? .82 : .88) + ')');
+      rootEl.style.setProperty('--text-faint', 'rgba(' + c + ',' + (dark ? .66 : .74) + ')');
+      rootEl.dataset.textColour = name;
+      dock.dataset.textColour = name;
+      dots.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.textColour === name)));
+      syncRing();
+      if (persist) { try { localStorage.setItem(STORAGE_KEY, name); } catch (e) { /* ignore */ } }
+    }
+
     picker.addEventListener('click', e => {
-      const b = e.target.closest('.accent-dot');
-      if (!b || !bloom) return;
-      const pr = panel.getBoundingClientRect(), br = b.getBoundingClientRect();
-      bloom.style.setProperty('--bx', (br.left + br.width / 2 - pr.left) + 'px');
-      bloom.style.setProperty('--by', (br.top + br.height / 2 - pr.top) + 'px');
-      bloom.classList.remove('go'); void bloom.offsetWidth; bloom.classList.add('go');
+      const b = e.target.closest('.text-colour-dot');
+      if (!b) return;
+      applyTextColour(b.dataset.textColour, true);
+      if (bloom) {
+        const pr = panel.getBoundingClientRect(), br = b.getBoundingClientRect();
+        bloom.style.setProperty('--bx', (br.left + br.width / 2 - pr.left) + 'px');
+        bloom.style.setProperty('--by', (br.top + br.height / 2 - pr.top) + 'px');
+        bloom.classList.remove('go'); void bloom.offsetWidth; bloom.classList.add('go');
+      }
+    });
+
+    /* Tab reaches the dots; Arrow Up/Down moves between them; Enter/Space selects (native button) */
+    picker.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      const i = dots.indexOf(document.activeElement);
+      if (i === -1) return;
+      e.preventDefault();
+      dots[e.key === 'ArrowDown' ? (i + 1) % dots.length : (i - 1 + dots.length) % dots.length].focus();
+    });
+
+    let saved = 'white';
+    try { saved = localStorage.getItem(STORAGE_KEY) || 'white'; } catch (e) { /* ignore */ }
+    applyTextColour(saved, false);
+  }
+
+  updatePreviewChip();                                  /* match the slider on first paint */
+})();
+
+
+
+
+/* ==================================================================
+   [JS-52]  CERTIFICATE HASH VERIFICATION — "Verified" pill + SHA-256 modal
+   ================================================================== */
+
+/* =================================================================
+   Adds a small pill under the buttons of every certificate card. It opens
+   #verifyModal ([HTML-27]) showing the file's published SHA-256, so
+   anyone can check a downloaded copy hasn't been altered. Fully additive:
+   it only reads the same .cert-title text the viewer gate ([JS-19]) uses
+   and never touches the gate's code. Esc closes, Tab stays inside the
+   modal, focus goes back to the pill. Exposes window.sajidVerifyModal.
+================================================================= */
+(function certHashVerification(){
+  // EDIT: replace each REPLACE_ME with the real SHA-256 of the file.
+  // Get it on Windows with: certutil -hashfile <file> SHA256
+  const CERT_HASHES = {
+    'CCNA Enterprise (course)': { hash: 'REPLACE_ME', verified: '2026-10-15' },
+    'Azure Administrator (AZ-104) — course': { hash: 'REPLACE_ME', verified: '2026-10-15' },
+    'Advanced Diploma — ACCP': { hash: 'REPLACE_ME', verified: '2026-10-15' },
+    'Odoo ERP Training': { hash: 'REPLACE_ME', verified: '2026-10-15' },
+    'Professional Certificate': { hash: 'REPLACE_ME', verified: '2026-10-15' },
+    'MDX Career Fair Certificate': { hash: 'REPLACE_ME', verified: '2026-10-15' }
+  };
+
+  const modal = document.getElementById('verifyModal');
+  const panel = document.getElementById('verifyPanel');
+  const titleEl = document.getElementById('verifyTitle');
+  const hashBlock = document.getElementById('verifyHashBlock');
+  const hashEl = document.getElementById('verifyHash');
+  const dateEl = document.getElementById('verifyDate');
+  const pendingEl = document.getElementById('verifyPending');
+  const copyBtn = document.getElementById('verifyCopy');
+  const statusEl = document.getElementById('verifyStatus');
+  const closeBtn = document.getElementById('verifyCloseBtn');
+  if (!modal || !panel || !titleEl || !hashBlock || !hashEl || !dateEl || !pendingEl || !copyBtn || !statusEl || !closeBtn) return;
+
+  const CLOSE_FADE_MS = 250;                 // matches the .25s fade on .vgate-panel
+  const HASH_PATTERN = /^[a-f0-9]{64}$/i;    // a real SHA-256: 64 hex characters
+  let isOpen = false;
+  let returnFocusTo = null;
+  let hideTimer = 0;
+  let copyResetTimer = 0;
+
+  // A hash counts as published only if it really looks like a SHA-256.
+  // "REPLACE_ME" (or a typo) therefore shows "Certified record" instead of a "Verified · hash sealed" claim it can't back up.
+  const hasPublishedHash = entry => !!entry && HASH_PATTERN.test(String(entry.hash || '').trim());
+  const prefersReducedMotionNow = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- page scroll lock (same approach as the viewer gate, kept separate so [JS-19] stays untouched) ---------- */
+  let savedScrollY = 0;
+  function lockPageScroll(){
+    savedScrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.documentElement.classList.add('verify-open');
+  }
+  function unlockPageScroll(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.documentElement.classList.remove('verify-open');
+    window.scrollTo(0, savedScrollY);
+  }
+
+  /* ---------- clipboard — same fallback as copyText() in [JS-30] / [JS-26] ---------- */
+  function copyHashText(t){
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+    return new Promise((res, rej) => {
+      const ta = document.createElement('textarea');
+      ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? res() : rej(new Error('copy failed')); } catch (err) { rej(err); }
+      ta.remove();
     });
   }
+
+  function showCopyResult(ok){
+    clearTimeout(copyResetTimer);
+    statusEl.classList.toggle('is-error', !ok);
+    statusEl.textContent = ok ? 'Hash copied to clipboard.' : 'Copy failed — select the hash above and copy it manually.';
+    copyBtn.textContent = ok ? 'Copied ✓' : 'Copy hash';
+    copyBtn.focus({ preventScroll: true });   // the textarea fallback steals focus
+    copyResetTimer = setTimeout(() => { copyBtn.textContent = 'Copy hash'; statusEl.textContent = ''; statusEl.classList.remove('is-error'); }, 2000);
+  }
+
+  /* ---------- open / close ---------- */
+  function openVerifyModal(certTitle, trigger){
+    const entry = CERT_HASHES[certTitle];
+    if (!entry) return false;                 // not a certificate we know about
+    const published = hasPublishedHash(entry);
+
+    clearTimeout(hideTimer);                  // a quick re-open must not be hidden by the previous close
+    clearTimeout(copyResetTimer);
+    titleEl.textContent = certTitle;
+    panel.classList.toggle('is-pending', !published);
+    hashBlock.hidden = !published;
+    pendingEl.hidden = published;
+    const explainEl = document.getElementById('verifyExplain'); if (explainEl) explainEl.hidden = !published;   // the "how to compare" text only makes sense once a hash exists
+    hashEl.textContent = published ? String(entry.hash).trim() : '';
+    dateEl.textContent = published ? (entry.verified || 'not recorded') : '';
+    copyBtn.textContent = 'Copy hash';
+    statusEl.textContent = '';
+    statusEl.classList.remove('is-error');
+
+    if (isOpen) return true;                  // already showing: contents swapped, nothing else to do
+    isOpen = true;
+    returnFocusTo = trigger || document.activeElement;
+    lockPageScroll();
+    modal.hidden = false;
+    requestAnimationFrame(() => {
+      modal.classList.add('is-open');
+      (published ? copyBtn : closeBtn).focus({ preventScroll: true });
+    });
+    return true;
+  }
+
+  function closeVerifyModal(){
+    if (!isOpen) return;
+    isOpen = false;
+    modal.classList.remove('is-open');
+    unlockPageScroll();
+    const finishHide = () => { modal.hidden = true; };
+    if (prefersReducedMotionNow()) finishHide();
+    else hideTimer = setTimeout(finishHide, CLOSE_FADE_MS);
+    const target = returnFocusTo;
+    returnFocusTo = null;
+    if (target && target.isConnected && typeof target.focus === 'function') target.focus({ preventScroll: true });
+  }
+
+  /* ---------- focus trap: Tab / Shift+Tab loop inside the panel ---------- */
+  function trapTabKey(e){
+    const focusable = [...panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+      .filter(el => !el.disabled && el.getClientRects().length > 0);
+    if (!focusable.length) { e.preventDefault(); return; }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+    if (!panel.contains(active)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && active === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); }
+  }
+
+  /* ---------- the pills ---------- */
+  // 14px inline "seal" (scalloped rosette + tick). Same shape in both states; the label and border style tell them apart.
+  function shieldIconMarkup(published){
+    return '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+      '<path d="M12 2.5l2.3 1.6 2.8-.3 1.1 2.6 2.5 1.4-.5 2.8 1.2 2.6-1.9 2.1-.2 2.8-2.8.7-1.9 2.1L12 19.5l-2.6 1.4-1.9-2.1-2.8-.7-.2-2.8-1.9-2.1 1.2-2.6-.5-2.8 2.5-1.4 1.1-2.6 2.8.3L12 2.5z" opacity="' + (published ? '1' : '.85') + '"/>' +
+      '<path d="M8.6 12.2l2.3 2.3 4.5-4.6"/>' +
+      '</svg>';
+  }
+
+  function addVerifyPills(){
+    const section = document.getElementById('certifications');
+    if (!section) return;
+    section.querySelectorAll('.cert-card').forEach(card => {
+      if (card.querySelector('.cert-verify-pill')) return;      // never add twice
+      const titleNode = card.querySelector('.cert-title');
+      const actions = card.querySelector('.cert-actions');
+      if (!titleNode || !actions) return;                       // e.g. the hidden ITIL card has no buttons yet
+      const certTitle = titleNode.textContent.trim();
+      if (!Object.prototype.hasOwnProperty.call(CERT_HASHES, certTitle)) return;
+
+      const published = hasPublishedHash(CERT_HASHES[certTitle]);
+      const labelText = published ? 'Verified · hash sealed' : 'Certified record';
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      pill.className = 'cert-verify-pill' + (published ? '' : ' is-pending');
+      pill.setAttribute('aria-haspopup', 'dialog');
+      pill.setAttribute('aria-label', `${labelText} — view the integrity seal (SHA-256) details for ${certTitle}`);
+      pill.innerHTML = shieldIconMarkup(published);
+      const label = document.createElement('span');
+      label.textContent = labelText;
+      pill.appendChild(label);
+      pill.addEventListener('click', () => openVerifyModal(certTitle, pill));
+      actions.after(pill);
+    });
+  }
+
+  /* ---------- wiring ---------- */
+  modal.querySelectorAll('[data-verify-close]').forEach(el => el.addEventListener('click', closeVerifyModal));
+  copyBtn.addEventListener('click', () => {
+    const hash = hashEl.textContent;
+    if (!hash) return;
+    copyHashText(hash).then(() => showCopyResult(true), () => showCopyResult(false));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!isOpen) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeVerifyModal(); }
+    else if (e.key === 'Tab') trapTabKey(e);
+  });
+
+  addVerifyPills();
+
+  // For future use — Section 6's "Verify all" command can call these.
+  window.sajidVerifyModal = { open: openVerifyModal, close: closeVerifyModal };
+})();
+
+/* ==================================================================
+   [JS-53]  TERMINAL EMULATOR — the whole site from a shell
+   Edit TERM_FILES / SECTION_INFO below to change what the commands print.
+   Uses window.sajidApplyTheme ([JS-28]) and #heroFocusRange ([JS-22]).
+   Command history lives in memory only — nothing is stored.
+   ================================================================== */
+(function terminalEmulator(){
+  const out   = document.getElementById('termOut');
+  const input = document.getElementById('termInput');
+  const win   = document.querySelector('.term-window');
+  if (!out || !input || !win) return;
+
+  const PROMPT = 'sajid@portfolio:~$';
+  const THEME_NAMES = ['lime', 'indigo', 'ruby', 'champagne', 'sapphire', 'amethyst', 'oxblood', 'forest', 'bronze', 'slate', 'plum', 'teal', 'cobalt', 'white', 'black'];
+
+  /* "files" for ls / cat. Email and phone are region-gated on the site ([JS-30]),
+     so the vCard deliberately leaves them out. */
+  const TERM_FILES = {
+    'about.txt': 'IT graduate in Doha, Qatar. BSc Information Technology (2:1) from Middlesex University Dubai, Advanced Diploma in Software Engineering (Distinction) from Aptech Qatar. Looking to grow into IT support, networking and web roles.',
+    'skills.md': 'Windows batch scripting, Windows 10/11 maintenance, network connectivity troubleshooting, UPS & server power diagnostics, routing & switching (CCNA course), Azure administration (AZ-104 course), Microsoft 365, ITIL, ServiceNow, Jira, Kaspersky EDR, Odoo ERP',
+    'experience.log': [
+      '2026-10 → 2027-01  AI Technical Content Writing Intern · GAO Tek Inc (virtual, part-time)',
+      '2025-05 → 2025-08  IT Executive & Business Development · Al Tawkel Immigration Center, Dubai',
+      '2023-11 → 2024-02  IT Support Engineer · Elegancia Healthcare / MMCH, Al-Rayyan',
+      '2022-02 → 2023-11  IT Support Engineer · Star Link — PIH Group, Doha (airport project)',
+      '2021-05 → 2022-02  Customer Service Agent · Starlink (Ooredoo International), Qatar'
+    ].join('\n'),
+    'resume.pdf': '(binary file — try "view cv" instead)',
+    'contact.vcf': [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'FN:Sajid Mehmood',
+      'TITLE:IT Graduate',
+      'ADR;TYPE=WORK:;;;Doha;;;Qatar',
+      'URL:https://sajidmk.com',
+      'X-SOCIALPROFILE;TYPE=linkedin:https://linkedin.com/in/imsajid-mehmood-1b3954333',
+      'NOTE:Email and phone are shown in the Contact section for approved regions.',
+      'END:VCARD'
+    ].join('\n')
+  };
+
+  /* section commands: [summary line, anchor, label for the jump link] */
+  const SECTION_INFO = {
+    about:          ['IT graduate in Doha, Qatar — BSc IT (2:1), open to relocate across the GCC.', '#about', 'About'],
+    skills:         ['Studied & practised: CCNA and AZ-104 courses, Microsoft 365, ITIL, Windows scripting, troubleshooting.', '#skills', 'Skills'],
+    experience:     ['Five roles, most recent first — from customer service to hospital and airport IT support.', '#experience', 'Experience'],
+    education:      ['BSc IT (2:1), Middlesex University Dubai · Advanced Diploma in Software Engineering (Distinction), Aptech Qatar.', '#education', 'Education'],
+    certifications: ['CCNA and AZ-104 courses, ITIL 4 Foundation, Aptech ACCP, Odoo ERP — with SHA-256 verification.', '#certifications', 'Certifications'],
+    projects:       ['Sajid IT Toolkit, network connectivity troubleshooting, UPS & server power diagnostics.', '#projects', 'Projects'],
+    contact:        ['Doha, Qatar · open across the GCC · email and phone appear in the Contact section for approved regions.', '#contact', 'Contact']
+  };
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const cmdHistory = [];
+  let hIdx = 0, draft = '';
+
+  /* ---------- output helpers ---------- */
+  function toBottom(){ out.scrollTop = out.scrollHeight; }
+  function println(text, cls){
+    const s = document.createElement('span');
+    s.className = 'term-line' + (cls ? ' ' + cls : '');
+    s.textContent = text;             // textContent, never innerHTML: typed text can't inject markup
+    out.appendChild(s);
+    while (out.childElementCount > 500) out.firstElementChild.remove();
+    toBottom();
+    return s;
+  }
+  function echoLine(raw){
+    const s = document.createElement('span');
+    s.className = 'term-line';
+    const p = document.createElement('span');
+    p.className = 'term-ok';
+    p.textContent = PROMPT + ' ';
+    s.appendChild(p);
+    s.appendChild(document.createTextNode(raw));
+    out.appendChild(s);
+    toBottom();
+  }
+  function linkLine(href, label){
+    const s = document.createElement('span');
+    s.className = 'term-line';
+    const a = document.createElement('a');
+    a.className = 'term-link';
+    a.href = href;
+    a.textContent = '→ scroll to ' + label;
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
+    });
+    s.appendChild(a);
+    out.appendChild(s);
+    toBottom();
+  }
+  function section(key){
+    const info = SECTION_INFO[key];
+    println(info[0]);
+    linkLine(info[1], info[2]);
+  }
+  const row = (cmd, desc) => '  ' + cmd.padEnd(20) + desc;
+
+  /* ---------- commands ---------- */
+  const COMMANDS = {
+    help(){
+      println('Commands', 'term-ok');
+      println(row('help', 'show this list'));
+      println(row('about', 'who I am'));
+      println(row('skills', 'what I work with'));
+      println(row('experience', 'five roles, newest first'));
+      println(row('education', 'degrees and diplomas'));
+      println(row('certifications', 'courses and credentials'));
+      println(row('projects', 'things I built'));
+      println(row('contact', 'how to reach me'));
+      println(row('whoami', 'one-line answer'));
+      println(row('ls', 'list files'));
+      println(row('cat <file>', 'read a file'));
+      println(row('theme <name>', THEME_NAMES.join(', ')));
+      println(row('blur <0-100>', 'glass blur, in px'));
+      println(row('date', 'time in Doha'));
+      println(row('echo <text>', 'repeat after me'));
+      println(row('clear', 'empty the screen'));
+      println('Tab completes · ↑ / ↓ browse history', 'term-muted');
+    },
+    about(){ section('about'); },
+    skills(){ section('skills'); },
+    experience(){ section('experience'); },
+    education(){ section('education'); },
+    certifications(){ section('certifications'); },
+    projects(){ section('projects'); },
+    contact(){ section('contact'); },
+    whoami(){ println('sajid — IT graduate · Doha, Qatar', 'term-ok'); },
+    clear(){ out.textContent = ''; },
+    theme(arg){
+      const name = arg.toLowerCase();
+      if (!name) {
+        println('usage: theme <name>', 'term-warn');
+        println('themes: ' + THEME_NAMES.join(', '), 'term-muted');
+        return;
+      }
+      if (THEME_NAMES.indexOf(name) === -1) {
+        println('theme: unknown theme "' + arg + '"', 'term-err');
+        println('themes: ' + THEME_NAMES.join(', '), 'term-muted');
+        return;
+      }
+      if (typeof window.sajidApplyTheme !== 'function') {
+        println('theme: the theme switcher is not available on this page', 'term-err');
+        return;
+      }
+      window.sajidApplyTheme(name);
+      println('theme → ' + name, 'term-ok');
+    },
+    blur(arg){
+      const slider = document.getElementById('heroFocusRange');
+      if (!slider) { println('blur: the focus slider is not available on this page', 'term-err'); return; }
+      const n = arg === '' ? NaN : Number(arg);
+      if (!Number.isFinite(n) || n < 0 || n > 100) { println('usage: blur <0-100>', 'term-warn'); return; }
+      slider.value = String(n);
+      slider.dispatchEvent(new Event('input', { bubbles: true }));   // the existing slider logic does the rest
+      println('blur → ' + n + 'px', 'term-ok');
+    },
+    sudo(){
+      const ref = String(Math.floor(Math.random() * 90000) + 10000);
+      println('Nice try. This incident has been logged. (Reference: SD-' + ref + ')', 'term-warn');
+    },
+    date(){
+      const fmt = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Qatar', weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      });
+      println(fmt.format(new Date()) + ' · Doha (UTC+3)');
+    },
+    echo(arg){ println(arg); },
+    ls(){ println(Object.keys(TERM_FILES).join('  ')); },
+    cat(arg){
+      if (!arg) { println('usage: cat <file>', 'term-warn'); return; }
+      if (Object.prototype.hasOwnProperty.call(TERM_FILES, arg)) println(TERM_FILES[arg]);
+      else println('cat: ' + arg + ': No such file or directory', 'term-err');
+    }
+  };
+  const COMMAND_NAMES = Object.keys(COMMANDS);
+
+  function runCommand(raw){
+    const text = raw.trim();
+    if (!text) return;
+    const cmd = text.split(/\s+/)[0].toLowerCase();
+    const arg = text.slice(cmd.length).trim();
+    if (!Object.prototype.hasOwnProperty.call(COMMANDS, cmd)) {
+      println('command not found: ' + cmd + " — type 'help' for a list.", 'term-err');
+      return;
+    }
+    try { COMMANDS[cmd](arg); }
+    catch (err) { println(cmd + ': something went wrong', 'term-err'); }
+  }
+
+  /* ---------- Tab completion ---------- */
+  function commonPrefix(list){
+    let p = list[0];
+    list.forEach(s => { while (s.indexOf(p) !== 0) p = p.slice(0, -1); });
+    return p;
+  }
+  function complete(){
+    const v = input.value;
+    const words = v.trim().split(/\s+/).filter(Boolean);
+    const trailing = /\s$/.test(v);
+    let pool, prefix, head;
+    if (!words.length) return;
+    if (words.length === 1 && !trailing) {            // completing the command itself
+      pool = COMMAND_NAMES; prefix = words[0]; head = '';
+    } else if ((words.length === 1 && trailing) || (words.length === 2 && !trailing)) {   // completing its argument
+      const c = words[0].toLowerCase();
+      pool = c === 'cat' ? Object.keys(TERM_FILES) : (c === 'theme' ? THEME_NAMES : null);
+      if (!pool) return;
+      prefix = trailing ? '' : words[1];
+      head = words[0] + ' ';
+    } else return;
+    const lower = prefix.toLowerCase();
+    const matches = pool.filter(x => x.toLowerCase().indexOf(lower) === 0);
+    if (!matches.length) return;
+    if (matches.length === 1) { input.value = head + matches[0] + (head ? '' : ' '); return; }
+    const cp = commonPrefix(matches);
+    if (cp.length > prefix.length) input.value = head + cp;
+    else println(matches.join('  '), 'term-muted');   // nothing more to fill in: show the candidates
+  }
+
+  /* ---------- keyboard ---------- */
+  input.addEventListener('keydown', e => {
+    if (e.isComposing) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const raw = input.value;
+      echoLine(raw);
+      if (raw.trim() && cmdHistory[cmdHistory.length - 1] !== raw) cmdHistory.push(raw);
+      input.value = '';
+      hIdx = cmdHistory.length; draft = '';
+      runCommand(raw);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!cmdHistory.length || hIdx === 0) return;
+      if (hIdx === cmdHistory.length) draft = input.value;
+      hIdx--;
+      input.value = cmdHistory[hIdx];
+      input.setSelectionRange(input.value.length, input.value.length);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (hIdx >= cmdHistory.length) return;
+      hIdx++;
+      input.value = hIdx === cmdHistory.length ? draft : cmdHistory[hIdx];
+      input.setSelectionRange(input.value.length, input.value.length);
+    } else if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      complete();
+    }
+  });
+
+  /* clicking anywhere in the window focuses the input (but never breaks a text selection or a link click) */
+  win.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    const sel = window.getSelection && window.getSelection();
+    if (sel && String(sel).length) return;
+    input.focus({ preventScroll: true });
+  });
+
+  println("Welcome. Type 'help' to list commands.", 'term-muted');
+})();
+
+/* ==================================================================
+   [JS-54]  SKILLS RADAR — pure-SVG "orbit gauge" (concentric segmented rings) in #skills
+   ================================================================== */
+
+// EDIT: one entry per axis. certified = backed by a certificate
+// or published proof on this site.
+const RADAR_AXES = [
+  { key: 'networking',  label: 'Networking',    value: 4, certified: true,
+    note: 'CCNA-aligned course + hands-on IDF work' },
+  { key: 'windows',     label: 'Windows',       value: 5, certified: true,
+    note: '5 years of hands-on enterprise support' },
+  { key: 'cloud',       label: 'Cloud (Azure)', value: 3, certified: false,
+    note: 'AZ-104-aligned course, not yet certified' },
+  { key: 'itsm',        label: 'ITSM',          value: 4, certified: true,
+    note: 'ManageEngine daily + ITIL-aligned' },
+  { key: 'scripting',   label: 'Scripting',     value: 4, certified: true,
+    note: '5 published .bat tools on this site' },
+  { key: 'security',    label: 'Security',      value: 3, certified: false,
+    note: 'Kaspersky EDR deployment, incident response' }
+];
+
+(function skillsRadar(){
+  const host   = document.getElementById('skillsRadar');
+  const toggle = document.getElementById('radarCertToggle');
+  if (!host || !RADAR_AXES.length) return;
+
+  /* "Orbit gauge": one concentric ring per skill, swept clockwise from 12 o'clock over 270°.
+     Each ring is 5 segments (= 5 levels). Solid bars = certified / published proof,
+     dotted bars = learning. A numbered node caps each ring; the core shows the average level. */
+  const NS = 'http://www.w3.org/2000/svg';
+  const W = 460, CX = W / 2, CY = W / 2;
+  const R0 = 196, STEP = 28, SW = 15;                 /* outer radius, ring pitch, bar thickness */
+  const LEVELS = 5, MAX = 5, SWEEP = 270;             /* degrees covered by a full ring */
+  const STORE_KEY = 'sajid_radar_cert_only';
+  const n = RADAR_AXES.length;
+
+  const rad  = d => d * Math.PI / 180;
+  const fmt  = v => v.toFixed(2);
+  const polar = (r, deg) => [CX + r * Math.cos(rad(deg - 90)), CY + r * Math.sin(rad(deg - 90))];   /* 0° = 12 o'clock */
+  const arc  = (r, d0, d1) => {
+    const [x0, y0] = polar(r, d0), [x1, y1] = polar(r, d1);
+    return `M${fmt(x0)} ${fmt(y0)}A${r} ${r} 0 ${d1 - d0 > 180 ? 1 : 0} 1 ${fmt(x1)} ${fmt(y1)}`;
+  };
+  const mk = (name, attrs, parent) => {
+    const e = document.createElementNS(NS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+
+  /* ---------- build the SVG ---------- */
+  const svg = mk('svg', { viewBox: `0 0 ${W} ${W}`, role: 'group', 'aria-label': 'Skills orbit gauge' });
+  const SEG = SWEEP / LEVELS;                          /* 54° per level */
+
+  const groups = RADAR_AXES.map((a, i) => {
+    const v  = Math.max(0, Math.min(MAX, a.value));
+    const r  = R0 - i * STEP;
+    const capA = (SW / 2) / r * 180 / Math.PI;         /* angle eaten by a round cap, so bars never touch */
+    const gap  = 2.2;                                  /* extra breathing room between bars (degrees) */
+    const g = mk('g', { class: 'radar-axis', 'data-certified': String(!!a.certified), style: `--i:${i}` }, svg);
+
+    /* wide invisible band: easy hover target for the whole ring */
+    mk('path', { d: arc(r, 0, SWEEP), class: 'radar-hit' }, g);
+
+    for (let l = 0; l < LEVELS; l++) {
+      const s0 = l * SEG + capA + gap / 2, s1 = (l + 1) * SEG - capA - gap / 2;
+      mk('path', { d: arc(r, s0, s1), class: 'radar-track', style: `--d:${i * 5 + l}` }, g);
+      const frac = Math.max(0, Math.min(1, v - l));
+      if (frac > 0) {
+        const e1 = s0 + (s1 - s0) * frac;
+        mk('path', { d: arc(r, s0, Math.max(e1, s0 + 0.01)), class: 'radar-fill', style: `--d:${i * 5 + l}` }, g);
+      }
+    }
+
+    /* node at the end of the filled part */
+    const lv = Math.max(0, Math.ceil(v) - 1), ls0 = lv * SEG + capA + gap / 2, ls1 = (lv + 1) * SEG - capA - gap / 2;
+    const endDeg = v > 0 ? ls0 + (ls1 - ls0) * (v - lv) : capA;
+    const [vx, vy] = polar(r, endDeg);
+    const node = mk('g', { class: 'radar-node', transform: `translate(${fmt(vx)} ${fmt(vy)})` }, g);
+    const dot = mk('circle', {
+      r: 11, class: 'radar-dot', tabindex: '0', role: 'button',
+      'aria-label': `${a.label} — ${v} of ${MAX} — ${a.certified ? 'Certified' : 'Not yet certified'}`
+    }, node);
+    const num = mk('text', { class: 'radar-num', 'text-anchor': 'middle', y: 3.8 }, node);
+    num.textContent = String(v);
+
+    /* label sits in the empty top-left quadrant, right-aligned against the 12 o'clock start line */
+    const label = mk('text', { x: CX - 12, y: CY - r + 4.2, 'text-anchor': 'end', class: 'radar-label' }, g);
+    label.textContent = a.label;
+    return { g, dot, vx, vy, a, v };
+  });
+
+  /* core: average level (of what is currently shown) */
+  const core = mk('g', { class: 'radar-core' }, svg);
+  const coreNum = mk('text', { x: CX, y: CY + 6, 'text-anchor': 'middle', class: 'radar-core-num' }, core);
+  const coreCap = mk('text', { x: CX, y: CY + 22, 'text-anchor': 'middle', class: 'radar-core-cap' }, core);
+  coreCap.textContent = 'AVG LEVEL';
+  function updateCore(certOnly) {
+    const list = groups.filter(x => !certOnly || x.a.certified);
+    const avg = list.length ? list.reduce((s, x) => s + x.v, 0) / list.length : 0;
+    coreNum.textContent = avg.toFixed(1);
+  }
+  updateCore(false);
+
+  host.appendChild(svg);
+
+  /* draw-in when it scrolls into view (skipped for reduced motion / no IntersectionObserver) */
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    svg.classList.add('radar-pre');
+    new IntersectionObserver((es, io) => {
+      if (es.some(e => e.isIntersecting)) { svg.classList.add('radar-in'); io.disconnect(); }
+    }, { threshold: .25 }).observe(host);
+  }
+
+  /* ---------- tooltip ---------- */
+  const tip = document.createElement('div');
+  tip.className = 'radar-tip';
+  tip.setAttribute('role', 'tooltip');
+  host.appendChild(tip);
+  let current = null;
+
+  function fillTip(item) {
+    tip.textContent = '';
+    const head = document.createElement('div'); head.className = 'radar-tip-head';
+    const name = document.createElement('b');   name.textContent = item.a.label;
+    const val  = document.createElement('span'); val.className = 'radar-tip-val'; val.textContent = `${item.v}/${MAX}`;
+    head.append(name, val);
+    const badge = document.createElement('span');
+    badge.className = 'radar-badge' + (item.a.certified ? ' is-cert' : '');
+    badge.textContent = item.a.certified ? 'Certified' : 'Not yet certified';
+    const note = document.createElement('div'); note.className = 'radar-tip-note'; note.textContent = item.a.note || '';
+    tip.append(head, badge, note);
+  }
+
+  function placeTip(item) {
+    const sr = svg.getBoundingClientRect(), hr = host.getBoundingClientRect();
+    const k = sr.width / W;
+    const x = (sr.left - hr.left) + item.vx * k;
+    const y = (sr.top  - hr.top)  + item.vy * k;
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let left = Math.max(0, Math.min(x - w / 2, hr.width - w));
+    let top  = y - h - 14;
+    if (top < 0) top = y + 16;                                     /* no room above → flip below */
+    tip.style.left = left + 'px';
+    tip.style.top  = top + 'px';
+  }
+
+  function show(item) {
+    if (current && current !== item) hide();
+    current = item;
+    item.g.classList.add('is-active'); svg.classList.add('has-active');
+    fillTip(item);
+    placeTip(item);
+    tip.classList.add('is-on');
+  }
+  function hide() {
+    if (!current) return;
+    current.g.classList.remove('is-active'); svg.classList.remove('has-active');
+    tip.classList.remove('is-on');
+    current = null;
+  }
+
+  groups.forEach(item => {
+    item.g.addEventListener('mouseenter', () => show(item));
+    item.g.addEventListener('mouseleave', hide);
+    item.dot.addEventListener('focus', () => show(item));
+    item.dot.addEventListener('blur', hide);
+    item.dot.addEventListener('click', () => show(item));          /* tap on touch screens */
+    item.dot.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); });
+  });
+  document.addEventListener('pointerdown', e => { if (!host.contains(e.target)) hide(); });
+  window.addEventListener('resize', () => { if (current) placeTip(current); });
+
+  /* ---------- "Show only certified" toggle ---------- */
+  if (toggle) {
+    /* Added here, not in the HTML: the Arsenal tab switcher ([JS-15]) binds to every
+       .arsenal-tab present when it runs, and this button must not join that group.
+       The class only borrows the existing pill look; .active mirrors aria-pressed. */
+    toggle.classList.add('arsenal-tab');
+
+    const apply = on => {
+      svg.classList.toggle('radar-hide-noncert', on);
+      updateCore(on);
+      toggle.setAttribute('aria-pressed', String(on));
+      toggle.classList.toggle('active', on);
+    };
+    let on = false;
+    try { on = localStorage.getItem(STORE_KEY) === '1'; } catch (e) { /* storage unavailable */ }
+    apply(on);
+    toggle.addEventListener('click', () => {
+      on = !on;
+      apply(on);
+      try { localStorage.setItem(STORE_KEY, on ? '1' : '0'); } catch (e) { /* ignore */ }
+    });
+  }
+})();
+
+/* ==================================================================
+   [JS-55]  SECTION HEADINGS — continuous section numbering, word split, scroll-in trigger
+   Pairs with [CSS-69] "SECTION HEADINGS". Splits each section h2 into
+   words (text content is unchanged, so [JS-09]'s mirror stays correct)
+   and adds .sh-in to headings and labels as they enter the viewport.
+   ================================================================== */
+(function sectionHeadings(){
+  /* Continuous 01, 02, 03… across the sections that are actually visible.
+     Hidden/pending sections are skipped, so there are no gaps; re-runs if one is revealed. */
+  function numberSections(){
+    let n = 0;
+    $$('.section').forEach(sec => {
+      const label = sec.querySelector('.section-label');
+      if (!label) return;
+      if (sec.hidden || sec.closest('[hidden]')) {
+        label.removeAttribute('data-sec');
+        const h = label.nextElementSibling;
+        if (h) h.removeAttribute('data-sec');
+        return;
+      }
+      const num = String(++n).padStart(2, '0');
+      label.dataset.sec = num;
+      const h = label.nextElementSibling;
+      if (h && h.tagName === 'H2') h.dataset.sec = num;
+    });
+  }
+  numberSections();
+  if ('MutationObserver' in window) {
+    new MutationObserver(numberSections)
+      .observe(document.body, { subtree: true, attributes: true, attributeFilter: ['hidden'] });
+  }
+
+  const heads  = $$('.section h2, .contact-panel h2');
+  const labels = $$('.section-label');
+
+  heads.forEach(h => {
+    if (h.children.length) return;                       /* only plain-text headings */
+    const words = h.textContent.trim().split(/\s+/);
+    h.textContent = '';
+    words.forEach((w, i) => {
+      const outer = document.createElement('span'); outer.className = 'sh-w';
+      const inner = document.createElement('span'); inner.className = 'sh-wi';
+      inner.style.setProperty('--i', i);
+      inner.textContent = w;
+      outer.appendChild(inner);
+      h.appendChild(outer);
+      if (i < words.length - 1) h.appendChild(document.createTextNode(' '));
+    });
+    h.classList.add('sh-split');
+  });
+  labels.forEach(l => l.classList.add('sh-pre'));
+
+  const targets = [...$$('.sh-split'), ...labels];
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    targets.forEach(t => t.classList.add('sh-in'));
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('sh-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: .35, rootMargin: '0px 0px -6% 0px' });
+  targets.forEach(t => io.observe(t));
 })();

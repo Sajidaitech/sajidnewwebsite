@@ -29,12 +29,12 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preload" href="assets/bg-landscape.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="assets/photo.jpg" as="image" fetchpriority="high">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"></noscript>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://www.sajidmk.com/#person","name":"Sajid Mehmood","jobTitle":"IT Graduate","url":"https://www.sajidmk.com/","image":"https://www.sajidmk.com/assets/photo.jpg","description":"IT graduate in Doha, Qatar with a BSc in Information Technology from Middlesex University Dubai, networking and Azure training, and a portfolio of Windows scripting tools.","address":{"@type":"PostalAddress","addressLocality":"Doha","addressCountry":"QA"},"knowsAbout":["Computer networking","Windows batch scripting","Information technology"],"alumniOf":{"@type":"CollegeOrUniversity","name":"Middlesex University Dubai"},"sameAs":["https://www.linkedin.com/in/imsajid-mehmood-1b3954333/"]},{"@type":"WebSite","@id":"https://www.sajidmk.com/#website","url":"https://www.sajidmk.com/","name":"Sajid Mehmood","publisher":{"@id":"https://www.sajidmk.com/#person"}},{"@type":"WebPage","@id":"https://www.sajidmk.com/#webpage","url":"https://www.sajidmk.com/","name":"Sajid Mehmood — IT Graduate | Doha, Qatar","isPartOf":{"@id":"https://www.sajidmk.com/#website"},"about":{"@id":"https://www.sajidmk.com/#person"},"description":"IT graduate in Doha, Qatar. BSc Information Technology (Middlesex University Dubai), networking and Azure training, and Windows scripting tools."}]}
 </script>
-<link rel="stylesheet" href="styles.css?v=20261020">
+<link rel="stylesheet" href="styles.css?v=20261022">
 </head>
 <body>
 <!--
@@ -43,7 +43,8 @@
   Styles live in styles.css, behaviour in script.js. Nothing is coded inline here.
   [HTML-01]  SIDE RAIL — puts the wide left gutter to work on big screens
   [HTML-02]  NAV
-  [HTML-03]  LIVE FOCUS SLIDER — drag to blur the hero panel (+ accent colour dots)
+  [HTML-03]  DISPLAY DOCK — blur slider, dock text-colour dots, bold switch
+  [HTML-03b] SITE THEME BUTTONS — hidden; drive [JS-28] (theme switcher)
   [HTML-04]  HERO
   [HTML-05]  RECRUITER FAST-PASS
   [HTML-06]  STATUS PAGE (uptime/response widget, styled like a real status page)
@@ -51,6 +52,7 @@
   [HTML-08]  WHY HIRE
   [HTML-09]  EXPERIENCE
   [HTML-10]  SKILLS
+  [HTML-10a] SKILLS RADAR — orbit gauge skill chart (data in RADAR_AXES, script.js)
   [HTML-11]  PROOF OF WORK
   [HTML-12]  CERTIFICATIONS
   [HTML-13]  PROJECTS
@@ -66,8 +68,17 @@
   [HTML-23]  IN-SITE DOCUMENT VIEWER (CV / certificates, no Drive redirect)
   [HTML-24]  COMMAND CONSOLE (Ctrl/⌘ + K, or "/")
   [HTML-25]  TOOLKIT DETAILS MODAL
+  [HTML-26]  NOW — what I'm working on this month (sits between REFERENCES and CONTACT)
+  [HTML-27]  CERTIFICATE HASH VERIFICATION MODAL (opens from the Verified pill on each certificate card)
   ==================================================================
 -->
+
+<!-- ============ [HTML-28] PRINT-ONLY CV HEADER (hidden on screen, shown by the [CSS-66] print block) ============ -->
+<header class="print-only print-cv-header">
+  <h1>Sajid Mehmood</h1>
+  <p class="print-title">IT Graduate — Doha, Qatar</p>
+  <p class="print-contact">sajiditeech@gmail.com · +974 6696 9598 · linkedin.com/in/imsajid-mehmood-1b3954333 · sajidmk.com</p>
+</header>
 
 <div class="bg-field"></div>
 <div class="bg-grain"></div>
@@ -88,6 +99,7 @@
 <!-- ============ [HTML-02] NAV ============ -->
 <nav class="nav glass-clear glass-tight nav-in" id="topNav">
   <a href="#home" class="nav-brand"><span class="ping"></span> Sajid Mehmood</a>
+  <span class="nav-bismillah" lang="ar" dir="rtl" aria-label="Bismillah ir-Rahman ir-Rahim — In the name of Allah, the Most Gracious, the Most Merciful">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span>
   <div class="nav-links" id="navLinks">
     <a href="#home" class="nav-link">Home</a>
     <a href="#about" class="nav-link">About</a>
@@ -119,7 +131,7 @@
 </div>
 
 <!-- ============ [HTML-03] DISPLAY DOCK — right-edge control capsule (blur · accent · bold) ============ -->
-<aside class="fx-dock" id="focusSlider" data-open="false" aria-label="Display controls">
+<aside class="fx-dock" id="focusSlider" data-open="false" data-text-colour="white" aria-label="Display controls">
   <button type="button" class="fx-handle" id="fxHandle" aria-expanded="false" aria-controls="fxPanel" aria-label="Open display controls" title="Display controls">
     <span class="fx-lens" aria-hidden="true"><i></i></span>
     <span class="fx-handle-text" aria-hidden="true">Display</span>
@@ -133,6 +145,13 @@
       <button type="button" class="fx-close" id="fxClose" aria-label="Close display controls">&times;</button>
     </div>
 
+    <div class="fx-preview fx-in" style="--k:0.5">
+      <span class="fx-preview-chip" aria-hidden="true">
+        <span class="fx-preview-img"></span>
+      </span>
+      <span class="fx-preview-label" id="fxPreviewLabel">Crystal</span>
+    </div>
+
     <div class="fx-body">
       <div class="fx-focus fx-in" style="--k:1">
         <span class="fx-cap" aria-hidden="true"><b>Clear</b><b>Blurred</b></span>
@@ -144,13 +163,24 @@
 
       <div class="fx-side">
         <div class="fx-dots-wrap fx-in" style="--k:2">
-          <div class="accent-picker fx-dots" id="accentPicker" role="group" aria-label="Accent colour"><button type="button" class="accent-dot" data-accent="lime" aria-pressed="false" aria-label="Electric lime accent" title="Electric Lime"></button><button type="button" class="accent-dot" data-accent="indigo" aria-pressed="false" aria-label="Indigo accent" title="Indigo Pulse"></button><button type="button" class="accent-dot" data-accent="ruby" aria-pressed="false" aria-label="Ruby accent" title="Ruby"></button><button type="button" class="accent-dot" data-accent="champagne" aria-pressed="false" aria-label="Champagne accent" title="Champagne"></button><button type="button" class="accent-dot" data-accent="charcoal" aria-pressed="false" aria-label="Charcoal gray theme" title="Charcoal"></button><button type="button" class="accent-dot" data-accent="graphite" aria-pressed="false" aria-label="Graphite gray theme" title="Graphite"></button><button type="button" class="accent-dot" data-accent="onyx" aria-pressed="false" aria-label="Onyx black theme" title="Onyx black"></button><button type="button" class="accent-dot" data-accent="white" aria-pressed="true" aria-label="White theme" title="White"></button><button type="button" class="accent-dot" data-accent="black" aria-pressed="false" aria-label="Black text theme" title="Black"></button></div>
+          <div class="fx-dots" id="textColourPicker" role="group" aria-label="Dock text colour">
+            <button type="button" class="text-colour-dot" data-text-colour="white" aria-pressed="true" aria-label="White text" title="White"></button>
+            <button type="button" class="text-colour-dot" data-text-colour="black" aria-pressed="false" aria-label="Black text" title="Black"></button>
+            <button type="button" class="text-colour-dot" data-text-colour="sapphire" aria-pressed="false" aria-label="Sapphire text" title="Sapphire"></button>
+            <button type="button" class="text-colour-dot" data-text-colour="amethyst" aria-pressed="false" aria-label="Amethyst text" title="Amethyst"></button>
+            <button type="button" class="text-colour-dot" data-text-colour="amber" aria-pressed="false" aria-label="Amber text" title="Amber"></button>
+            <button type="button" class="text-colour-dot" data-text-colour="mint" aria-pressed="false" aria-label="Mint text" title="Mint"></button>
+          </div>
         </div>
         <button type="button" class="focus-bold-toggle fx-bold fx-in" id="boldToggle" style="--k:3" aria-pressed="false" title="Switch between normal and bold text"><b>B</b><span class="fx-bold-txt">Normal</span></button>
       </div>
     </div>
   </div>
 </aside>
+
+<!-- ============ [HTML-03b] SITE THEME BUTTONS (no visible UI) — [JS-28] reads these to apply, remember and expose themes
+     (terminal `theme` command, saved theme on load). The dock no longer shows them; its dot column now sets dock text colour only. ============ -->
+<div class="accent-picker" id="accentPicker" hidden aria-hidden="true" role="group" aria-label="Accent colour"><button type="button" class="accent-dot" data-accent="lime" aria-pressed="false" aria-label="Electric lime accent" title="Electric Lime"></button><button type="button" class="accent-dot" data-accent="indigo" aria-pressed="false" aria-label="Indigo accent" title="Indigo Pulse"></button><button type="button" class="accent-dot" data-accent="ruby" aria-pressed="false" aria-label="Ruby accent" title="Ruby"></button><button type="button" class="accent-dot" data-accent="champagne" aria-pressed="false" aria-label="Champagne accent" title="Champagne"></button><button type="button" class="accent-dot" data-accent="sapphire" aria-pressed="false" aria-label="Sapphire theme" title="Sapphire"></button><button type="button" class="accent-dot" data-accent="amethyst" aria-pressed="false" aria-label="Amethyst theme" title="Amethyst"></button><button type="button" class="accent-dot" data-accent="oxblood" aria-pressed="false" aria-label="Oxblood theme" title="Oxblood"></button><button type="button" class="accent-dot" data-accent="forest" aria-pressed="false" aria-label="Forest theme" title="Forest"></button><button type="button" class="accent-dot" data-accent="bronze" aria-pressed="false" aria-label="Bronze theme" title="Bronze"></button><button type="button" class="accent-dot" data-accent="slate" aria-pressed="false" aria-label="Slate theme" title="Slate"></button><button type="button" class="accent-dot" data-accent="plum" aria-pressed="false" aria-label="Plum theme" title="Plum"></button><button type="button" class="accent-dot" data-accent="teal" aria-pressed="false" aria-label="Teal theme" title="Teal"></button><button type="button" class="accent-dot" data-accent="cobalt" aria-pressed="false" aria-label="Cobalt theme" title="Cobalt"></button><button type="button" class="accent-dot" data-accent="white" aria-pressed="true" aria-label="White theme" title="White"></button><button type="button" class="accent-dot" data-accent="black" aria-pressed="false" aria-label="Black text theme" title="Black"></button></div>
 
 <main id="home">
 
@@ -667,6 +697,20 @@
       <div class="section-label"><span class="dot"></span>Skills</div>
       <h2>What I've used, studied and am learning.</h2>
       <p class="section-intro">Grouped by evidence, not by proficiency rating.</p>
+      <!-- ============ [HTML-10a] SKILLS RADAR — skill shape at a glance (data lives in RADAR_AXES in script.js) ============ -->
+      <div class="skills-radar-wrap glass glass-tight" data-reveal="up">
+        <h3 class="radar-h3">Skill shape at a glance.</h3>
+        <div class="radar-toolbar">
+          <button type="button" id="radarCertToggle" class="radar-toggle" aria-pressed="false">Show only certified</button>
+        </div>
+        <div id="skillsRadar" class="skills-radar"></div>
+        <p class="radar-legend">
+          <span class="radar-key"><i class="radar-key-dot"></i>Solid bar — certified or published proof on this site</span>
+          <span class="radar-key"><i class="radar-key-dot is-hollow"></i>Dotted bar — learning / not yet certified</span>
+          <span class="radar-key">Each ring is one skill, each segment one level (full ring = 5 of 5). Hover or focus a node for details.</span>
+        </p>
+      </div>
+
       <div class="skills-grid" data-stagger>
         <div class="skill-card glass" data-reveal="up">
           <div class="cat">Used in my projects</div>
@@ -715,6 +759,28 @@
             <span>ITIL Framework</span><span>Incident Mgmt</span><span>Change Mgmt</span><span>ManageEngine ServiceDesk</span><span>ServiceNow</span><span>Jira</span><span>Asset Mgmt</span><span>SLA Management</span>
           </div>
           <div class="arsenal-proof">Every item here is backed by hands-on deployment — full context in <a href="#experience">Experience</a> and verification in <a href="#certifications">Certifications</a>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ [HTML-29] TERMINAL (interactive shell — styles [CSS-67], behaviour [JS-53]) ============ -->
+  <section class="section" id="terminal">
+    <div class="container">
+      <div class="section-label"><span class="dot"></span>Terminal</div>
+      <h2>Or just type.</h2>
+      <p class="section-intro">The whole site, navigable from a shell. Type 'help' to get started.</p>
+      <div class="term-window glass" data-reveal="up">
+        <div class="term-titlebar">
+          <span class="term-dot term-dot--red" aria-hidden="true"></span>
+          <span class="term-dot term-dot--amber" aria-hidden="true"></span>
+          <span class="term-dot term-dot--green" aria-hidden="true"></span>
+          <span class="term-title">sajid@portfolio: ~</span>
+        </div>
+        <div class="term-out" id="termOut" aria-live="polite" tabindex="0"></div>
+        <div class="term-prompt-row">
+          <span class="term-prompt">sajid@portfolio:~$</span>
+          <input class="term-input" id="termInput" aria-label="Terminal input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
         </div>
       </div>
     </div>
@@ -1374,6 +1440,13 @@
 <footer>
   <div class="footer-panel">
     <p class="footer-line">Learning, building and documenting — one project at a time.</p>
+    <!-- coined words: invented for this site, no dictionary entry (web-checked Oct 2026) -->
+    <dl class="footer-lexicon" aria-label="A small lexicon, coined for this site">
+      <div><dt>Soluvance</dt><dd><i>n.</i> the calm that settles in once a fault is traced and the connection comes back.</dd></div>
+      <div><dt>Ethervane</dt><dd><i>n.</i> a small thing that points toward wherever the signal is strongest.</dd></div>
+      <div><dt>Quillume</dt><dd><i>n.</i> the light left on by someone building something late at night.</dd></div>
+      <div><dt>Nocturvale</dt><dd><i>n.</i> the quiet hour when everything is documented and nothing is on fire.</dd></div>
+    </dl>
     <p class="cmdk-tip"><button type="button" class="cmdk-tip-btn" id="cmdkTip" aria-haspopup="dialog">Command menu <span class="cmdk-tip-keys" aria-hidden="true"><kbd data-cmdk-mod>Ctrl</kbd><kbd>K</kbd></span></button></p>
     <div class="footer-row">
       <span>© <span id="year">2025</span> Sajid Mehmood</span>
@@ -1443,7 +1516,30 @@
   </div>
 </div>
 
+<!-- ============ [HTML-27] CERTIFICATE HASH VERIFICATION MODAL (opened by the .cert-verify-pill buttons that script.js [JS-52] adds to each certificate card) ============ -->
+<div class="vgate verify-modal" id="verifyModal" role="dialog" aria-modal="true" aria-labelledby="verifyTitle" hidden>
+  <div class="vgate-scrim" data-verify-close></div>
+  <div class="vgate-panel verify-panel" id="verifyPanel">
+    <button type="button" class="vgate-close" data-verify-close aria-label="Close">&times;</button>
+    <div class="vgate-icon" aria-hidden="true">🛡️</div>
+    <h3 class="vgate-title" id="verifyTitle">Certificate</h3>
+    <div id="verifyHashBlock">
+      <code class="verify-hash" id="verifyHash"></code>
+      <div class="cert-actions">
+        <button type="button" class="cert-btn primary" id="verifyCopy">Copy hash</button>
+      </div>
+      <p class="vgate-status" id="verifyStatus" aria-live="polite"></p>
+      <p class="vgate-sub">Hash last verified: <span id="verifyDate"></span></p>
+    </div>
+    <p class="vgate-sub verify-pending" id="verifyPending" hidden>This certificate is on file and can be viewed on this site. Its SHA-256 integrity seal — the fingerprint that proves the file hasn't been altered — hasn't been published yet.</p>
+    <p class="vgate-sub" id="verifyExplain">This hash is published so anyone can verify the file hasn't been altered. Compare it on Windows with: <code>certutil -hashfile &lt;file&gt; SHA256</code></p>
+    <div class="cert-actions">
+      <button type="button" class="cert-btn" id="verifyCloseBtn" data-verify-close>Close</button>
+    </div>
+  </div>
+</div>
+
 <script src="qrcode.min.js" defer></script>
-<script src="script.js?v=20261020" defer></script>
+<script src="script.js?v=20261022" defer></script>
 </body>
 </html>

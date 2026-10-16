@@ -63,8 +63,19 @@
    [CSS-59]  IT TOOLKIT
    [CSS-60]  ACCENT SWITCHER — colour dots next to the Aa toggle
    [CSS-61]  FILE ORGANIZER PREVIEW — toolkit modal
-   [CSS-62]  SAFEGUARDS — what is kept from the removed Warm-White pass
-   [CSS-end]  STAGGER INDEX + small helpers (replaces old inline style="" attributes)
+   [CSS-61a] SAFEGUARDS — what is kept from the removed Warm-White pass
+   [CSS-61b] MOBILE — one glass layer only (phones, <=640px)
+   [CSS-end] STAGGER INDEX + small helpers (replaces old inline style="" attributes)
+   [CSS-62]  DISPLAY DOCK — the focus/accent/bold bar, moved to the right edge
+   [CSS-63]  DARK SURFACE THEMES — Sapphire / Amethyst / Oxblood / Forest / Bronze / Slate / Plum / Teal / Cobalt
+   [CSS-64]  NOW — "what I'm working on right now" cards (grid + status chips)
+   [CSS-65]  CERTIFICATE HASH VERIFICATION — seal pill, hash box, "Certified record" state
+   [CSS-66]  PRINT-FRIENDLY CV
+   [CSS-67]  TERMINAL — interactive shell panel
+   [CSS-68]  SKILLS RADAR — "orbit gauge" (concentric segmented rings) above .skills-grid
+   [CSS-69]  SECTION HEADINGS — numbered label (numbers set by [JS-55]), ghost number, word reveal
+   [CSS-71]  CONTACT + FOOTER JOIN — contact and footer glass share one edge, no gap; footer lexicon (coined words)
+   [CSS-70]  TRANSPARENT GLASS — no fills, no tint, no sheen on any panel/card; edges stay. Text colour: [JS-50] dots
    Note: later PART sections intentionally override earlier ones (CSS cascade), so order matters. Do not reorder.
    ================================================================== */
 
@@ -116,8 +127,8 @@
   --danger:#FF6B6B;
 
   /* ---- type — Apple system stack (Liquid Glass pass) ---- */
-  --ff-display:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-  --ff-body:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --ff-display:"Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --ff-body:"Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ff-mono:'IBM Plex Mono', ui-monospace, monospace;
 
   /* ---- shape / depth ---- */
@@ -352,6 +363,19 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .nav-brand{ display:flex; align-items:center; gap:10px; white-space:nowrap; flex:none; font-family:var(--ff-display); font-weight:600; font-size:16px; }
 .nav-brand .ping{ width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
+/* Bismillah in the navbar */
+.nav-bismillah{
+  flex:none; margin-left:clamp(16px,3vw,56px);
+  font-family:'Amiri','Noto Naskh Arabic','Scheherazade New','Traditional Arabic',serif;
+  font-size:clamp(22px,1.9vw,30px); line-height:1.4; white-space:nowrap;
+  color:var(--accent-light, var(--accent));
+  text-shadow:0 0 14px rgba(var(--accent-rgb),.35);
+  user-select:none; cursor:default;
+}
+@media (min-width:1180px) and (max-width:1399px){ .nav-bismillah{ font-size:20px; margin-left:12px; } }
+@media (max-width:1179px){ .nav-bismillah{ margin-left:auto; margin-right:auto; font-size:24px; } }
+@media (max-width:560px){ .nav-bismillah{ font-size:19px; margin-left:8px; margin-right:auto; } }
+@media (max-width:400px){ .nav-bismillah{ display:none; } }
 .nav-links{ display:flex; gap:var(--nav-gap,6px); align-items:center; flex:none; margin:0 var(--nav-gap,6px) 0 auto; padding-left:14px; }
 .nav-links a{ white-space:nowrap; flex:none; }
 .nav-cta{
@@ -458,12 +482,12 @@ button{ font-family:inherit; cursor:pointer; }
 
 /* status strip — reads like a live systems readout, not a stat-card grid */
 .status-strip{
-  display:flex; flex-wrap:wrap; gap:0;
+  display:flex; flex-wrap:nowrap; align-items:stretch; justify-content:space-between; gap:0;
   padding:18px 22px;
 }
 .status-item{
-  display:flex; flex-direction:column; gap:4px;
-  padding:0 22px; border-right:1px solid var(--glass-border);
+  display:flex; flex-direction:column; gap:4px; flex:1 1 auto; min-width:0;
+  padding:0 clamp(10px,1.3vw,20px); border-right:1px solid var(--glass-border);
 }
 .status-item:first-child{ padding-left:0; }
 .status-item:last-child{ border-right:none; }
@@ -3744,7 +3768,7 @@ html.tk-open{ overflow:hidden; }
 }
 
 /* ==================================================================
-   [CSS-62]  SAFEGUARDS — what is kept from the removed Warm-White pass
+   [CSS-61a] SAFEGUARDS — what is kept from the removed Warm-White pass
    ==================================================================
 
    The "Warm-White Refinement" that used to end this file re-pointed every
@@ -3926,7 +3950,7 @@ a.gv-row--link:hover{ border-color:rgba(var(--accent-rgb),.55); background:rgba(
 
 
 /* ==================================================================
-   [CSS-63]  MOBILE — one glass layer only (phones, <=640px)
+   [CSS-61b] MOBILE — one glass layer only (phones, <=640px)
    ==================================================================
    On a phone the page was glass inside glass inside glass: the section
    panel, then the Contact panel with its own border/blur/liquid layer,
@@ -4171,21 +4195,20 @@ html[data-theme="black"] .focus-slider-readout{ color:#000; }
    lens orb blurs in step with the slider, and a thin meter under it shows
    the current blur. Hover (mouse) or tap/click (touch, keyboard) and the
    capsule UNFOLDS into a vertical control panel with a springy overshoot:
-   readout → vertical "lens" slider → colour dots (a ring slides between
-   them, a colour bloom ripples out on pick) → bold switch, each staggered in.
-   Same IDs as before (#heroFocusRange, #focusSliderReadout, #accentPicker,
+   readout → vertical "lens" slider → text-colour dots (a ring slides between
+   them, a bloom ripples out on pick; they recolour the dock's TEXT only) → bold switch, each staggered in.
+   Same IDs as before (#heroFocusRange, #focusSliderReadout, #textColourPicker,
    #boldToggle) so the existing JS keeps driving everything.
    ================================================================== */
 .fx-dock{
   --fx-spring: cubic-bezier(.2,1.25,.35,1);
   --fx-out: cubic-bezier(.2,.8,.2,1);
   --fx-dot: 20px; --fx-gap: 9px; --fx-pitch: calc(var(--fx-dot) + var(--fx-gap));
-  --fx-n: 9;   /* number of colour dots */
+  --fx-n: 6;    /* number of text-colour dots */
   --fx-h: calc(var(--fx-dot) * var(--fx-n) + var(--fx-gap) * (var(--fx-n) - 1) + 57px);   /* slider length = dot column + bold switch */
   --lens: 0;                   /* 0..1, written by script.js [JS-50] */
   --fx-hw: clamp(26px, calc(var(--panel-gutter) - 8px), 34px);   /* capsule width: always fits inside the gutter */
-  /* the dock always stays dark glass, so white text stays readable on any theme/photo */
-  --text:#fff; --text-dim:rgba(255,255,255,.84); --text-faint:rgba(255,255,255,.64);
+  /* the dock's text follows the site-wide text colour chosen with its own dots ([JS-50]) */
   --glass-border:rgba(255,255,255,.2); --glass-border-bright:rgba(255,255,255,.5);
   position:fixed; z-index:45;
   right:max(2px, calc((var(--panel-gutter) - var(--fx-hw)) / 2)); top:50%;
@@ -4350,27 +4373,53 @@ html[data-theme="black"] .focus-slider-readout{ color:#000; }
   transform:translateY(calc(var(--sel, 0) * var(--fx-pitch)));
   transition:transform .5s var(--fx-spring);
 }
-.fx-dots .accent-dot{
-  width:var(--fx-dot); height:var(--fx-dot); margin:0; flex:none;
+.fx-dots .text-colour-dot{
+  width:var(--fx-dot); height:var(--fx-dot); margin:0; padding:0; flex:none; cursor:pointer; border-radius:50%;
+  background:var(--dot-colour, #fff);
   border:2px solid rgba(255,255,255,.55);
-  box-shadow:0 0 0 1px rgba(0,0,0,.45), 0 0 10px -1px var(--dot);
+  box-shadow:0 0 0 1px rgba(0,0,0,.45), 0 0 10px -1px var(--dot-colour, #fff);
   opacity:0; scale:.3;                               /* pop in one by one when the panel opens */
   transition:scale .2s ease, opacity .15s ease, transform .25s var(--fx-spring), box-shadow .25s ease, border-color .25s ease;
 }
-.fx-dock[data-open="true"] .fx-dots .accent-dot{
+.fx-dock[data-open="true"] .fx-dots .text-colour-dot{
   opacity:1; scale:1;
   transition:scale .5s var(--fx-spring) calc(300ms + var(--d, 0) * 45ms), opacity .25s ease calc(300ms + var(--d, 0) * 45ms),
              transform .25s var(--fx-spring), box-shadow .25s ease, border-color .25s ease;
 }
-.fx-dots .accent-dot:nth-child(1){ --d:0; } .fx-dots .accent-dot:nth-child(2){ --d:1; } .fx-dots .accent-dot:nth-child(3){ --d:2; }
-.fx-dots .accent-dot:nth-child(4){ --d:3; } .fx-dots .accent-dot:nth-child(5){ --d:4; } .fx-dots .accent-dot:nth-child(6){ --d:5; } .fx-dots .accent-dot:nth-child(7){ --d:6; }
-.fx-dots .accent-dot:nth-child(8){ --d:7; } .fx-dots .accent-dot:nth-child(9){ --d:8; } .fx-dots .accent-dot:nth-child(10){ --d:9; }
-.fx-dots .accent-dot:hover{ transform:scale(1.18); }
-.fx-dots .accent-dot[aria-pressed="true"]{
+.text-colour-dot[data-text-colour="white"]{ --dot-colour:#FFFFFF; --d:0; }
+.text-colour-dot[data-text-colour="black"]{ --dot-colour:#000000; --d:1; border-color:rgba(255,255,255,.8); }
+.text-colour-dot[data-text-colour="sapphire"]{ --dot-colour:#7FB8F0; --d:2; }
+.text-colour-dot[data-text-colour="amethyst"]{ --dot-colour:#C4A5F5; --d:3; }
+.text-colour-dot[data-text-colour="amber"]{ --dot-colour:#F5C26B; --d:4; }
+.text-colour-dot[data-text-colour="mint"]{ --dot-colour:#8FE5C0; --d:5; }
+.fx-dots .text-colour-dot:hover{ transform:scale(1.18); }
+.fx-dots .text-colour-dot[aria-pressed="true"]{
   transform:scale(.8); border-color:rgba(255,255,255,.95);
-  box-shadow:0 0 0 1px rgba(0,0,0,.5), 0 0 14px 1px var(--dot);
+  box-shadow:0 0 0 1px rgba(0,0,0,.5), 0 0 14px 1px var(--dot-colour);
 }
-.fx-dots .accent-dot:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+.fx-dots .text-colour-dot:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+@media (prefers-reduced-motion:reduce){
+  .fx-dots .text-colour-dot, .fx-dock[data-open="true"] .fx-dots .text-colour-dot{ transition:none; }
+  .fx-dots::after{ transition:none; }
+}
+
+/* ---- dock text = the site-wide text colour (set on <html> by [JS-50] from the dots below) ---- */
+.fx-dock{ --dock-text:var(--text); --dock-text-dim:var(--text-dim); --dock-text-faint:var(--text-faint); }
+
+/* every text element in the dock reads the variables. Selectors are kept at (or above) the specificity of
+   the rules they override; the bold switch's pressed state and the close button's hover keep their own
+   on-accent colours because they sit on an accent fill. */
+.fx-dock .fx-readout{ color:var(--dock-text); }
+.fx-dock .fx-cap{ color:var(--dock-text-faint); }
+.fx-dock .fx-handle-text{ color:var(--dock-text-dim); }
+/* blur-state label keeps its fade (crystal/soft full, blurred dim, frosted faint); the extra attribute
+   selector outranks the per-state rules that appear later in [CSS-62] */
+.fx-dock[data-text-colour][data-fx-state] .fx-preview-label{ color:var(--dock-text); }
+.fx-dock[data-text-colour][data-fx-state="blurred"] .fx-preview-label{ color:var(--dock-text-dim); }
+.fx-dock[data-text-colour][data-fx-state="frosted"] .fx-preview-label{ color:var(--dock-text-faint); }
+.fx-dock .fx-bold:not([aria-pressed="true"]){ color:var(--dock-text-dim); }
+.fx-dock .fx-bold:not([aria-pressed="true"]) b{ color:var(--dock-text); }
+.fx-dock .fx-close:not(:hover):not(:focus-visible){ color:var(--dock-text-dim); }
 
 /* bold switch */
 .fx-bold{
@@ -4414,9 +4463,109 @@ html[data-theme="black"] .focus-slider-readout{ color:#000; }
 }
 @media (prefers-reduced-motion:reduce) and (max-width:900px){ .fx-panel{ transform:none; } }
 
+/* ---------- dock upgrade 1 — live before/after blur preview chip ---------- */
+/* miniaturised hero, blurred in sync with the real slider (JS-50 writes --fx-chip-blur on the dock) */
+.fx-preview{
+  display:flex; align-items:center; gap:8px; margin:2px 0 12px;
+}
+.fx-preview-chip{
+  position:relative; width:52px; height:36px; border-radius:10px;
+  overflow:hidden; flex:none;
+  border:1px solid var(--glass-border);
+  border-top-color:var(--glass-border-bright);
+  background:rgba(0,0,0,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+}
+.fx-preview-img{
+  position:absolute; inset:-2px;               /* -2px so blur edges don't show a seam */
+  background-image:url('assets/bg-landscape.jpg');
+  background-size:cover;
+  background-position:42% center;
+  filter:blur(var(--fx-chip-blur, 0px)) saturate(1.1) brightness(.95);
+  transition:filter .08s linear;               /* instant-feeling, still smooth */
+}
+.fx-preview-label{
+  min-width:0; white-space:nowrap;
+  font-family:var(--ff-mono);
+  font-size:10px;                              /* 10px + tight tracking keeps "Blurred" / "Frosted" inside the 106px panel body */
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  color:var(--accent);
+  transition:color .2s ease;
+}
+/* the label's colour shifts at each threshold so the user feels the state change, not just reads it */
+.fx-dock[data-fx-state="crystal"] .fx-preview-label{ color:var(--accent); }
+.fx-dock[data-fx-state="soft"]    .fx-preview-label{ color:var(--text); }
+.fx-dock[data-fx-state="blurred"] .fx-preview-label{ color:var(--text-dim); }
+.fx-dock[data-fx-state="frosted"] .fx-preview-label{ color:var(--text-faint); }
+@media (prefers-reduced-motion:reduce){
+  .fx-preview-img{ transition:none; }
+  .fx-preview-label{ transition:none; }
+}
+
+/* ---------- dock upgrade 2 — hover / focus try-before-you-buy on colour dots ---------- */
+/* the dock previews a hovered colour on its own glass only; the rest of the page stays on the committed theme.
+   --preview-accent is the dot's swatch colour, which is very dark on the dark themes, so text is lifted toward white. */
+.fx-dock[data-preview="true"] .fx-panel,
+.fx-dock[data-preview="true"] .fx-handle{
+  background:
+    linear-gradient(165deg,
+      color-mix(in srgb, var(--preview-accent, var(--accent)) 26%, transparent) 0%,
+      rgba(255,255,255,.04) 42%),
+    rgba(12,13,16,.44);
+  border-top-color:color-mix(in srgb, var(--preview-accent, var(--accent)) 70%, white 30%);
+}
+.fx-dock[data-preview="true"] .fx-readout,
+.fx-dock[data-preview="true"] .fx-preview-label{
+  color:color-mix(in srgb, var(--preview-accent, var(--accent)) 45%, white 55%);
+}
+@media (prefers-reduced-motion:reduce){
+  .fx-dock[data-preview="true"] .fx-panel,
+  .fx-dock[data-preview="true"] .fx-handle{ transition:none; }
+}
+
+/* ---------- dock upgrade 3 — slider groove + glass-bead thumb ---------- */
+/* groove: the track reads as a channel cut into the glass. It lives on ::after (behind the slider, z-index -1)
+   because ::before already draws the tick marks; 12px wide so it frames the 8px native track instead of hiding under it. */
+.fx-track::after{
+  content:'';
+  position:absolute; left:50%; top:3px; bottom:3px; z-index:-1;
+  width:12px; margin-left:-6px; border-radius:999px;
+  background:linear-gradient(180deg,
+    rgba(0,0,0,.30) 0%, rgba(0,0,0,.16) 100%);
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,.45),
+    inset 0 -1px 0 rgba(255,255,255,.08);
+  pointer-events:none;
+}
+/* thumb: real glass bead — specular highlight in the upper-left (hover / active / focus-visible rules above still apply) */
+.fx-range::-webkit-slider-thumb{
+  background:
+    radial-gradient(circle at 34% 30%, #fff 0%, #fff 45%,
+                    rgba(255,255,255,.72) 100%);
+  box-shadow:
+    0 3px 10px rgba(0,0,0,.55),
+    0 0 0 6px rgba(var(--accent-rgb),.16),
+    inset -1px -1px 1px rgba(0,0,0,.15),
+    inset 1px 1px 1px rgba(255,255,255,.9);
+}
+.fx-range::-moz-range-thumb{
+  background:
+    radial-gradient(circle at 34% 30%, #fff 0%, #fff 45%,
+                    rgba(255,255,255,.72) 100%);
+  box-shadow:
+    0 3px 10px rgba(0,0,0,.55),
+    0 0 0 6px rgba(var(--accent-rgb),.16),
+    inset -1px -1px 1px rgba(0,0,0,.15),
+    inset 1px 1px 1px rgba(255,255,255,.9);
+}
+.fx-range:focus-visible::-moz-range-thumb{       /* Firefox had no keyboard ring on the thumb */
+  box-shadow:0 3px 10px rgba(0,0,0,.55), 0 0 0 4px rgba(var(--accent-rgb),.5);
+}
+
 
 /* ==================================================================
-   [CSS-63]  DARK SURFACE THEMES — Charcoal / Graphite / Onyx
+   [CSS-63]  DARK SURFACE THEMES — Sapphire / Amethyst / Oxblood / Forest / Bronze / Slate / Plum / Teal / Cobalt
    script.js [JS-28] sets data-dark and --surface-rgb / --surface-a on <html>.
    Panels become tinted charcoal or black glass (never white); text stays light.
    !important for the same reason as the Black theme: the blur slider writes an
@@ -4428,4 +4577,462 @@ html[data-dark] :is(.hero, .recruiter-bar, .section, .footer-panel, .nav, .mob-d
 html[data-dark] .diag-console{ background:rgba(var(--surface-rgb), .55); }
 html[data-dark] ::selection{ background:rgba(255,255,255,.28); }
 /* the dot swatches for dark colours need a visible edge on the dark dock */
-.accent-dot[data-accent="charcoal"], .accent-dot[data-accent="graphite"], .accent-dot[data-accent="onyx"]{ border-color:rgba(255,255,255,.7); }
+.accent-dot:is([data-accent="sapphire"],[data-accent="amethyst"],[data-accent="oxblood"],[data-accent="forest"],[data-accent="bronze"],[data-accent="slate"],[data-accent="plum"],[data-accent="teal"],[data-accent="cobalt"]){ border-color:rgba(255,255,255,.7); }
+
+
+/* ==================================================================
+   [CSS-64]  NOW — "what I'm working on right now" cards
+   index.html [HTML-26], script.js [JS-51]. The cards are plain
+   .glass .glass-tight panels (no new surface treatment); this block only
+   adds the grid, the type and the three status chips. Nothing here
+   animates, and the entrance comes from the shared [data-reveal] system.
+   ================================================================== */
+.now-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; }
+.now-card{ display:flex; flex-direction:column; align-items:flex-start; gap:10px; padding:24px; }
+.now-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; }
+.now-icon{ font-size:28px; line-height:1; }
+.now-label{ font-size:17px; margin:0; }
+.now-text{ font-size:14.5px; line-height:1.6; color:var(--text-dim); margin:0; }
+.now-elapsed{ margin-top:auto; padding-top:4px; font-family:var(--ff-mono); font-size:12px; color:var(--text-faint); }
+
+/* status chips — same pill shape as .lab-status */
+.now-chip{ font-family:var(--ff-mono); font-size:11px; text-transform:capitalize; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+.now-chip--active{ color:var(--accent); background:var(--accent-dim); }
+.now-chip--learning{ color:var(--amber); background:var(--amber-dim); }
+.now-chip--reading{ color:var(--text-faint); background:rgba(255,255,255,.05); }
+
+/* same breakpoints as .skills-grid: 3 columns desktop, 2 tablet, 1 phone */
+@media (max-width:900px){ .now-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:620px){ .now-grid{ grid-template-columns:1fr; } }
+
+@media (prefers-reduced-motion:reduce){
+  .now-card{ transition:none; animation:none; }
+}
+
+
+/* ==================================================================
+   [CSS-65]  CERTIFICATE HASH VERIFICATION — pill + modal extras
+   index.html [HTML-27], script.js [JS-52]. The modal is a .vgate with a
+   .vgate-panel inside ([CSS-52]), so the glass surface, the fade/slide and
+   the phone bottom-sheet all come from there. This block only adds the
+   pill, the hash box, the pending state and the scroll lock. Colours are
+   var(--accent) / var(--amber) so the accent switcher keeps working.
+   ================================================================== */
+html.verify-open{ overflow:hidden; }
+
+/* the seal pill that sits under each certificate's buttons */
+.cert-verify-pill{
+  align-self:flex-start;
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--ff-mono); font-size:10.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  padding:6px 13px 6px 10px; border-radius:999px; cursor:pointer;
+  color:var(--text); background:rgba(var(--text-rgb),.06);
+  border:1px solid rgba(var(--text-rgb),.5);
+  transition:transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.cert-verify-pill svg{ flex:none; }
+.cert-verify-pill:hover{ background:rgba(var(--text-rgb),.14); border-color:var(--text); transform:translateY(-1px); }
+.cert-verify-pill:active{ transform:translateY(0) scale(.96); }
+.cert-verify-pill:focus-visible{ outline:2px solid var(--text); outline-offset:3px; }
+
+/* "Certified record": hash not published yet — dashed edge says "on file", solid edge (above) says "hash-sealed" */
+.cert-verify-pill.is-pending{ border-style:dashed; border-color:rgba(var(--text-rgb),.45); }
+.verify-panel.is-pending .verify-pending{ color:var(--text); }
+
+/* the SHA-256 itself — same field look as .vgate-input, monospace, one click selects it all */
+.verify-hash{
+  display:block; margin:0 0 12px; padding:12px 13px; border-radius:12px;
+  font-family:var(--ff-mono); font-size:12.5px; line-height:1.55;
+  color:var(--text); background:transparent; border:1px solid rgba(var(--text-rgb),.3);
+  word-break:break-all; -webkit-user-select:all; user-select:all;
+}
+
+/* .cert-btn is built for links; these two are <button>s, so give them a hand cursor and a thumb-friendly size */
+.verify-panel .cert-btn{ cursor:pointer; font-size:12.5px; padding:9px 16px; }
+
+@media (prefers-reduced-motion:reduce){
+  .cert-verify-pill{ transition:none; }
+  .cert-verify-pill:hover, .cert-verify-pill:active{ transform:none; }
+  .verify-modal .vgate-scrim, .verify-modal .vgate-panel{ transition:none; }
+  .verify-modal .vgate-panel{ translate:0 0; scale:1; }
+}
+
+/* =====================================================================
+   [CSS-66]  PRINT-FRIENDLY CV — Ctrl/⌘+P turns the page into a clean,
+   black-on-white, single-column CV. CSS only; delete this whole block
+   (and the [HTML-28] header) to remove the feature.
+   ===================================================================== */
+.print-only{ display:none; }
+
+@media print{
+  /* hide all interactive / decorative chrome */
+  .nav, .mob-drawer, .nav-scrim, .side-rail, .fx-dock,
+  .bg-field, .bg-grain, .scroll-progress,
+  .cmdk, .cmdk-toast, .vgate, .vview, .tk-modal, .qr-zoom,
+  #verifyModal, .cmdk-tip, #toolkit, #lab, #diagnostics, #triage,
+  #status, #now, #playbook, .cert-actions, .cert-verify-pill,
+  .scroll-scrub-hint, .cp-liquid, .fx-bloom, button, .btn{
+    display:none !important;
+  }
+
+  body{ background:#fff !important; color:#000 !important; font-size:11pt; margin:2cm; }
+
+  /* kill glass */
+  .glass, .glass-clear, .section, .hero, .recruiter-bar,
+  .footer-panel, .contact-panel.glass{
+    background:#fff !important; border:1px solid #ccc !important;
+    box-shadow:none !important; backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important; color:#000 !important;
+    border-radius:0 !important; clip-path:none !important;
+  }
+
+  /* all text black */
+  *{ color:#000 !important; text-shadow:none !important; }
+
+  /* single-column reflow */
+  .hero-grid, .about-grid, .contact-grid, .skills-grid, .cert-grid,
+  .award-grid, .refs-grid, .now-grid, .proof-grid, .case-body-inner,
+  .tk-cols, .tk-facts{
+    display:block !important;
+  }
+
+  /* scroll-reveal content must be visible on paper */
+  [data-reveal], [data-reveal].is-visible{
+    opacity:1 !important; transform:none !important; transition:none !important;
+  }
+
+  /* page breaks */
+  #experience, #education, #certifications, #contact{
+    page-break-before:always; break-before:page;
+  }
+  .tl-item, .cert-card, .edu-card, .case-card, .now-card{
+    page-break-inside:avoid; break-inside:avoid;
+  }
+
+  /* show where external links go */
+  a[href^="http"]:not([href*="sajidmk.com"])::after{
+    content:" (" attr(href) ")"; font-size:.85em; color:#555 !important;
+    word-break:break-all;
+  }
+
+  /* print-only CV header */
+  .print-only{ display:block !important; }
+  .print-cv-header{ text-align:center; margin-bottom:1.5cm; border-bottom:1px solid #ccc; padding-bottom:.5cm; }
+  .print-cv-header h1{ font-size:22pt; margin:0 0 .2cm; }
+  .print-title{ font-size:12pt; color:#333 !important; margin:0 0 .3cm; }
+  .print-contact{ font-size:10pt; color:#555 !important; margin:0; }
+}
+
+/* ==================================================================
+   [CSS-67]  TERMINAL — interactive shell panel (HTML-29, JS-53)
+   The surface is the normal .glass material; nothing new is invented.
+   ================================================================== */
+.term-window{ margin-top:28px; max-width:880px; cursor:text; }
+.term-window:focus-within{ border-color:var(--accent); }
+
+.term-titlebar{
+  display:flex; align-items:center; gap:8px; padding:11px 16px;
+  border-bottom:1px solid var(--glass-border);
+  font-family:var(--ff-mono); font-size:12px; color:var(--text-faint);
+}
+/* OS window-chrome colours — deliberately NOT theme colours */
+.term-dot{ width:12px; height:12px; border-radius:50%; flex:none; }
+.term-dot--red{ background:#ff5f57; }
+.term-dot--amber{ background:#febc2e; }
+.term-dot--green{ background:#28c840; }
+.term-title{ flex:1; text-align:center; margin-right:52px; /* 3 dots + 2 gaps, keeps the title centred */ }
+
+.term-out{
+  font-family:var(--ff-mono); font-size:13.5px; line-height:1.6; color:var(--text);
+  max-height:420px; overflow-y:auto; overscroll-behavior:contain;
+  background:transparent; padding:18px;
+}
+.term-out:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
+
+.term-line{ display:block; white-space:pre-wrap; word-break:break-word; }
+.term-ok{ color:var(--accent); }
+.term-warn{ color:var(--amber); }
+.term-muted{ color:var(--text-faint); }
+.term-err{ color:#ff9d9d; }
+
+.term-link{
+  color:var(--accent); text-decoration:underline; text-underline-offset:3px;
+  transition:opacity .15s ease; cursor:pointer;
+}
+.term-link:hover{ opacity:.8; }
+.term-link:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:3px; }
+
+.term-prompt-row{
+  display:flex; align-items:center; gap:8px; padding:0 18px 16px;
+  font-family:var(--ff-mono); font-size:13.5px; line-height:1.6;
+}
+.term-prompt{ color:var(--accent); font-family:var(--ff-mono); white-space:nowrap; }
+.term-input{
+  flex:1; min-width:0; background:transparent; border:0; padding:0; margin:0;
+  font:inherit; color:inherit; outline:none; caret-color:var(--accent);
+}
+
+/* 16px inputs stop iOS Safari from zooming the page when the field gains focus */
+@media (max-width:820px){
+  .term-out, .term-prompt-row, .term-input{ font-size:16px; }
+}
+@media (prefers-reduced-motion:reduce){
+  .term-link{ transition:none; }
+  .term-out{ scroll-behavior:auto; }
+}
+
+/* ==================================================================
+   [CSS-68]  SKILLS RADAR — "orbit gauge" (concentric segmented rings) above .skills-grid
+   The toggle button gets the existing .arsenal-tab pill style via JS
+   (see [JS-54]); nothing new is invented for it here.
+   ================================================================== */
+.skills-radar-wrap{ margin-bottom:40px; padding:26px; }
+.radar-h3{ font-size:clamp(20px,3vw,26px); margin:0 0 16px; }
+.radar-toolbar{ display:flex; flex-wrap:wrap; gap:8px; }
+.radar-toggle{ cursor:pointer; }
+
+.skills-radar{ position:relative; max-width:560px; margin:20px auto 0; }
+.skills-radar svg{ display:block; width:100%; height:auto; overflow:visible; color:var(--text); }
+
+/* orbit gauge: every ring = one skill, 5 segments = 5 levels */
+.radar-hit{ fill:none; stroke:transparent; stroke-width:24; pointer-events:stroke; }
+.radar-track{ fill:none; stroke:currentColor; stroke-width:15; stroke-linecap:round; opacity:.1; }
+.radar-fill{ fill:none; stroke:currentColor; stroke-width:15; stroke-linecap:round; }
+/* learning / not certified: the same bar, drawn as a row of dots instead of a solid pill */
+.radar-axis[data-certified="false"] .radar-fill{ stroke-width:5; stroke-dasharray:.01 9.5; opacity:.9; }
+.radar-label{ font-family:var(--ff-mono); font-size:11.5px; letter-spacing:.04em; fill:currentColor; opacity:.78; pointer-events:none; }
+.radar-node{ pointer-events:none; }
+.radar-dot{ fill:rgba(10,12,13,.82); stroke:currentColor; stroke-width:1.6; cursor:pointer; outline:none; pointer-events:auto; }
+.radar-dot:focus-visible{ stroke-width:3; }
+.radar-num{ font-family:var(--ff-mono); font-size:11px; font-weight:700; fill:currentColor; pointer-events:none; }
+.radar-core-num{ font-family:var(--ff-mono); font-size:30px; font-weight:700; fill:currentColor; }
+.radar-core-cap{ font-family:var(--ff-mono); font-size:8.5px; letter-spacing:.18em; fill:currentColor; opacity:.6; }
+
+/* hover / focus: the chosen ring lights up, the others step back */
+.radar-axis.is-active .radar-track{ opacity:.2; }
+.radar-axis.is-active .radar-dot{ stroke-width:2.6; }
+.has-active .radar-axis:not(.is-active){ opacity:.32; }
+
+/* "Show only certified" */
+.radar-hide-noncert [data-certified="false"]{ opacity:.18; }
+
+/* motion only where the user allows it */
+@media (prefers-reduced-motion:no-preference){
+  .radar-axis{ transition:opacity .25s ease; }
+  .radar-track, .radar-fill, .radar-node, .radar-label{ transition:opacity .25s ease; }
+  .radar-pre .radar-fill, .radar-pre .radar-track{ opacity:0; }
+  .radar-pre .radar-node, .radar-pre .radar-label{ opacity:0; }
+  .radar-in .radar-fill{ animation:radarBar .55s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--d) * 28ms); }
+  .radar-in .radar-track{ animation:radarTrack .5s ease both; animation-delay:calc(var(--d) * 28ms); }
+  .radar-in .radar-node, .radar-in .radar-label{ animation:radarNode .5s ease both; animation-delay:calc(var(--i) * 110ms + 450ms); }
+}
+@keyframes radarBar{   from{ opacity:0; } to{ opacity:1; } }
+@keyframes radarTrack{ from{ opacity:0; } to{ opacity:.1; } }
+@keyframes radarNode{  from{ opacity:0; } to{ opacity:1; } }
+
+/* tooltip */
+.radar-tip{
+  position:absolute; left:0; top:0; z-index:5;
+  width:max-content; max-width:220px; padding:10px 12px;
+  font-size:12.5px; line-height:1.45; color:var(--text);
+  border-radius:14px;
+  background:rgba(10,12,14,.86);                       /* floating tip: keeps a backing so it reads over any content */
+  border:1px solid var(--glass-border); border-top-color:var(--glass-border-bright);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  box-shadow:var(--shadow-ambient);
+  pointer-events:none; opacity:0; visibility:hidden;
+}
+.radar-tip.is-on{ opacity:1; visibility:visible; }
+.radar-tip-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+.radar-tip-head b{ font-weight:600; }
+.radar-tip-val{ font-family:var(--ff-mono); color:var(--accent); }
+.radar-badge{
+  display:inline-block; margin:6px 0 4px; padding:2px 8px; border-radius:999px;
+  font-family:var(--ff-mono); font-size:11px;
+  border:1px solid var(--glass-border); color:var(--text-faint);
+}
+.radar-badge.is-cert{ color:var(--accent); border-color:rgba(var(--accent-rgb),.45); background:var(--accent-dim); }
+.radar-tip-note{ color:var(--text-dim); }
+
+/* legend */
+.radar-legend{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:6px 18px;
+  margin:18px 0 0; font-size:12.5px; color:var(--text-faint);
+}
+.radar-key{ display:inline-flex; align-items:center; gap:7px; }
+.radar-key-dot{ width:14px; height:7px; border-radius:99px; background:var(--text); }
+.radar-key-dot.is-hollow{ width:14px; height:7px; border-radius:0; background:radial-gradient(circle, var(--text) 1.6px, transparent 2px) 0 50% / 5px 7px repeat-x; border:0; }
+
+/* ==================================================================
+   [CSS-69]  SECTION HEADINGS — bigger type, numbered label, word-by-word
+   reveal with a one-time accent light sweep, outlined ghost number.
+   JS ([JS-55]) splits each h2 into .sh-w > .sh-wi words and adds .sh-in
+   when it scrolls into view. No glow: the sweep is a colour pass, not a
+   text-shadow. Without JS (or with reduced motion) everything is visible.
+   ================================================================== */
+/* Numbers come from [JS-55] as data-sec on the label (and its h2). CSS counters
+   were dropped: content-visibility:auto (see "Speed 3") isolates counter scope,
+   so every deferred section restarted at 01, and hidden/pending sections
+   would otherwise leave gaps. */
+
+/* ---- label: number · dot · text · drawn line ---- */
+.section-label{
+  gap:12px; margin-bottom:18px;
+  font-size:14px; letter-spacing:.16em; text-transform:uppercase;
+}
+.section-label[data-sec]::before{
+  content:attr(data-sec);
+  color:var(--text-faint); letter-spacing:.08em;
+}
+.section-label::after{
+  content:''; flex:none; height:1px; width:clamp(60px,18vw,200px);
+  background:linear-gradient(90deg, currentColor, transparent);
+  opacity:.55; transform-origin:left center;
+}
+.section-label.sh-pre{ opacity:0; transform:translateY(8px); }
+.section-label.sh-pre::after{ transform:scaleX(0); }
+.section-label.sh-pre.sh-in{ opacity:1; transform:none; }
+.section-label.sh-pre.sh-in::after{ transform:scaleX(1); }
+
+/* ---- the heading itself ---- */
+.section h2{
+  font-size:clamp(34px,5.2vw,64px); line-height:1.04; max-width:900px;
+  letter-spacing:-.035em; font-weight:700;
+}
+.contact-panel h2{ font-size:clamp(32px,4vw,48px); line-height:1.06; letter-spacing:-.03em; font-weight:700; }
+.section-intro{ font-size:17px; margin-top:20px; }
+
+/* outlined ghost number sitting behind the heading */
+.section > .container > .section-label + h2[data-sec]::before{
+  content:attr(data-sec);
+  position:absolute; right:0; top:50%; z-index:-2;
+  transform:translateY(-50%);
+  font-family:var(--ff-mono); font-size:2.4em; font-weight:700; line-height:1;
+  color:transparent; -webkit-text-stroke:1px rgba(var(--text-rgb),.16);
+  pointer-events:none; user-select:none; white-space:nowrap;
+}
+
+/* ---- word split ---- */
+.sh-split{ text-wrap:balance; }
+.sh-w{
+  display:inline-block; overflow:hidden; vertical-align:top;
+  padding:.08em .04em .16em; margin:-.08em -.04em -.16em;
+}
+.sh-wi{
+  display:inline-block;
+  background:linear-gradient(105deg, var(--text) 40%, var(--accent) 50%, var(--text) 60%) 100% 0 / 300% 100% no-repeat;
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent;
+}
+.sh-split:not(.sh-in) .sh-wi{ transform:translateY(108%); }
+.sh-split.sh-in .sh-wi{
+  transform:none;
+  transition:transform .85s var(--sp-ease,cubic-bezier(.16,.84,.44,1)) calc(.1s + var(--i,0) * 70ms);
+  animation:shSweep 1.5s ease-out calc(.35s + var(--i,0) * 70ms) both;
+}
+@keyframes shSweep{
+  from{ background-position:100% 0; }
+  to{   background-position:0 0; }
+}
+/* reflection + ghost number fade in after the words land */
+.sh-split::after, .sh-split::before{ transition:opacity .9s ease .5s; }
+.sh-split:not(.sh-in)::after, .sh-split:not(.sh-in)::before{ opacity:0; }
+
+/* light "ink" panel (#toolkit): plain ink colour, no sweep */
+#toolkit .sh-wi{ background:none; -webkit-text-fill-color:currentColor; color:var(--tk-ink); animation:none !important; }
+#toolkit .section > .container > .section-label + h2[data-sec]::before,
+#toolkit h2::before{ -webkit-text-stroke-color:rgba(0,0,0,.14); }
+
+@media (max-width:700px){
+  .section > .container > .section-label + h2[data-sec]::before{ display:none; }
+  .section-label{ font-size:13px; letter-spacing:.12em; }
+}
+@media (prefers-reduced-motion:reduce){
+  .section-label.sh-pre, .section-label.sh-pre::after{ opacity:1; transform:none; }
+  .sh-split:not(.sh-in) .sh-wi{ transform:none; }
+  .sh-split.sh-in .sh-wi{ transition:none; animation:none; }
+  .sh-split::after, .sh-split::before{ transition:none; }
+  .sh-split:not(.sh-in)::after, .sh-split:not(.sh-in)::before{ opacity:1; }
+  .sh-wi{ background:none; -webkit-text-fill-color:currentColor; color:inherit; }
+}
+
+/* ==================================================================
+   [CSS-70]  TRANSPARENT GLASS — every panel, card, chip and the dock itself has NO fill, NO colour tint and NO
+   sheen; only the thin border edge remains, so the photo shows straight through. The Clear/Blurred slider still
+   controls the backdrop BLUR of the big panels. Pop-ups (command menu, viewer, gate, modals) keep a backing so
+   they stay readable over the page. Site-wide text colour comes from the dock dots ([JS-50] -> --text*).
+   ================================================================== */
+:root{
+  --glass-floor:0; --glass-ceil:0; --glass-veil:0;
+  --veil-card:transparent; --glass-tint:transparent; --glass-tint-strong:transparent;
+  --glass-surface:none; --glass-surface-strong:none;
+}
+:is(.nav, .mob-drawer, .hero, .section, .recruiter-bar, .footer-panel,
+    .glass, .glass-clear, .glass-tight,
+    .btn, .recruiter-link, .cf-submit,
+    .cs-item, .tl-item, .bd-card, .tl-quote, .tl-subroles, .tk-card, .tk-note, .gv-row,
+    .diag-console, .geo-vault, .status-strip, .hero-photo-tag,
+    .fx-panel, .fx-handle, .fx-preview-chip, .fx-bold){
+  background:none !important;
+  background-color:transparent !important;
+}
+/* sheen layers that make glass look like glass */
+:is(.glass, .glass-clear, .glass-tight)::before,
+:is(.glass, .glass-clear, .glass-tight)::after,
+.fx-panel::before, .fx-panel::after, .fx-handle::before{ background:none !important; }
+/* inner highlights / dark insets go; the outer edge stays */
+:is(.glass, .glass-clear, .glass-tight, .nav, .mob-drawer){ box-shadow:none !important; }
+/* themes can never tint panels */
+html[data-dark] :is(.hero, .recruiter-bar, .section, .footer-panel, .nav, .mob-drawer),
+html[data-theme="black"] :is(.hero, .recruiter-bar, .section, .footer-panel, .nav, .mob-drawer, .focus-slider){
+  background:none !important; background-color:transparent !important;
+}
+html[data-dark] .diag-console, html[data-theme="black"] .diag-console{ background:transparent !important; }
+/* chips and form fields: no fill either (their borders stay) */
+.skill-tags > *, main :is(input, textarea, select){ background:none !important; background-color:transparent !important; }
+
+/* ---- site-wide font colour: labels and links that were hard-coded white/accent/blue-grey now follow it ----
+   (text on solid accent fills — the white Run buttons, tk-primary — keeps its dark on-accent colour for contrast) */
+:root{ --amber:var(--text-dim); --amber-dim:rgba(var(--text-rgb),.12); }
+:is(.nav-link, .nav-brand, .nav-cta, .section-label, .highlight-card .val, .status-item .val, .cert-btn, .cert-btn.primary,
+    .cert-badge.verified, .bd-card-plus, .recruiter-link, .btn, .btn-arrow, .proof-stat .val, .gv-pill, .tk-cursor):not(:hover):not(:focus-visible):not(.tk-primary){
+  color:var(--text);
+}
+/* the Toolkit panel has its own ink variables — tie them to the same site-wide colour, and drop its fills */
+#toolkit{
+  --tk-ink:var(--text); --tk-dim:var(--text-dim); --tk-line:rgba(var(--text-rgb),.26);
+  --tk-card:transparent; --tk-soft:transparent; --tk-field:transparent; --tk-btn:transparent; --tk-btn-h:rgba(var(--text-rgb),.12);
+}
+:is(.bd-eyebrow, .lab-status, .edu-result, .now-chip, .status-chip, .radar-toggle, .term-prompt, .section-intro, .tk-seo,
+    .scroll-scrub-hint, .scroll-scrub-hint *, .gv-note a, .cf-submit-text, .tk-badge):not(:hover):not(:focus-visible){ color:var(--text); }
+
+/* ==================================================================
+   [CSS-71]  CONTACT + FOOTER JOIN — one continuous glass panel
+   Contact's bottom corners and the footer's top corners are squared off and the double border becomes a single
+   hairline divider, so there is no notch or gap between the two panels.
+   ================================================================== */
+#contact{ margin-bottom:0 !important; border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-width:0; }
+footer{ margin-top:0; padding-top:0; }
+.footer-panel{
+  margin-top:0;
+  border-top-left-radius:0; border-top-right-radius:0;
+  border-top:1px solid rgba(var(--text-rgb),.22);
+}
+
+/* footer lexicon: four coined words, each with a one-line meaning (text colour follows the dock dots) */
+.footer-lexicon{
+  display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:22px 28px;
+  margin:0 0 20px; padding:0 0 22px; border-bottom:1px solid rgba(var(--text-rgb),.16);
+}
+.footer-lexicon > div{ margin:0; }
+.footer-lexicon dt{
+  font-family:var(--ff-display); font-style:italic; font-weight:600; font-size:21px; letter-spacing:.01em;
+  color:var(--text); margin:0 0 6px;
+}
+.footer-lexicon dt::after{
+  content:''; display:block; width:26px; height:1px; margin-top:7px; background:currentColor; opacity:.5;
+}
+.footer-lexicon dd{ margin:0; font-size:13px; line-height:1.55; color:var(--text-dim); }
+.footer-lexicon dd i{ font-family:var(--ff-mono); font-style:normal; font-size:11px; letter-spacing:.08em; opacity:.7; margin-right:4px; }
+@media (max-width:900px){ .footer-lexicon{ grid-template-columns:repeat(2, minmax(0,1fr)); } }
+@media (max-width:520px){ .footer-lexicon{ grid-template-columns:1fr; text-align:left; } }
