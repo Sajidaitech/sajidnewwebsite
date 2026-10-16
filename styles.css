@@ -363,19 +363,6 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .nav-brand{ display:flex; align-items:center; gap:10px; white-space:nowrap; flex:none; font-family:var(--ff-display); font-weight:600; font-size:16px; }
 .nav-brand .ping{ width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
-/* Bismillah in the navbar */
-.nav-bismillah{
-  flex:none; margin-left:clamp(16px,3vw,56px);
-  font-family:'Amiri','Noto Naskh Arabic','Scheherazade New','Traditional Arabic',serif;
-  font-size:clamp(22px,1.9vw,30px); line-height:1.4; white-space:nowrap;
-  color:var(--accent-light, var(--accent));
-  text-shadow:0 0 14px rgba(var(--accent-rgb),.35);
-  user-select:none; cursor:default;
-}
-@media (min-width:1180px) and (max-width:1399px){ .nav-bismillah{ font-size:20px; margin-left:12px; } }
-@media (max-width:1179px){ .nav-bismillah{ margin-left:auto; margin-right:auto; font-size:24px; } }
-@media (max-width:560px){ .nav-bismillah{ font-size:19px; margin-left:8px; margin-right:auto; } }
-@media (max-width:400px){ .nav-bismillah{ display:none; } }
 .nav-links{ display:flex; gap:var(--nav-gap,6px); align-items:center; flex:none; margin:0 var(--nav-gap,6px) 0 auto; padding-left:14px; }
 .nav-links a{ white-space:nowrap; flex:none; }
 .nav-cta{
@@ -399,7 +386,7 @@ button{ font-family:inherit; cursor:pointer; }
 --------------------------------------------------------------- */
 .hero{
   position:relative; z-index:2;
-  padding:64px 0 100px;
+  padding:40px 0 100px;
   width:min(var(--panel-max), calc(100% - 2 * var(--panel-gutter)));
   margin:22px auto 28px;
   border-radius:var(--radius-lg);
@@ -416,6 +403,17 @@ button{ font-family:inherit; cursor:pointer; }
 }
 @media (max-width:900px){ .hero{ margin-top:18px; } }
 @media (max-width:640px){ .hero{ margin-top:14px; margin-bottom:20px; } }
+/* Bismillah — centred at the top of the hero, above the chips and photo */
+.hero-bismillah-wrap{ text-align:center; margin-bottom:clamp(20px,3vw,36px); }
+.hero-bismillah{
+  display:inline-block; margin:0;
+  font-family:'Amiri','Noto Naskh Arabic','Scheherazade New','Traditional Arabic',serif;
+  font-size:clamp(28px,3.4vw,48px); line-height:1.6; white-space:nowrap;
+  color:var(--accent-light, var(--accent));
+  text-shadow:0 0 18px rgba(var(--accent-rgb),.35), 0 2px 12px rgba(0,0,0,.45);
+  user-select:none;
+}
+@media (max-width:640px){ .hero-bismillah{ font-size:26px; } }
 .hero-grid{
   display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:center;
 }
