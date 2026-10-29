@@ -33,6 +33,9 @@ export default {
     if (url.pathname.replace(/\/+$/, '') === '/api/contact') {
       return handleContact(request, env, url);
     }
+    if (url.pathname === '/api/download') {
+      return handleDownload(request, url);
+    }
     // Everything else: normal static site.
     return env.ASSETS.fetch(request);
   },
@@ -107,4 +110,38 @@ function reply(body, status = 200, extra = {}) {
       ...extra,
     },
   });
+}
+
+// Explicit allowlist: this endpoint is for deliberately PUBLIC downloadable files only.
+// Do not add transcripts or identity documents to this list.
+const PUBLIC_DOWNLOADS = {
+  'cv': { key: "pdf file/SajidMehmood CV.pdf", filename: "SajidMehmood CV.pdf" },
+  'ccna': { key: "assets/CCNA certificate.pdf", filename: "CCNA certificate.pdf" },
+  'azure': { key: "assets/AZURE.jpg", filename: "AZURE.jpg" },
+  'aptech': { key: "pdf file/Aptech Certificats .pdf", filename: "Aptech Certificats .pdf" },
+  'odoo': { key: "pdf file/odoo event certificate.pdf", filename: "odoo event certificate.pdf" },
+  'techwiz': { key: "pdf file/TECHWIZ4 CERTIFICATES.pdf", filename: "TECHWIZ4 CERTIFICATES.pdf" },
+  'mdxcareer': { key: "pdf file/MDX career fair volunteering certificate.png", filename: "MDX career fair volunteering certificate.png" },
+  'hia': { key: "pdf file/airport project certificate .png", filename: "airport project certificate .png" },
+  'starlink': { key: "pdf file/starlink Experience Letter .pdf", filename: "starlink Experience Letter .pdf" },
+};
+async function handleDownload(request, url) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return new Response('Method not allowed', {status:405, headers:{Allow:'GET, HEAD'}});
+  }
+  const file = PUBLIC_DOWNLOADS[url.searchParams.get('file') || ''];
+  if (!file) return new Response('File not found', {status:404});
+  const publicUrl = 'https://assets.sajidmk.com/' + file.key.split('/').map(encodeURIComponent).join('/');
+  try {
+    const result = await fetch(publicUrl);
+    if (!result.ok) return new Response('R2 file unavailable', {status:502});
+    const headers = new Headers();
+    headers.set('Content-Type', result.headers.get('Content-Type') || 'application/octet-stream');
+    headers.set('Content-Disposition', 'attachment; filename="' + file.filename.replace(/["\r\n]/g, '') + '"');
+    headers.set('X-Content-Type-Options', 'nosniff');
+    headers.set('Cache-Control', 'public, max-age=600');
+    return new Response(request.method === 'HEAD' ? null : result.body, {status:200,headers});
+  } catch (error) {
+    return new Response('R2 temporarily unavailable', {status:502});
+  }
 }

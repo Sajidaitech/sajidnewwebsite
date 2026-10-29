@@ -644,14 +644,7 @@ $$('[data-case]').forEach(card => {
 (function regionContact(){
   const CONFIG = {
     instagramHandle: 'imsajidmehmood',
-    allow: [
-      'QA','AE','SA','KW','BH','OM',            /* Gulf (GCC) */
-      'JO','EG','TR',                           /* nearby */
-      'US','CA',                                /* North America */
-      'GB','IE','DE','FR','NL','BE','CH','AT','IT','ES','SE','NO','DK'  /* Europe */
-    ],
-    e: 'c2FqaWRpdGVlY2hAZ21haWwuY29t',
-    p: 'Kzk3NDY2OTY5NTk4'
+    // Approved countries and private contact details are set only in the Cloudflare Pages worker.
   };
 
   const IG_OK = CONFIG.instagramHandle !== 'YOUR_INSTAGRAM_HANDLE' && /^[A-Za-z0-9._]{1,30}$/.test(CONFIG.instagramHandle);
@@ -764,12 +757,12 @@ $$('[data-case]').forEach(card => {
   }
 
   /* ---------- apply the result ---------- */
-  function finish(geo){
+  function finish(geo, serverContact){
     const code = geo ? geo.code : '';
-    const full = !!code && CONFIG.allow.includes(code);
+    const email = serverContact && serverContact.mode === 'full' ? String(serverContact.email || '') : '';
+    const phone = email ? String(serverContact.phone || '') : '';
+    const full = !!email;
     const mode = full ? 'full' : 'social';
-    const email = full ? atob(CONFIG.e) : '';
-    const phone = full ? atob(CONFIG.p) : '';
     const place = code ? nameOf(code) : '';
 
     // Instagram is open to everyone (when a handle is configured)
@@ -803,7 +796,10 @@ $$('[data-case]').forEach(card => {
     document.dispatchEvent(new CustomEvent('sm:geo', { detail:{ mode, code: code || '', place: geo || null } }));
   }
 
-  Promise.all([geoP.catch(() => null), minScan]).then(r => finish(r[0]));
+  const serverContactP = fetch('/api/contact', { cache:'no-store', credentials:'omit' })
+    .then(response => { if (!response.ok) throw Error('Contact unavailable'); return response.json(); })
+    .catch(() => ({ mode:'social' })); // Fail closed if not on Cloudflare Pages.
+  Promise.all([geoP.catch(() => null), minScan, serverContactP]).then(r => finish(r[0], r[2]));
 })();
 
 /* ==================================================================
@@ -1139,7 +1135,7 @@ $$('[data-case]').forEach(card => {
    "Download" actions trigger the actual file download.
 ================================================================= */
 (function viewerGate(){
-  const CV_ID = '1-Ktw3XGNO4UZvxATGR9ED44NZiFMlwz_';
+  const CV_PUBLIC_URL = 'https://assets.sajidmk.com/pdf%20file/SajidMehmood%20CV.pdf';
   const NOTIFY_ENDPOINT = 'https://formspree.io/f/mbglyrwl'; // same form used by the contact section
 
   const gate = document.getElementById('vgate');
@@ -1287,8 +1283,8 @@ $$('[data-case]').forEach(card => {
 
   // Wire up every certificate button + every CV link on the page.
   function itemFromLink(link){
-    const isCV = link.href.includes(CV_ID);
-    const isDownload = link.href.includes('export=download') || link.hasAttribute('download');
+    const isCV = link.dataset.documentKind === 'cv' || link.href === CV_PUBLIC_URL || link.href.includes('/api/download?file=cv');
+    const isDownload = link.href.includes('export=download') || link.href.includes('/api/download?file=') || link.hasAttribute('download');
     let title = 'CV';
     if (!isCV) {
       const certCard = link.closest('.cert-card');
@@ -1312,7 +1308,7 @@ $$('[data-case]').forEach(card => {
   }
 
   const targets = document.querySelectorAll(
-    'a.cert-btn, a[href*="' + CV_ID + '"]'
+    'a.cert-btn, a[data-document-kind="cv"]'
   );
   targets.forEach(link => {
     link.addEventListener('click', (e) => {
